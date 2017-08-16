@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Aspac</string>
+
+    <!-- Login Activity-->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+
+    <!-- Home Activity-->
+    <string name="title_activity_home">Beranda</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- Nav Header Home-->
+    <string name="dummy_name">John Doe</string>
+    <string name="dummy_email">john.doe@ncl.com</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
