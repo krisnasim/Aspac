@@ -14,7 +14,26 @@
     <string name="dummy_name">John Doe</string>
     <string name="dummy_email">john.doe@ncl.com</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Attendance Fragment -->
+    <string name="dummy_text_att">this is attendance fragment</string>
+    <string name="absen_label">Absen</string>
+
+    <!-- Create Fragment -->
+    <string name="dummy_text_crt">this is create fragment</string>
+
+    <!-- Home Fragment -->
+    <string name="dummy_text_hom">this is home fragment</string>
+
+    <!-- Leave Fragment -->
+    <string name="dummy_text_lea">this is leave fragment</string>
+
+    <!-- Machine Fragment -->
+    <string name="dummy_text_mch">this is machine fragment</string>
+
+    <!-- Sparepart Fragment -->
+    <string name="dummy_text_spr">this is sparepart fragment</string>
+
+    <!-- Work Fragment -->
+    <string name="dummy_text_wrk">this is work fragment</string>
 
 </resources>
