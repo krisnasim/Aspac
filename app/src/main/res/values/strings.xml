@@ -18,8 +18,24 @@
     <string name="dummy_text_att">this is attendance fragment</string>
     <string name="absen_label">Absen</string>
 
+    <string-array name="spinner_absen">
+        <item>Masuk</item>
+        <item>Keluar</item>
+        <item>Lain-Lain</item>
+    </string-array>
+
     <!-- Create Fragment -->
     <string name="dummy_text_crt">this is create fragment</string>
+
+    <!-- Radio values-->
+    <string name="radio_cust_new">Baru</string>
+    <string name="radio_cust_old">Lama</string>
+
+    <!-- Checkboxes values-->
+    <string name="check_prob_1">Getaran mesin</string>
+    <string name="check_prob_2">Tidak nyala</string>
+    <string name="check_prob_3">Keluar asap</string>
+    <string name="check_prob_4">Uang nyangkut</string>
 
     <!-- Home Fragment -->
     <string name="dummy_text_hom">this is home fragment</string>
@@ -27,11 +43,47 @@
     <!-- Leave Fragment -->
     <string name="dummy_text_lea">this is leave fragment</string>
 
+    <string-array name="spinner_leave">
+        <item>Sakit</item>
+        <item>Cuti</item>
+        <item>Lain-Lain</item>
+    </string-array>
+
     <!-- Machine Fragment -->
     <string name="dummy_text_mch">this is machine fragment</string>
 
+    <string-array name="spinner_type_mch">
+        <item>Type X</item>
+        <item>Type Y</item>
+        <item>Type Z</item>
+    </string-array>
+
+    <string-array name="spinner_name_mch">
+        <item>Machine A</item>
+        <item>Machine B</item>
+        <item>Machine C</item>
+        <item>Machine D</item>
+        <item>Machine E</item>
+        <item>Machine F</item>
+    </string-array>
+
     <!-- Sparepart Fragment -->
     <string name="dummy_text_spr">this is sparepart fragment</string>
+
+    <string-array name="spinner_type_spr">
+        <item>Machine X</item>
+        <item>Machine Y</item>
+        <item>Machine Z</item>
+    </string-array>
+
+    <string-array name="spinner_name_spr">
+        <item>Sparepart A</item>
+        <item>Sparepart B</item>
+        <item>Sparepart C</item>
+        <item>Sparepart D</item>
+        <item>Sparepart E</item>
+        <item>Sparepart F</item>
+    </string-array>
 
     <!-- Work Fragment -->
     <string name="dummy_text_wrk">this is work fragment</string>

@@ -1,13 +1,179 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:layout_editor_absoluteX="8dp"
+    tools:layout_editor_absoluteY="8dp"
     tools:context="id.co.ncl.aspac.fragment.SparepartFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/dummy_text_spr" />
+        android:background="@color/md_blue_grey_300">
 
-</FrameLayout>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sparepart_pick_card_view"
+            android:layout_width="345dp"
+            android:layout_height="170dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/jenis_sparepart_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="13dp"
+                    android:text="Jenis Sparepart"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/jenis_sparepart_spinner"
+                    android:layout_width="280dp"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="10dp"
+                    android:entries="@array/spinner_type_spr"
+                    app:layout_constraintLeft_toLeftOf="@+id/jenis_sparepart_label"
+                    app:layout_constraintTop_toBottomOf="@+id/jenis_sparepart_label" />
+
+                <TextView
+                    android:id="@+id/nama_sparepart_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Sparepart"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/jenis_sparepart_spinner"
+                    app:layout_constraintLeft_toLeftOf="@+id/jenis_sparepart_spinner" />
+
+                <Spinner
+                    android:id="@+id/nama_sparepart_spiner"
+                    android:layout_width="280dp"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="10dp"
+                    android:entries="@array/spinner_name_spr"
+                    app:layout_constraintLeft_toLeftOf="@+id/nama_sparepart_label"
+                    app:layout_constraintTop_toBottomOf="@+id/nama_sparepart_label" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sparepart_amount_card_view"
+            android:layout_width="345dp"
+            android:layout_height="95dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sparepart_pick_card_view"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/jumlah_sparepart_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="13dp"
+                    android:text="Jumlah Sparepart"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="8dp" />
+
+                <EditText
+                    android:id="@+id/jumlah_sparepart_input"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:ems="10"
+                    android:inputType="number"
+                    app:layout_constraintLeft_toLeftOf="@+id/jumlah_sparepart_label"
+                    app:layout_constraintTop_toBottomOf="@+id/jumlah_sparepart_label" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sparepart_notes_card_view"
+            android:layout_width="344dp"
+            android:layout_height="150dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sparepart_amount_card_view"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/sparepart_notes_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="13dp"
+                    android:text="Sparepart Notes"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/sparepart_notes_input"
+                    android:layout_width="320dp"
+                    android:layout_height="97dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:gravity="top|left"
+                    android:inputType="textMultiLine"
+                    app:layout_constraintLeft_toLeftOf="@+id/sparepart_notes_label"
+                    app:layout_constraintTop_toBottomOf="@+id/sparepart_notes_label" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <Button
+            android:id="@+id/sparepart_button"
+            android:layout_width="113dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Kirim"
+            android:textColor="@color/md_white_1000"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sparepart_notes_card_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.502" />
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
