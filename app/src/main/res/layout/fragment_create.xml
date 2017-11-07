@@ -33,25 +33,25 @@
                     android:id="@+id/complaint_issue_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="13dp"
-                    android:text="Complaint Issue"
+                    android:textSize="20sp"
+                    android:text="Customer Data"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/complaint_issue_input"
-                    android:layout_width="320dp"
-                    android:layout_height="75dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:gravity="top|left"
-                    android:hint="Tulis komplain disini"
-                    android:inputType="textMultiLine"
-                    app:layout_constraintLeft_toLeftOf="@+id/complaint_issue_label"
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Handriady Wirawan \nBCA Cab. Gading Serpong \nJl. Scientia XVI \n14540"
+                    android:textSize="14sp"
+                    app:layout_constraintHorizontal_bias="0.08"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/complaint_issue_label" />
+
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
@@ -59,7 +59,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_2_card_view"
             android:layout_width="344dp"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -74,46 +74,37 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/customer_type_label"
+                    android:id="@+id/engineer_name_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="13dp"
-                    android:text="Customer Type"
+                    android:text="Engineer"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <RadioGroup
-                    android:id="@+id/customer_type_radio_group"
-                    android:layout_width="170dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="0dp"
+                <TextView
+                    android:id="@+id/engineer_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
-                    app:layout_constraintLeft_toLeftOf="@+id/customer_type_label"
-                    app:layout_constraintTop_toBottomOf="@+id/customer_type_label">
+                    android:text="Dennis Kurniawan"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.04"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/engineer_name_label" />
 
-                    <RadioButton
-                        android:id="@+id/cust_new_radio_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/radio_cust_new" />
 
-                    <RadioButton
-                        android:id="@+id/cust_old_radio_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/radio_cust_old" />
-                </RadioGroup>
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_3_card_view"
             android:layout_width="344dp"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -128,55 +119,29 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/complaint_checkbox_label"
+                    android:id="@+id/customer_type_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="13dp"
-                    android:text="Problem Symptoms"
+                    android:text="Date &amp; Time"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <CheckBox
-                    android:id="@+id/symptom_prob_check_box_1"
+                <TextView
+                    android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="@string/check_prob_1"
-                    app:layout_constraintLeft_toLeftOf="@+id/complaint_checkbox_label"
-                    app:layout_constraintTop_toBottomOf="@+id/complaint_checkbox_label" />
+                    android:text="7 November 2017, 13:42"
+                    android:textSize="26sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customer_type_label" />
 
-                <CheckBox
-                    android:id="@+id/symptom_prob_check_box_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/check_prob_2"
-                    app:layout_constraintLeft_toLeftOf="@+id/symptom_prob_check_box_1"
-                    app:layout_constraintTop_toBottomOf="@+id/symptom_prob_check_box_1" />
-
-                <CheckBox
-                    android:id="@+id/symptom_prob_check_box_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="0dp"
-                    android:text="@string/check_prob_3"
-                    app:layout_constraintLeft_toRightOf="@+id/symptom_prob_check_box_1"
-                    app:layout_constraintTop_toTopOf="@+id/symptom_prob_check_box_1" />
-
-                <CheckBox
-                    android:id="@+id/symptom_prob_check_box_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="0dp"
-                    android:text="@string/check_prob_4"
-                    app:layout_constraintLeft_toLeftOf="@+id/symptom_prob_check_box_3"
-                    app:layout_constraintTop_toTopOf="@+id/symptom_prob_check_box_2" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
@@ -184,15 +149,63 @@
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_4_card_view"
             android:layout_width="344dp"
-            android:layout_height="120dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="300dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_form_3_card_view" >
+            app:layout_constraintTop_toBottomOf="@+id/create_form_3_card_view">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/expandableButton1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:drawableEnd="@android:drawable/arrow_down_float"
+                    android:paddingEnd="10dp"
+                    android:text="Mesin 1" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/expandableLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/expandableButton1"
+                    android:layout_marginTop="8dp"
+                    android:background="#ffffff"
+                    android:padding="16dp"
+                    app:ael_duration="400"
+                    app:ael_expanded="false"
+                    app:ael_interpolator="accelerate"
+                    app:ael_orientation="vertical"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintLeft_toRightOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="40dp"
+                        android:text="Android is an open source and Linux-based Operating System for mobile devices such as smartphones and tablet computers. Android was developed by the Open Handset Alliance, led by Google, and other companies. The first beta version of the Android Software Development Kit (SDK) was released by Google in 2007 where as the first commercial version, Android 1.0, was released in September 2008." />
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/create_form_5_card_view"
+            android:layout_width="344dp"
+            android:layout_height="180dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create_form_4_card_view">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -202,40 +215,47 @@
                     android:id="@+id/rating_bar_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="13dp"
-                    android:text="Customer Statisfaction"
-                    app:layout_constraintHorizontal_bias="0.466"
+                    android:text="Description"
+                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <RatingBar
-                    android:id="@+id/customer_create_rating_bar"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:minEms="5"
+                    android:lines="5"
+                    android:gravity="top|left"
+                    android:hint="Data tambahan mengenai service"
+                    app:layout_constraintHorizontal_bias="0.09"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rating_bar_label" />
+
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/create_form_5_card_view"
+            android:id="@+id/create_form_6_card_view"
             android:layout_width="344dp"
-            android:layout_height="120dp"
+            android:layout_height="180dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_form_4_card_view" >
+            app:layout_constraintTop_toBottomOf="@+id/create_form_5_card_view">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -248,21 +268,67 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="13dp"
-                    android:text="Email Contact"
+                    android:text="Parts Consumed"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/create_customer_email_input"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginTop="8dp"
                     android:ems="10"
-                    android:hint="john.doe@xyz.com"
-                    android:inputType="textEmailAddress"
+                    android:lines="5"
+                    android:gravity="top|left"
+                    android:hint="Baut No. 39, Tuas XYY, ..."
+                    android:inputType="textMultiLine"
                     app:layout_constraintLeft_toLeftOf="@+id/create_customer_email_label"
                     app:layout_constraintTop_toBottomOf="@+id/create_customer_email_label" />
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/create_form_7_card_view"
+            android:layout_width="344dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create_form_6_card_view">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/customer_signature_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="13dp"
+                    android:text="Customer Signature"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:text="Print"
+                    android:textColor="@color/md_white_1000"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customer_signature_label" />
+
             </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
@@ -279,10 +345,9 @@
             android:text="Kirim"
             android:textColor="@color/md_white_1000"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.464"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_form_5_card_view" />
+            app:layout_constraintTop_toBottomOf="@+id/create_form_7_card_view" />
 
     </android.support.constraint.ConstraintLayout>
 
