@@ -4,27 +4,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.fragment.AttendanceFragment;
-import id.co.ncl.aspac.fragment.CreateFragment;
 import id.co.ncl.aspac.fragment.HomeFragment;
 import id.co.ncl.aspac.fragment.LeaveFragment;
 import id.co.ncl.aspac.fragment.MachineFragment;
@@ -34,8 +29,10 @@ import id.co.ncl.aspac.fragment.WorkFragment;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private int previousMenu = 0, selectedMenu;
     private FragmentManager manager;
     private FragmentTransaction transaction;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +49,10 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
+        selectedMenu = R.id.nav_dashboard;
     }
 
     @Override
@@ -62,8 +61,20 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+//            if(getFragmentManager().getBackStackEntryCount()>1) {
+//                getFragmentManager().popBackStack();
+//            }
+//            else {
+                super.onBackPressed();
+//            }
         }
+
+        //navigationView.getMenu().getItem(2).setChecked(true);
+        //Log.d("previousMenu", "Changing "+String.valueOf(previousMenu));
+        navigationView.getMenu().findItem(previousMenu).setChecked(true);
+        int switcher = previousMenu;
+        previousMenu = selectedMenu;
+        selectedMenu = switcher;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -76,6 +87,12 @@ public class HomeActivity extends AppCompatActivity
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        //logic for storing the previous menu ID
+        previousMenu = selectedMenu;
+        selectedMenu = id;
+
+        Log.d("previousMenu", String.valueOf(previousMenu));
+        Log.d("selectedMenu", String.valueOf(selectedMenu));
 
         if (id == R.id.nav_dashboard) {
             fragment = new HomeFragment();
@@ -89,9 +106,11 @@ public class HomeActivity extends AppCompatActivity
             fragment = new SparepartFragment();
         } else if (id == R.id.nav_machine) {
             fragment = new MachineFragment();
-        } else if (id == R.id.nav_create) {
-            fragment = new CreateFragment();
-        } else if (id == R.id.nav_logout) {
+        }
+//        else if (id == R.id.nav_create) {
+//            fragment = new CreateFragment();
+//        }
+        else if (id == R.id.nav_logout) {
             logout();
         }
 
@@ -105,11 +124,24 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     public void changeFragment(Fragment fragment) {
         manager = getSupportFragmentManager();
         transaction = manager.beginTransaction();
         transaction.replace(R.id.home_main_frame, fragment);
         transaction.addToBackStack(null);
+
+//        manager.addOnBackStackChangedListener(
+//                new FragmentManager.OnBackStackChangedListener() {
+//                    public void onBackStackChanged() {
+//                        // Update your UI here.
+//                        navigationView.getMenu().findItem(1).setChecked(true);
+//                    }
+//                });
         transaction.commit();
     }
 

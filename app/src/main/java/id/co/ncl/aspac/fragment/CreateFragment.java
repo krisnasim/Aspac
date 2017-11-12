@@ -93,22 +93,22 @@ public class CreateFragment extends Fragment {
                 Log.d("JSONContent", dataKeren.getString("date_service"));
                 date_time.setText(dataKeren.getString("date_service"));
                 JSONObject custJSON = dataKeren.getJSONObject("customer_branch");
-                Log.d("JSONContent", custJSON.getString("branch_name"));
-                Log.d("JSONContent", custJSON.getString("branch_status"));
-                Log.d("JSONContent", custJSON.getString("branch_address"));
-                Log.d("JSONContent", custJSON.getString("office_phone_number"));
+                //Log.d("JSONContent", custJSON.getString("branch_name"));
+                //Log.d("JSONContent", custJSON.getString("branch_status"));
+                //Log.d("JSONContent", custJSON.getString("branch_address"));
+                //Log.d("JSONContent", custJSON.getString("office_phone_number"));
                 cust_data.setText(custJSON.getString("branch_name") + "\n" + custJSON.getString("branch_status") + "\n" + custJSON.getString("branch_address") + "\n" + custJSON.getString("office_phone_number"));
                 JSONObject teknisiJSON = dataKeren.getJSONObject("teknisi");
-                Log.d("JSONContent", teknisiJSON.getString("username"));
-                Log.d("JSONContent", teknisiJSON.getString("email"));
-                Log.d("JSONContent", teknisiJSON.getString("name"));
+                //Log.d("JSONContent", teknisiJSON.getString("username"));
+                //Log.d("JSONContent", teknisiJSON.getString("email"));
+                //Log.d("JSONContent", teknisiJSON.getString("name"));
                 engineer_name.setText(teknisiJSON.getString("name"));
                 JSONArray mesinsArray = dataKeren.getJSONArray("machines");
                 for(int y = 0; y < mesinsArray.length(); y++) {
                     JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-                    Log.d("JSONContent", mesinJSON.getString("brand"));
-                    Log.d("JSONContent", mesinJSON.getString("model"));
-                    Log.d("JSONContent", mesinJSON.getString("serial_number"));
+                    //Log.d("JSONContent", mesinJSON.getString("brand"));
+                    //Log.d("JSONContent", mesinJSON.getString("model"));
+                    //Log.d("JSONContent", mesinJSON.getString("serial_number"));
 
                     //create new forum object
                     Mesin newMesin = new Mesin();

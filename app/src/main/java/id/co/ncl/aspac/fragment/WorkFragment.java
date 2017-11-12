@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     private JSONArray dataGlobalArray;
     private WorkListAdapter adapter;
     private SharedPreferences sharedPref;
-    private List<Work> workData = new ArrayList<Work>();
+    private ArrayList<Work> workData = new ArrayList<>();
 
     public WorkFragment() {
         // Required empty public constructor
@@ -59,6 +61,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("onCreate", "I AM CREATED!");
     }
 
     @Override
@@ -67,10 +70,25 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_work, container, false);
         ButterKnife.bind(this, view);
+        Log.d("onCreate", "MY VIEW IS CREATED!");
         getActivity().setTitle("Daftar Pekerjaan Rutin");
 
-        //get work API
-        getAllWorkData();
+        if(savedInstanceState != null) {
+            Log.d("onCreate", "SAVEDINSTANCESTATE YEA!");
+            workData = savedInstanceState.getParcelableArrayList("work");
+            String dataGlobalArrayString = savedInstanceState.getString("globalArray");
+            try {
+                dataGlobalArray = new JSONArray(dataGlobalArrayString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            setAdapter();
+        } else {
+            Log.d("onCreate", "INIT DATA!");
+            //get work API
+            getAllWorkData();
+        }
 
 //        //create date object
 //        Calendar myCalendar = Calendar.getInstance();
@@ -104,6 +122,14 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("onCreate", "SAVING INSTANCES!");
+        outState.putString("globalArray", dataGlobalArray.toString());
+        outState.putParcelableArrayList("work", workData);
+    }
+
+    @Override
     public void onErrorResponse(VolleyError error) {
         Log.d("ErrorJSON", "Error Message: "+error);
     }
@@ -111,7 +137,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     @Override
     public void onResponse(JSONObject response) {
         try {
-            Log.d("JSONResponse", "JSON Response: "+response.toString(2));
+            //Log.d("JSONResponse", "JSON Response: "+response.toString(2));
+            Log.d("onCreate", "API SUCCESS!");
             //create local JSONObj
             JSONObject jsonObj = response;
             JSONArray dataArray = jsonObj.getJSONArray("data");
@@ -121,23 +148,23 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             if(workData.size() == 0) {
                 for (int z = 0; z < dataArray.length(); z++) {
                     JSONObject obj = dataArray.getJSONObject(z);
-                    Log.d("JSONContent", "Starting new array of values "+z);
-                    Log.d("JSONContent", obj.getString("date_service"));
+                    //Log.d("JSONContent", "Starting new array of values "+z);
+                    //Log.d("JSONContent", obj.getString("date_service"));
                     JSONObject custJSON = obj.getJSONObject("customer_branch");
-                    Log.d("JSONContent", custJSON.getString("branch_name"));
-                    Log.d("JSONContent", custJSON.getString("branch_status"));
-                    Log.d("JSONContent", custJSON.getString("branch_address"));
-                    Log.d("JSONContent", custJSON.getString("office_phone_number"));
+                    //Log.d("JSONContent", custJSON.getString("branch_name"));
+                    //Log.d("JSONContent", custJSON.getString("branch_status"));
+                    //Log.d("JSONContent", custJSON.getString("branch_address"));
+                    //Log.d("JSONContent", custJSON.getString("office_phone_number"));
                     JSONObject teknisiJSON = obj.getJSONObject("teknisi");
-                    Log.d("JSONContent", teknisiJSON.getString("username"));
-                    Log.d("JSONContent", teknisiJSON.getString("email"));
-                    Log.d("JSONContent", teknisiJSON.getString("name"));
+                    //Log.d("JSONContent", teknisiJSON.getString("username"));
+                    //Log.d("JSONContent", teknisiJSON.getString("email"));
+                    //Log.d("JSONContent", teknisiJSON.getString("name"));
                     JSONArray mesinsArray = obj.getJSONArray("machines");
                     for(int y = 0; y < mesinsArray.length(); y++) {
                         JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-                        Log.d("JSONContent", mesinJSON.getString("brand"));
-                        Log.d("JSONContent", mesinJSON.getString("model"));
-                        Log.d("JSONContent", mesinJSON.getString("serial_number"));
+                        //Log.d("JSONContent", mesinJSON.getString("brand"));
+                        //Log.d("JSONContent", mesinJSON.getString("model"));
+                        //Log.d("JSONContent", mesinJSON.getString("serial_number"));
                     }
 
                     //create date formatting
@@ -164,6 +191,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     }
 
     private void getAllWorkData() {
+        Log.d("onCreate", "GET SOME API!");
         //set the url
         //String url = getString(R.string.list_all_post);
         String url = "http://aspac.noti-technologies.com/api/getserviceschedule/3";
@@ -184,6 +212,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     }
 
     private void setAdapter() {
+        Log.d("onCreate", "SET ADAPTERS!");
         if(workData.size()>0){
             Log.d("setAdapter", "Setting up work list adapter");
 
