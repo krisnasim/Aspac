@@ -30,7 +30,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/complaint_issue_label"
+                    android:id="@+id/cust_data_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="14dp"
@@ -41,7 +41,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/cust_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -50,7 +50,7 @@
                     app:layout_constraintHorizontal_bias="0.08"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/complaint_issue_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/cust_data_label" />
 
 
             </android.support.constraint.ConstraintLayout>
@@ -129,7 +129,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/date_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -149,7 +149,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_4_card_view"
             android:layout_width="344dp"
-            android:layout_height="300dp"
+            android:layout_height="410dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="20dp"
@@ -159,40 +159,16 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/expandableButton1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffff"
-                    android:drawableEnd="@android:drawable/arrow_down_float"
-                    android:paddingEnd="10dp"
-                    android:text="Mesin 1" />
-
-                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
-                    android:id="@+id/expandableLayout1"
+                <ListView
+                    android:id="@+id/daftar_mesin_list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/expandableButton1"
-                    android:layout_marginTop="8dp"
-                    android:background="#ffffff"
-                    android:padding="16dp"
-                    app:ael_duration="400"
-                    app:ael_expanded="false"
-                    app:ael_interpolator="accelerate"
-                    app:ael_orientation="vertical"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintLeft_toRightOf="parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="40dp"
-                        android:text="Android is an open source and Linux-based Operating System for mobile devices such as smartphones and tablet computers. Android was developed by the Open Handset Alliance, led by Google, and other companies. The first beta version of the Android Software Development Kit (SDK) was released by Google in 2007 where as the first commercial version, Android 1.0, was released in September 2008." />
-                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
-
+                    app:layout_constraintRight_toRightOf="parent"/>
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
