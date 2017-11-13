@@ -89,10 +89,10 @@ public class MesinLPSAdapter extends BaseAdapter implements View.OnClickListener
             tempValues = null;
             tempValues = mesinData.get(i);
 
-            Log.d("GetView", "setting each row with data");
-            Log.d("GetViewData", tempValues.getMesinBrand());
-            Log.d("GetViewData", String.valueOf(tempValues.getMesinModel()));
-            Log.d("GetViewData", String.valueOf(tempValues.getMesinNomorSeri()));
+            //Log.d("GetView", "setting each row with data");
+            //Log.d("GetViewData", tempValues.getMesinBrand());
+            //Log.d("GetViewData", String.valueOf(tempValues.getMesinModel()));
+            //Log.d("GetViewData", String.valueOf(tempValues.getMesinNomorSeri()));
 
             holder.mesin_merk_label.setText(tempValues.getMesinBrand());
             holder.mesin_model_label.setText(tempValues.getMesinModel());

@@ -149,7 +149,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_4_card_view"
             android:layout_width="344dp"
-            android:layout_height="410dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="20dp"
@@ -157,19 +157,27 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/create_form_3_card_view">
 
-            <android.support.constraint.ConstraintLayout
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:fillViewport="true" >
 
-                <ListView
-                    android:id="@+id/daftar_mesin_list_view"
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"/>
-            </android.support.constraint.ConstraintLayout>
+                    android:layout_height="wrap_content">
+
+                    <ListView
+                        android:id="@+id/daftar_mesin_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"/>
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView

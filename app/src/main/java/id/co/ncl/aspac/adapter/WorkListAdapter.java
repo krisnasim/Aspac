@@ -95,10 +95,10 @@ public class WorkListAdapter extends BaseAdapter implements View.OnClickListener
             tempValues = null;
             tempValues = workData.get(position);
 
-            Log.d("GetView", "setting each row with data");
-            Log.d("GetViewData", tempValues.getWorkTitle());
-            Log.d("GetViewData", tempValues.getWorkDescShort());
-            Log.d("GetViewData", String.valueOf(tempValues.getWorkDateTime()));
+            //Log.d("GetView", "setting each row with data");
+            //Log.d("GetViewData", tempValues.getWorkTitle());
+            //Log.d("GetViewData", tempValues.getWorkDescShort());
+            //Log.d("GetViewData", String.valueOf(tempValues.getWorkDateTime()));
 
 
             Format formatter = new SimpleDateFormat("yyyy-MM-dd");
