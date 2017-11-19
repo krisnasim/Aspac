@@ -27,6 +27,13 @@
         <!-- colorControlActivated & colorControlHighlight use the colorAccent color by default -->
     </style>
 
+    <!-- Style for Material Dialog -->
+    <style name="CustomDialog" parent="Base.Theme.AppCompat.Light.Dialog.MinWidth">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="colorAccent">@color/md_white_1000</item>
+        <item name="android:textColor">@color/md_white_1000</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

@@ -4,11 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,15 +30,37 @@ public class CreateDetailFragment extends Fragment {
     @BindView(R.id.input_part_select_demo) SparepartCompletionView completionView;
 
     private Sparepart[] parts;
+    private JSONObject dataKeren;
     private ArrayAdapter<Sparepart> adapterSpare;
+    private JSONArray jsonSpareparts = new JSONArray();
+    private JSONArray jsonMachines = new JSONArray();
 
     @OnClick(R.id.send_job_detail_button)
     public void goBackSir() {
-        //move to new fragment
-        HomeActivity act = (HomeActivity) getActivity();
-        Bundle args = new Bundle();
 
-        act.goBackFragment();
+        if(dataKeren.length() != 0) {
+            try {
+                Log.d("JSONContent", dataKeren.getString("serial_number"));
+
+                JSONObject jsonMesin = new JSONObject();
+                jsonMesin.put("machine_id", 10);
+                jsonMesin.put("serial_number", dataKeren.getString("serial_number"));
+                jsonMesin.put("rtbs_flag", 10);
+                jsonMesin.put("rtas_flag", 10);
+                jsonMesin.put("job_status", 1);
+                jsonMesin.put("garansi_mesin", 123456);
+                jsonMesin.put("sparepart_consumed", jsonSpareparts);
+                jsonMachines.put(jsonMesin);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //move to new fragment
+//        HomeActivity act = (HomeActivity) getActivity();
+//        Bundle args = new Bundle();
+//
+//        act.goBackFragment();
     }
 
     public CreateDetailFragment() {

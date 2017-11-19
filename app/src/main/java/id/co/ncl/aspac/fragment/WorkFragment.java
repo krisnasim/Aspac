@@ -1,6 +1,7 @@
 package id.co.ncl.aspac.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -194,19 +195,23 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         Log.d("onCreate", "GET SOME API!");
         //set the url
         //String url = getString(R.string.list_all_post);
-        String url = "http://aspac.noti-technologies.com/api/getserviceschedule/3";
+        String url = "http://aspac.noti-technologies.com/api/getserviceschedule";
+        String token = "";
+        if(checkforSharedPreferences()) {
+            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            token = "Bearer "+sharedPref.getString("token", "empty token");
+        }
+
         //set headers
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/x-www-form-urlencoded");
-        //headers.put("Authorization", token);
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", token);
         //set params
-        HashMap<String, String> params = new HashMap<>();
+//        HashMap<String, String> params = new HashMap<>();
         JSONObject param = new JSONObject();
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        CustomJSONObjectRequest jsObjRequest = new CustomJSONObjectRequest(Request.Method.GET, url, param, this, this);
-        //put headers into customRequest
-        //jsObjRequest.setHeaders(headers);
+        CustomJSONObjectRequest jsObjRequest = new CustomJSONObjectRequest(Request.Method.GET, url, param, headers, this, this);
         //add the request to the queue
         requestQueue.add(jsObjRequest);
     }
@@ -238,5 +243,17 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         else {
             Log.d("setAdapter", "The workData array is empty!");
         }
+    }
+
+    private boolean checkforSharedPreferences() {
+        boolean result = false;
+        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        if(sharedPref.contains("token")) {
+            //sharedpref exist
+            result = true;
+        } else {
+            //sharedpref does not exist. do nothing
+        }
+        return result;
     }
 }

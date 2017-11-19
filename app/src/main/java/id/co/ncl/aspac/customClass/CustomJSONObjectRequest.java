@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class CustomJSONObjectRequest extends JsonObjectRequest {
 
+    private Map<String, String> headers;
     private Map<String, String> params;
 
     public CustomJSONObjectRequest(int method, String url, JSONObject jsonRequest,
@@ -20,21 +21,32 @@ public class CustomJSONObjectRequest extends JsonObjectRequest {
         super(method, url, jsonRequest, listener, errorListener);
     }
 
-    public CustomJSONObjectRequest(int method, String url, JSONObject jsonRequest, Map<String, String> params,
+    public CustomJSONObjectRequest(int method, String url, JSONObject jsonRequest, Map<String, String> headers,
                                    Response.Listener<JSONObject> listener,
                                    Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
-        this.params = params;
+        this.headers = headers;
     }
+
+//    public CustomJSONObjectRequest(int method, String url, JSONObject jsonRequest, Map<String, String> params,
+//                                   Response.Listener<JSONObject> listener,
+//                                   Response.ErrorListener errorListener) {
+//        super(method, url, jsonRequest, listener, errorListener);
+//        this.params = params;
+//    }
 
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        HashMap<String, String> headers = new HashMap<String, String>();
+        //HashMap<String, String> headers = new HashMap<String, String>();
         //headers.put("Content-Type", "application/x-www-form-urlencoded");
-        headers.put("Content-Type", "application/json");
-        return headers;
+        //headers.put("Content-Type", "application/json");
+        return this.headers;
     }
+
+        public void setHeaders(Map headers) {
+            this.headers = headers;
+        }
 
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
