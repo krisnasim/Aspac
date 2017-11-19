@@ -145,6 +145,10 @@ public class HomeActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    public void goBackFragment() {
+        manager.popBackStack();
+    }
+
     private void setFirstFragment() {
         boolean boolIntent = checkforBundle();
         Fragment fragment = new HomeFragment();

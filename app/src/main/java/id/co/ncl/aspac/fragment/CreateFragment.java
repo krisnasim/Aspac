@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,8 +33,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ncl.aspac.R;
+import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
+import id.co.ncl.aspac.customClass.SparepartCompletionView;
 import id.co.ncl.aspac.model.Mesin;
+import id.co.ncl.aspac.customClass.ListViewUtility;
+import id.co.ncl.aspac.model.Sparepart;
 
 public class CreateFragment extends Fragment {
 
@@ -40,11 +49,17 @@ public class CreateFragment extends Fragment {
     @BindView(R.id.engineer_name) TextView engineer_name;
     @BindView(R.id.date_time) TextView date_time;
     @BindView(R.id.daftar_mesin_list_view) ListView daftar_mesin_list_view;
+    @BindView(R.id.create_form_4_card_view) CardView create_form_4_card_view;
 
     private View view;
     private MesinLPSAdapter adapter;
+    private int listViewHeight;
     private JSONObject dataKeren;
     private List<Mesin> mesinData = new ArrayList<Mesin>();
+
+    private SparepartCompletionView completionView;
+    private Sparepart[] people;
+    private ArrayAdapter<Sparepart> adapterSpare;
 
 //    @OnClick(R.id.expandableButton1)
 //    public void clickMe() {
@@ -124,6 +139,7 @@ public class CreateFragment extends Fragment {
             }
 
             setAdapter();
+
         } else {
             //create new forum object
             Mesin newMesin = new Mesin();
@@ -138,6 +154,19 @@ public class CreateFragment extends Fragment {
 
             setAdapter();
         }
+
+//        Sparepart[] parts = new Sparepart[]{
+//                new Sparepart("AASDC23", "Head counter part"),
+//                new Sparepart("W3CAASD", "Windle cash counter"),
+//                new Sparepart("AB78XYY", "Stopgap brake"),
+//                new Sparepart("LLOP888", "Machine bracket"),
+//                new Sparepart("M0N87YD", "Outer shell"),
+//                new Sparepart("112UUIY", "Grease")
+//        };
+//
+//        adapterSpare = new ArrayAdapter<Sparepart>(getActivity(), android.R.layout.simple_list_item_1, parts);
+//        completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select);
+//        completionView.setAdapter(adapterSpare);
         return view;
     }
 
@@ -151,15 +180,6 @@ public class CreateFragment extends Fragment {
         super.onDetach();
     }
 
-    public void expandableButton1(View view) {
-        //expandableLayout1 = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout1);
-        //expandableLayout1.toggle(); // toggle expand and collapse
-    }
-
-    public void expandableButton2(View view) {
-        //expandableLayout2 = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout2);
-        //expandableLayout2.toggle(); // toggle expand and collapse
-    }
 
     private void setAdapter() {
         if(mesinData.size()>0){
@@ -167,29 +187,58 @@ public class CreateFragment extends Fragment {
 
             adapter = new MesinLPSAdapter(getActivity(), mesinData, getResources());
             daftar_mesin_list_view.setAdapter(adapter);
+
             daftar_mesin_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //Log.d("log", "mesin clicked");
-                    //make a new customDialog instead now
-                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-                    // Get the layout inflater
-                    LayoutInflater inflater = getActivity().getLayoutInflater();
-                    mBuilder.setView(inflater.inflate(R.layout.dialog_mesin_service_list, null));
-                    mBuilder.setNeutralButton("Tutup", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+//                    //Log.d("log", "mesin clicked");
+//                    //make a new customDialog instead now
+//                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+//                    // Get the layout inflater
+//                    LayoutInflater inflater = getActivity().getLayoutInflater();
+//                    mBuilder.setView(inflater.inflate(R.layout.dialog_mesin_service_list, null));
+//                    mBuilder.setNeutralButton("Tutup", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            dialogInterface.dismiss();
+//                        }
+//                    });
+//
+//                    AlertDialog dialog = mBuilder.create();
+//                    dialog.show();
 
-                    AlertDialog dialog = mBuilder.create();
-                    dialog.show();
+                    //move to new fragment
+                    HomeActivity act = (HomeActivity) getActivity();
+                    Bundle args = new Bundle();
+//                    try {
+//                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+                    Fragment newFrag = new CreateDetailFragment();
+                    //newFrag.setArguments(args);
+                    act.changeFragment(newFrag);
                 }
             });
         }
         else {
             Log.d("setAdapter", "The mesinData array is empty!");
         }
+
+//        daftar_mesin_list_view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//            public void onGlobalLayout() {
+//                listViewHeight = daftar_mesin_list_view.getHeight();
+//                Log.d("ListViewHeight", String.valueOf(listViewHeight));
+//            }
+//        });
+//
+//        // Set the CardView layoutParams
+//        ViewGroup.LayoutParams params = create_form_4_card_view.getLayoutParams();
+//        params.height = listViewHeight;
+//
+//        create_form_4_card_view.setLayoutParams(params);
+
+        ListViewUtility.setListViewHeightBasedOnChildren(daftar_mesin_list_view);
     }
 }
