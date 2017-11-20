@@ -52,8 +52,8 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
         progressDialog.setMessage("Mohon tunggu...");
         progressDialog.show();
 
-//        HashMap<String, String> headers = new HashMap<>();
-//        headers.put("Content-Type", "application/json");
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
 
 //        HashMap<String, String> params = new HashMap<>();
 //        params.put("username", input_username.getText().toString());
@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, jsonObj, this, this);
+        customJSONReq.setHeaders(headers);
 
         try {
             //Map<String, String> testH = jsObjRequest.getHeaders();

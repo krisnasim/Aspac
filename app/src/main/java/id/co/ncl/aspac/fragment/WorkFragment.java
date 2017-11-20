@@ -196,6 +196,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         //set the url
         //String url = getString(R.string.list_all_post);
         String url = "http://aspac.noti-technologies.com/api/getserviceschedule";
+
         String token = "";
         if(checkforSharedPreferences()) {
             sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
