@@ -11,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,14 +43,22 @@ public class CreateDetailFragment extends Fragment {
     @BindView(R.id.send_job_detail_button) Button send_job_detail_button;
     //@BindView(R.id.input_part_select_demo) SparepartCompletionView completionView;
     @BindView(R.id.sparepart_layout) LinearLayout sparepart_layout;
+    @BindView(R.id.rtas_check_box) CheckBox rtas_check_box;
+    @BindView(R.id.rtbs_check_box) CheckBox rtbs_check_box;
+    @BindView(R.id.radioGroupDetail) RadioGroup radioGroupDetail;
+    @BindView(R.id.job_status_ok_radio_btn) RadioButton job_status_ok_radio_btn;
+    @BindView(R.id.job_status_bad_radio_btn) RadioButton job_status_bad_radio_btn;
 
     private Sparepart[] parts;
-    private JSONObject dataKeren;
     //private LinearLayout layout;
     private Context ctx;
     private ArrayAdapter<Sparepart> adapterSpare;
     private JSONArray jsonSpareparts = new JSONArray();
-    private JSONArray jsonMachines = new JSONArray();
+    //private JSONArray jsonMachines = new JSONArray();
+    private JSONObject machineStatus = new JSONObject();
+    private JSONObject previousDataKeren;
+    private JSONObject dataMachine;
+    private int machinePosition;
 
 //    @OnClick(R.id.add_number_btn)
 //    public void addNumber() {
@@ -149,29 +160,84 @@ public class CreateDetailFragment extends Fragment {
     @OnClick(R.id.send_job_detail_button)
     public void goBackSir() {
 
-        if(dataKeren.length() != 0) {
-            try {
-                Log.d("JSONContent", dataKeren.getString("serial_number"));
+//        if(dataKeren.length() != 0) {
+//            try {
+//                Log.d("JSONContent", dataKeren.getString("serial_number"));
+//
+//                JSONObject jsonMesin = new JSONObject();
+//                jsonMesin.put("machine_id", 10);
+//                jsonMesin.put("serial_number", dataKeren.getString("serial_number"));
+//                jsonMesin.put("rtbs_flag", 10);
+//                jsonMesin.put("rtas_flag", 10);
+//                jsonMesin.put("job_status", 1);
+//                jsonMesin.put("garansi_mesin", 123456);
+//                jsonMesin.put("sparepart_consumed", jsonSpareparts);
+//                jsonMachines.put(jsonMesin);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
-                JSONObject jsonMesin = new JSONObject();
-                jsonMesin.put("machine_id", 10);
-                jsonMesin.put("serial_number", dataKeren.getString("serial_number"));
-                jsonMesin.put("rtbs_flag", 10);
-                jsonMesin.put("rtas_flag", 10);
-                jsonMesin.put("job_status", 1);
-                jsonMesin.put("garansi_mesin", 123456);
-                jsonMesin.put("sparepart_consumed", jsonSpareparts);
-                jsonMachines.put(jsonMesin);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        //get the data first
+        boolean rtas;
+        boolean rtbs;
+        boolean machineOK;
+
+        if(rtas_check_box.isChecked()) {
+            rtas = true;
+        } else {
+            rtas = false;
+        }
+
+        if(rtbs_check_box.isChecked()) {
+            rtbs = true;
+        } else {
+            rtbs = false;
+        }
+
+        int choice = radioGroupDetail.getCheckedRadioButtonId();
+
+        if(choice == job_status_ok_radio_btn.getId()) {
+            machineOK = true;
+        } else {
+            machineOK = false;
+        }
+
+        try {
+            machineStatus.put("rtas_status", rtas);
+            machineStatus.put("rtbs_status", rtbs);
+            machineStatus.put("machine_ok", machineOK);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //set the sparepart array
+        JSONObject jsonSparepart = new JSONObject();
+        try {
+            jsonSparepart.put("sparepart_id", "13");
+            jsonSpareparts.put(jsonSparepart);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //add machinestatus JSONObj and sparepart JSONArray to previousDataKeren
+        try {
+            JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
+            JSONObject mesin = mesinsArray.getJSONObject(machinePosition);
+            mesin.put("machine_status", machineStatus);
+            mesin.put("machine_spareparts", jsonSpareparts);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         //move to new fragment
-//        HomeActivity act = (HomeActivity) getActivity();
-//        Bundle args = new Bundle();
-//
-//        act.goBackFragment();
+        HomeActivity act = (HomeActivity) getActivity();
+        Bundle args = new Bundle();
+        args.putString("data", previousDataKeren.toString());
+        //args.putString("dataKeren", dataKeren.toString());
+        Fragment newFrag = new CreateFragment();
+        newFrag.setArguments(args);
+        act.changeFragmentNoBS(newFrag);
     }
 
     public CreateDetailFragment() {
@@ -181,6 +247,16 @@ public class CreateDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if(args != null) {
+            //get the arguments here
+            try {
+                dataMachine = new JSONObject(args.getString("data"));
+                previousDataKeren = new JSONObject(args.getString("dataKeren"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -189,22 +265,72 @@ public class CreateDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_detail, container, false);
         ButterKnife.bind(this, view);
+        getActivity().setTitle("Laporan servis mesin");
         ctx = getActivity();
 
-        parts = new Sparepart[]{
-                new Sparepart("AASDC23", "Head counter part"),
-                new Sparepart("W3CAASD", "Windle cash counter"),
-                new Sparepart("AB78XYY", "Stopgap brake"),
-                new Sparepart("LLOP888", "Machine bracket"),
-                new Sparepart("M0N87YD", "Outer shell"),
-                new Sparepart("112UUIY", "Grease")
-        };
+//        parts = new Sparepart[]{
+//                new Sparepart("AASDC23", "Head counter part"),
+//                new Sparepart("W3CAASD", "Windle cash counter"),
+//                new Sparepart("AB78XYY", "Stopgap brake"),
+//                new Sparepart("LLOP888", "Machine bracket"),
+//                new Sparepart("M0N87YD", "Outer shell"),
+//                new Sparepart("112UUIY", "Grease")
+//        };
 
-        adapterSpare = new ArrayAdapter<Sparepart>(getActivity(), android.R.layout.simple_list_item_1, parts);
+        //adapterSpare = new ArrayAdapter<Sparepart>(getActivity(), android.R.layout.simple_list_item_1, parts);
         //completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select_demo);
         //completionView.setAdapter(adapterSpare);
 
         //sparepart_qty.setText("1");
+
+        if(previousDataKeren.length() != 0) {
+            Log.d("JSONContent", "Starting new array of values");
+            try {
+                Log.d("JSONContent", previousDataKeren.getString("date_service"));
+
+                JSONObject custJSON = previousDataKeren.getJSONObject("customer_branch");
+                Log.d("JSONContent", custJSON.getString("branch_name"));
+                Log.d("JSONContent", custJSON.getString("branch_status"));
+                Log.d("JSONContent", custJSON.getString("branch_address"));
+                Log.d("JSONContent", custJSON.getString("office_phone_number"));
+
+                JSONObject teknisiJSON = previousDataKeren.getJSONObject("teknisi");
+                Log.d("JSONContent", teknisiJSON.getString("username"));
+                Log.d("JSONContent", teknisiJSON.getString("email"));
+                Log.d("JSONContent", teknisiJSON.getString("name"));
+
+                JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
+
+                for(int y = 0; y < mesinsArray.length(); y++) {
+                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
+                    Log.d("JSONContent", mesinJSON.getString("brand"));
+                    Log.d("JSONContent", mesinJSON.getString("model"));
+                    Log.d("JSONContent", mesinJSON.getString("serial_number"));
+
+                    if(mesinJSON.getString("brand").equals(dataMachine.getString("brand"))) {
+                        if(mesinJSON.getString("model").equals(dataMachine.getString("model"))) {
+                            if(mesinJSON.getString("serial_number").equals(dataMachine.getString("serial_number"))) {
+                                //same machine picked. remember the position
+                                machinePosition = y;
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+//        if(dataMachine.length() != 0) {
+//            Log.d("JSONContent", "Machine data");
+//            try {
+//                Log.d("JSONContent", dataMachine.getString("brand"));
+//                Log.d("JSONContent", dataMachine.getString("model"));
+//                Log.d("JSONContent", dataMachine.getString("serial_number"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         return view;
     }

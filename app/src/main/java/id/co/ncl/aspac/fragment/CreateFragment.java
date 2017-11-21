@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -130,7 +131,43 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         headers.put("Authorization", token);
 
         //array holder. must be changed with delivered from other fragment
+        JSONArray jsonSpareparts1 = new JSONArray();
+        JSONArray jsonSpareparts2 = new JSONArray();
+
         JSONArray jsonMachines = new JSONArray();
+        JSONObject jsonMachine1 = new JSONObject();
+        JSONObject jsonMachine2 = new JSONObject();
+        JSONObject jsonSparepart1 = new JSONObject();
+        JSONObject jsonSparepart2 = new JSONObject();
+        try {
+            jsonSparepart1.put("sparepart_id", "13");
+            jsonSpareparts1.put(jsonSparepart1);
+            jsonSparepart2.put("sparepart_id", "15");
+            jsonSpareparts2.put(jsonSparepart2);
+
+            jsonMachine1.put("machine_id", "11");
+            jsonMachine1.put("serial_number", "aabbcc");
+            jsonMachine1.put("rtbs_flag", "11");
+            jsonMachine1.put("rtas_flag", "11");
+            jsonMachine1.put("job_status", "11");
+            jsonMachine1.put("garansi_number", "123456");
+            jsonMachine1.put("sparepart_consumed",jsonSpareparts1);
+
+            jsonMachine2.put("machine_id", "12");
+            jsonMachine2.put("serial_number", "aabbcc");
+            jsonMachine2.put("rtbs_flag", "12");
+            jsonMachine2.put("rtas_flag", "12");
+            jsonMachine2.put("job_status", "12");
+            jsonMachine2.put("garansi_number", "123456");
+            jsonMachine2.put("sparepart_consumed",jsonSpareparts2);
+
+            jsonMachines.put(jsonMachine1);
+            jsonMachines.put(jsonMachine2);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("type_lps", 1);
@@ -148,6 +185,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, jsonObj, this, this);
+        customJSONReq.setHeaders(headers);
 
         try {
             //Map<String, String> testH = jsObjRequest.getHeaders();
@@ -212,6 +250,22 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     //Log.d("JSONContent", mesinJSON.getString("brand"));
                     //Log.d("JSONContent", mesinJSON.getString("model"));
                     //Log.d("JSONContent", mesinJSON.getString("serial_number"));
+
+                    //check data only if exists in mesinJSON
+                    if(mesinJSON.has("machine_status")) {
+                        Log.d("GODDAMN", "F*CK YEAH! DIS IS AWESOME");
+
+                        JSONObject machineStatus = mesinJSON.getJSONObject("machine_status");
+                        Log.d("JSONContent", machineStatus.getString("rtas_status"));
+                        Log.d("JSONContent", machineStatus.getString("rtbs_status"));
+                        Log.d("JSONContent", machineStatus.getString("machine_ok"));
+
+                        JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
+                        for(int t = 0; t < machineSpareparts.length(); t++) {
+                            JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
+                            Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
+                        }
+                    }
 
                     //create new forum object
                     Mesin newMesin = new Mesin();
@@ -280,10 +334,17 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     public void onResponse(JSONObject response) {
         progressDialog.dismiss();
         try {
+            Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
             Log.d("onResponse", response.toString(2));
+            Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //move to new fragment
+        HomeActivity act = (HomeActivity) getActivity();
+        Fragment newFrag = new WorkFragment();
+        act.changeFragmentNoBS(newFrag);
     }
 
     private void setAdapter() {
@@ -317,6 +378,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     Bundle args = new Bundle();
                     try {
                         args.putString("data", dataMachineArray.getJSONObject(position).toString());
+                        args.putString("dataKeren", dataKeren.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -324,7 +386,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();
                     newFrag.setArguments(args);
-                    act.changeFragment(newFrag);
+                    act.changeFragmentNoBS(newFrag);
                 }
             });
         }

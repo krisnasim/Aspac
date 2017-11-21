@@ -145,6 +145,14 @@ public class HomeActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    public void changeFragmentNoBS(Fragment fragment) {
+        manager = getSupportFragmentManager();
+        transaction = manager.beginTransaction();
+        transaction.replace(R.id.home_main_frame, fragment);
+        //transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void goBackFragment() {
         manager.popBackStack();
     }
