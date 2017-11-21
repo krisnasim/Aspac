@@ -27,6 +27,7 @@ import butterknife.OnLongClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.customClass.SparepartCompletionView;
+import id.co.ncl.aspac.customClass.SparepartFormGenerator;
 import id.co.ncl.aspac.model.Sparepart;
 
 
@@ -38,7 +39,7 @@ public class CreateDetailFragment extends Fragment {
     //@BindView(R.id.sparepart_qty) TextView sparepart_qty;
     @BindView(R.id.send_job_detail_button) Button send_job_detail_button;
     //@BindView(R.id.input_part_select_demo) SparepartCompletionView completionView;
-    @BindView(R.id.sparepart_layout) RelativeLayout sparepart_layout;
+    @BindView(R.id.sparepart_layout) LinearLayout sparepart_layout;
 
     private Sparepart[] parts;
     private JSONObject dataKeren;
@@ -69,62 +70,80 @@ public class CreateDetailFragment extends Fragment {
     @OnClick(R.id.add_sparepart_button)
     public void addSparepartLayout() {
 
+        SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity());
+        sparepart_layout.addView(form1);
+
 //        TextView label = new TextView(ctx);
 //        label.setText("Jumlah suara calon "+(x+1));
 //        label.setTextSize(14);
-        int spinnerID = View.generateViewId();
-        Spinner spinnerSpr = new Spinner(ctx);
-        spinnerSpr.setId(spinnerID);
-        int spinnerWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, getResources().getDisplayMetrics());
-        int spinnerHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.spinner_type_spr));
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
-        spinnerSpr.setAdapter(spinnerArrayAdapter);
 
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(spinnerWidth, spinnerHeight);
-        int startMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-        lp.setMargins(startMargin, 17, 0, 0);
-        spinnerSpr.setLayoutParams(lp);
-        sparepart_layout.addView(spinnerSpr);
+//        int spinnerID = View.generateViewId();
+//        Spinner spinnerSpr = new Spinner(ctx);
+//        spinnerSpr.setId(spinnerID);
+//        int spinnerWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, getResources().getDisplayMetrics());
+//        int spinnerHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.spinner_type_spr));
+//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+//        spinnerSpr.setAdapter(spinnerArrayAdapter);
+//
+//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(spinnerWidth, spinnerHeight);
+//        int startMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+//        lp.setMargins(startMargin, 17, 0, 0);
+//        spinnerSpr.setLayoutParams(lp);
+//        sparepart_layout.addView(spinnerSpr);
+//
+//        int qtyID = View.generateViewId();
+//        int addbtnID = View.generateViewId();
+//        Button addBtn = new Button(ctx);
+//        addBtn.setId(addbtnID);
+//        addBtn.setText("+");
 
-        int addbtnID = View.generateViewId();
-        Button addBtn = new Button(ctx);
-        addBtn.setId(addbtnID);
-        addBtn.setText("+");
+//        addBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                int value = Integer.parseInt(sparepart_qty.getText().toString());
+//                value += 1;
+//                sparepart_qty.setText(String.valueOf(value));
+//            }
+//        });
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
-        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(width, width);
-        int startMargin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-        lp2.setMargins(startMargin2, 17, 0, 0);
-        lp2.addRule(RelativeLayout.RIGHT_OF, spinnerID);
-        addBtn.setLayoutParams(lp2);
-        sparepart_layout.addView(addBtn);
-
-        int qtyID = View.generateViewId();
-        TextView qtyValue = new TextView(ctx);
-        qtyValue.setTextSize(26);
-        qtyValue.setId(qtyID);
-        qtyValue.setText("0");
-
-        RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(width, width);
-        int startMargin3 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 28, getResources().getDisplayMetrics());
-        lp3.setMargins(startMargin3, 17, 0, 0);
-        lp3.addRule(RelativeLayout.RIGHT_OF, addbtnID);
-        qtyValue.setLayoutParams(lp3);
-        sparepart_layout.addView(qtyValue);
-
-        int minbtnID = View.generateViewId();
-        Button minBtn = new Button(ctx);
-        minBtn.setId(minbtnID);
-        minBtn.setText("-");
-
-        RelativeLayout.LayoutParams lp4 = new RelativeLayout.LayoutParams(width, width);
-        int startMargin4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-        lp4.setMargins(startMargin4, 17, 0, 0);
-        lp4.addRule(RelativeLayout.RIGHT_OF, qtyID);
-        minBtn.setLayoutParams(lp4);
-        sparepart_layout.addView(minBtn);
-
+//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+//        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(width, width);
+//        int startMargin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+//        lp2.setMargins(startMargin2, 17, 0, 0);
+//        lp2.addRule(RelativeLayout.RIGHT_OF, spinnerID);
+//        addBtn.setLayoutParams(lp2);
+//        sparepart_layout.addView(addBtn);
+//
+//        TextView qtyValue = new TextView(ctx);
+//        qtyValue.setTextSize(26);
+//        qtyValue.setId(qtyID);
+//        qtyValue.setText("0");
+//
+//        RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(width, width);
+//        int startMargin3 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 28, getResources().getDisplayMetrics());
+//        lp3.setMargins(startMargin3, 17, 0, 0);
+//        lp3.addRule(RelativeLayout.RIGHT_OF, addbtnID);
+//        qtyValue.setLayoutParams(lp3);
+//        sparepart_layout.addView(qtyValue);
+//
+//        int minbtnID = View.generateViewId();
+//        Button minBtn = new Button(ctx);
+//        minBtn.setId(minbtnID);
+//        minBtn.setText("-");
+//        minBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+//
+//        RelativeLayout.LayoutParams lp4 = new RelativeLayout.LayoutParams(width, width);
+//        int startMargin4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+//        lp4.setMargins(startMargin4, 17, 0, 0);
+//        lp4.addRule(RelativeLayout.RIGHT_OF, qtyID);
+//        minBtn.setLayoutParams(lp4);
+//        sparepart_layout.addView(minBtn);
     }
 
     @OnClick(R.id.send_job_detail_button)
