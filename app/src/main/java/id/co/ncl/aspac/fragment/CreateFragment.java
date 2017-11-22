@@ -260,9 +260,15 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                         Log.d("JSONContent", machineStatus.getString("rtbs_status"));
                         Log.d("JSONContent", machineStatus.getString("machine_ok"));
 
+                        JSONArray spareparts = mesinJSON.getJSONArray("spareparts");
+
                         JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
                         for(int t = 0; t < machineSpareparts.length(); t++) {
                             JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
+                            JSONObject sparepart = spareparts.getJSONObject(t);
+                            Log.d("JSONBaru", sparepart.getString("code"));
+                            Log.d("JSONBaru", sparepart.getString("name"));
+                            Log.d("JSONBaru", sparepart.getString("sell_price"));
                             Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
                         }
                     }
