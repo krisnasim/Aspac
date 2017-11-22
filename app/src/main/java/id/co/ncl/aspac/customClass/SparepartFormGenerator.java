@@ -45,13 +45,13 @@ public class SparepartFormGenerator extends RelativeLayout {
         DEFAULT_SPINNER_HEIGHT = convertIntToDP(40);
         //the rest of LayoutParams should be defined here
         LayoutParams layPar = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        layPar.setMargins(convertIntToDP(8), convertIntToDP(16), convertIntToDP(8), convertIntToDP(16));
+        layPar.setMargins(convertIntToDP(8), convertIntToDP(8), convertIntToDP(8), convertIntToDP(8));
         setLayoutParams(layPar);
 
         //setting up the elements
         //1. Sparepart Picker
         LayoutParams lpSpinner = new LayoutParams(DEFAULT_SPINNER_WIDTH, DEFAULT_SPINNER_HEIGHT);
-        lpSpinner.setMargins(convertIntToDP(4), convertIntToDP(16), convertIntToDP(8), convertIntToDP(16));
+        lpSpinner.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
         lpSpinner.addRule(ALIGN_PARENT_LEFT);
         createSparepartPicker(context);
         sparepartPickerID = View.generateViewId();
@@ -61,7 +61,7 @@ public class SparepartFormGenerator extends RelativeLayout {
         //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
         //2. Quantity value
         LayoutParams lpTextView = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        lpTextView.setMargins(convertIntToDP(10), convertIntToDP(16), convertIntToDP(8), convertIntToDP(16));
+        lpTextView.setMargins(convertIntToDP(10), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
         //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
         lpTextView.addRule(RelativeLayout.RIGHT_OF, sparepartPickerID);
         createQtyValue(context);
@@ -72,7 +72,7 @@ public class SparepartFormGenerator extends RelativeLayout {
         addView(qtyValue);
         //3. Buttons
         LayoutParams lpAddButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
-        lpAddButton.setMargins(convertIntToDP(4), convertIntToDP(16), convertIntToDP(8), convertIntToDP(16));
+        lpAddButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
         lpAddButton.addRule(RIGHT_OF, qtyValueID);
         createAddButton(context);
         addButtonID = View.generateViewId();
@@ -80,7 +80,7 @@ public class SparepartFormGenerator extends RelativeLayout {
         addButton.setLayoutParams(lpAddButton);
         addView(addButton);
         LayoutParams lpMinButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
-        lpMinButton.setMargins(convertIntToDP(4), convertIntToDP(16), convertIntToDP(8), convertIntToDP(16));
+        lpMinButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
         lpMinButton.addRule(RIGHT_OF, addButtonID);
         createMinButton(context);
         minButtonID = View.generateViewId();

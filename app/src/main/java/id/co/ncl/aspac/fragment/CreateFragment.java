@@ -2,11 +2,16 @@ package id.co.ncl.aspac.fragment;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -36,6 +41,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +52,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +63,7 @@ import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.activity.LoginActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
+import id.co.ncl.aspac.customClass.PrinterCommands;
 import id.co.ncl.aspac.customClass.SparepartCompletionView;
 import id.co.ncl.aspac.model.Mesin;
 import id.co.ncl.aspac.customClass.ListViewUtility;
@@ -84,6 +96,19 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private Sparepart[] people;
     private ArrayAdapter<Sparepart> adapterSpare;
 
+    //new variables for the printing
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothSocket bluetoothSocket;
+    private BluetoothDevice bluetoothDevice;
+
+    private OutputStream outputStream;
+    private InputStream inputStream;
+    private Thread thread;
+
+    private byte[] readBuffer;
+    private int readBufferPosition;
+    private volatile boolean stopWorker;
+
 //    @OnClick(R.id.expandableButton1)
 //    public void clickMe() {
 //        expandableLayout1.toggle();
@@ -98,6 +123,12 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 //    public void clickme2() {
 //        expandableButton2(view);
 //    }
+
+    @OnClick(R.id.print_button)
+    public void printDemo() {
+        //begin the bluetooth chain
+        FindBluetoothDevice();
+    }
 
     @OnClick(R.id.create_form_button)
     public void sendForm() {
@@ -265,10 +296,12 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                         JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
                         for(int t = 0; t < machineSpareparts.length(); t++) {
                             JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
-                            JSONObject sparepart = spareparts.getJSONObject(t);
-                            Log.d("JSONBaru", sparepart.getString("code"));
-                            Log.d("JSONBaru", sparepart.getString("name"));
-                            Log.d("JSONBaru", sparepart.getString("sell_price"));
+                            if(machineSpareparts.length() > 0) {
+                                JSONObject sparepart = spareparts.getJSONObject(t);
+                                Log.d("JSONBaru", sparepart.getString("code"));
+                                Log.d("JSONBaru", sparepart.getString("name"));
+                                Log.d("JSONBaru", sparepart.getString("sell_price"));
+                            }
                             Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
                         }
                     }
@@ -427,5 +460,289 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             //sharedpref does not exist. do nothing
         }
         return result;
+    }
+
+    //do find the bluetooth first
+    private void FindBluetoothDevice(){
+        try {
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if(bluetoothAdapter == null){
+                Toast.makeText(getActivity(), "No Bluetooth Adapter found", Toast.LENGTH_LONG).show();
+            }
+            if(bluetoothAdapter.isEnabled()){
+                Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBT,0);
+            }
+
+            Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
+
+            if(pairedDevice.size()>0){
+                for(BluetoothDevice pairedDev:pairedDevice){
+                    Log.d("printerName", pairedDev.getName());
+                    // My Bluetoth printer name is RPP-02
+                    if(pairedDev.getName().equals("RPP-02")){
+                        bluetoothDevice = pairedDev;
+                        Toast.makeText(getActivity(), "Bluetooth Printer Attached: "+pairedDev.getName(), Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                }
+            }
+
+            //open bluetooth printer
+            openBluetoothPrinter();
+        } catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+    // then, Open Bluetooth Printer connection
+    private void openBluetoothPrinter() throws IOException {
+        try{
+            //Standard uuid from string //
+            UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuidSting);
+            bluetoothSocket.connect();
+            outputStream = bluetoothSocket.getOutputStream();
+            inputStream = bluetoothSocket.getInputStream();
+            //begin to listen for data stream
+            beginListenData();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            try {
+                Log.e("errorFall","trying fallback...");
+
+//                UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+//                final Method m = bluetoothDevice.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+//                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, uuidSting);
+
+                //bluetoothSocket =(BluetoothSocket) bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(bluetoothDevice,2);
+//                bluetoothSocket.connect();
+
+                Log.e("","Connected");
+            }
+            catch (Exception e2) {
+                Log.e("", "Couldn't establish Bluetooth connection!");
+                e2.printStackTrace();
+            }
+
+        }
+    }
+
+    void beginListenData(){
+        try{
+            final Handler handler =new Handler();
+            final byte delimiter=10;
+            stopWorker =false;
+            readBufferPosition=0;
+            readBuffer = new byte[1024];
+
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!Thread.currentThread().isInterrupted() && !stopWorker){
+                        try{
+                            int byteAvailable = inputStream.available();
+                            if(byteAvailable>0){
+                                byte[] packetByte = new byte[byteAvailable];
+                                inputStream.read(packetByte);
+
+                                for(int i=0; i<byteAvailable; i++){
+                                    byte b = packetByte[i];
+                                    if(b==delimiter){
+                                        byte[] encodedByte = new byte[readBufferPosition];
+                                        System.arraycopy(
+                                                readBuffer,0,
+                                                encodedByte,0,
+                                                encodedByte.length
+                                        );
+                                        final String data = new String(encodedByte,"US-ASCII");
+                                        readBufferPosition=0;
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //lblPrinterName.setText(data);
+                                                Log.d("dataPrint", data);
+                                            }
+                                        });
+                                    }else{
+                                        readBuffer[readBufferPosition++]=b;
+                                    }
+                                }
+                            }
+                        }catch(Exception ex){
+                            stopWorker=true;
+                        }
+                    }
+                }
+            });
+            thread.start();
+            //print the data
+            printData();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    // Printing Text to Bluetooth Printer //
+    void printData() throws IOException {
+        try{
+//            String msg = textBox.getText().toString();
+//            msg+="\n";
+//            Log.d("message", msg);
+//            byte[] msgBuffer = msg.getBytes();
+//            outputStream.write(msgBuffer);
+
+            printCustom("Font sizes", 5, 1);
+//            printNewLine();
+//            printCustom("Text Size 0", 0, 0);
+//            printCustom("Text Size 0", 0, 1);
+//            printCustom("Text Size 0", 0, 2);
+//
+//            printCustom("Text Size 1", 1, 0);
+//            printCustom("Text Size 2", 2, 0);
+//            printCustom("Text Size 3", 3, 0);
+//            printCustom("Text Size 4", 4, 0); //these sizes are experimental byte I made my own
+//            printCustom("Text Size 5", 5, 0); //these sizes are experimental byte I made my own
+//
+//            printNewLine();
+//            printNewLine();
+//            printCustom("Bill example", 5, 1);
+//            printNewLine();
+//
+//            printCustom("Fair Group BD",2,1);
+//            printCustom("Pepperoni Foods Ltd.",0,1);
+//            //printPhoto(R.drawable.ic_icon_pos);
+//            printCustom("H-123, R-123, Dhanmondi, Dhaka-1212",0,1);
+//            printCustom("Hot Line: +88000 000000",0,1);
+//            printCustom("Vat Reg : 0000000000,Mushak : 11",0,1);
+//            String dateTime[] = getDateTime();
+//            printText(leftRightAlign(dateTime[0], dateTime[1]));
+//            printNewLine();
+//            printText(leftRightAlign("Qty: Name" , "Price "));
+//            printNewLine();
+//            printCustom(new String(new char[32]).replace("\0", "."),0,1);
+//            printText(leftRightAlign("Total" , "2,0000/="));
+//            printNewLine();
+//            printCustom("Thank you for coming & we look",0,1);
+//            printCustom("forward to serve you again",0,1);
+//            printNewLine();
+//            printNewLine();
+
+            //lblPrinterName.setText("Printing Text...");
+            Toast.makeText(getActivity(), "Mencetak tulisan...", Toast.LENGTH_SHORT).show();
+            //after finished, disconnect the printer
+            disconnectBT();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    // Disconnect Printer //
+    void disconnectBT() throws IOException {
+        try {
+            stopWorker=true;
+            outputStream.close();
+            inputStream.close();
+            bluetoothSocket.close();
+            //lblPrinterName.setText("Printer Disconnected.");
+            Toast.makeText(getActivity(), "Printer Terputus", Toast.LENGTH_SHORT).show();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    //print new line
+    private void printNewLine() {
+        try {
+            outputStream.write(PrinterCommands.FEED_LINE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String[] getDateTime() {
+        final Calendar c = Calendar.getInstance();
+        String dateTime [] = new String[2];
+        dateTime[0] = c.get(Calendar.DAY_OF_MONTH) +"/"+ c.get(Calendar.MONTH) +"/"+ c.get(Calendar.YEAR);
+        dateTime[1] = c.get(Calendar.HOUR_OF_DAY) +":"+ c.get(Calendar.MINUTE);
+        return dateTime;
+    }
+
+    private String leftRightAlign(String str1, String str2) {
+        String ans = str1 +str2;
+        if(ans.length() <25){
+            int n = (25 - str1.length() + str2.length());
+            ans = str1 + new String(new char[n]).replace("\0", " ") + str2;
+        }
+        return ans;
+    }
+
+    //print text
+    private void printText(String msg) {
+        try {
+            // Print normal text
+            outputStream.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    //print custom
+    private void printCustom(String msg, int size, int align) {
+        //Print config "mode"
+        byte[] cc = new byte[]{0x1B,0x21,0x03};  // 0- normal size text
+        //byte[] cc1 = new byte[]{0x1B,0x21,0x00};  // 0- normal size text
+        byte[] bb = new byte[]{0x1B,0x21,0x08};  // 1- only bold text
+        byte[] bb2 = new byte[]{0x1B,0x21,0x20}; // 2- bold with medium text
+        byte[] bb3 = new byte[]{0x1B,0x21,0x10}; // 3- bold with large text
+        byte[] bb4 = new byte[]{0x1B,0x21,0x5}; //experimental
+        byte[] bb5 = new byte[]{0x1B,0x21,0x30}; //experimental
+        try {
+            switch (size){
+                case 0:
+                    outputStream.write(cc);
+                    break;
+                case 1:
+                    outputStream.write(bb);
+                    break;
+                case 2:
+                    outputStream.write(bb2);
+                    break;
+                case 3:
+                    outputStream.write(bb3);
+                    break;
+                case 4:
+                    outputStream.write(bb4);
+                    break;
+                case 5:
+                    outputStream.write(bb5);
+                    break;
+            }
+
+            switch (align){
+                case 0:
+                    //left align
+                    outputStream.write(PrinterCommands.ESC_ALIGN_LEFT);
+                    break;
+                case 1:
+                    //center align
+                    outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
+                    break;
+                case 2:
+                    //right align
+                    outputStream.write(PrinterCommands.ESC_ALIGN_RIGHT);
+                    break;
+            }
+            outputStream.write(msg.getBytes());
+            outputStream.write(PrinterCommands.LF);
+            //outputStream.write(cc);
+            //printNewLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

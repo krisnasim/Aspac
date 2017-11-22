@@ -312,6 +312,27 @@ public class CreateDetailFragment extends Fragment {
                             if(mesinJSON.getString("serial_number").equals(dataMachine.getString("serial_number"))) {
                                 //same machine picked. remember the position
                                 machinePosition = y;
+
+                                if(mesinJSON.has("machine_status")) {
+                                    JSONObject machineStats = mesinJSON.getJSONObject("machine_status");
+                                    Log.d("JSONContent", machineStats.getString("rtas_status"));
+                                    Log.d("JSONContent", machineStats.getString("rtbs_status"));
+                                    Log.d("JSONContent", machineStats.getString("machine_ok"));
+
+                                    if(machineStats.getString("rtas_status").equals("true")) {
+                                        rtas_check_box.setChecked(true);
+                                    }
+
+                                    if(machineStats.getString("rtbs_status").equals("true")) {
+                                        rtbs_check_box.setChecked(true);
+                                    }
+
+                                    if(machineStats.getString("machine_ok").equals("true")) {
+                                        job_status_ok_radio_btn.setChecked(true);
+                                    } else {
+                                        job_status_bad_radio_btn.setChecked(true);
+                                    }
+                                }
                             }
                         }
                     }
