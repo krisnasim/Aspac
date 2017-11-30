@@ -1,28 +1,21 @@
 package id.co.ncl.aspac.fragment;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,7 +28,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +36,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,14 +51,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
-import id.co.ncl.aspac.activity.LoginActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.customClass.PrinterCommands;
-import id.co.ncl.aspac.customClass.SparepartCompletionView;
 import id.co.ncl.aspac.model.Mesin;
 import id.co.ncl.aspac.customClass.ListViewUtility;
-import id.co.ncl.aspac.model.Sparepart;
 
 public class CreateFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
@@ -92,9 +80,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
 
-    private SparepartCompletionView completionView;
-    private Sparepart[] people;
-    private ArrayAdapter<Sparepart> adapterSpare;
+//    private SparepartCompletionView completionView;
+//    private Spare_Part[] people;
+//    private ArrayAdapter<Spare_Part> adapterSpare;
 
     //new variables for the printing
     private BluetoothAdapter bluetoothAdapter;
@@ -336,16 +324,16 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setAdapter();
         }
 
-//        Sparepart[] parts = new Sparepart[]{
-//                new Sparepart("AASDC23", "Head counter part"),
-//                new Sparepart("W3CAASD", "Windle cash counter"),
-//                new Sparepart("AB78XYY", "Stopgap brake"),
-//                new Sparepart("LLOP888", "Machine bracket"),
-//                new Sparepart("M0N87YD", "Outer shell"),
-//                new Sparepart("112UUIY", "Grease")
+//        Spare_Part[] parts = new Spare_Part[]{
+//                new Spare_Part("AASDC23", "Head counter part"),
+//                new Spare_Part("W3CAASD", "Windle cash counter"),
+//                new Spare_Part("AB78XYY", "Stopgap brake"),
+//                new Spare_Part("LLOP888", "Machine bracket"),
+//                new Spare_Part("M0N87YD", "Outer shell"),
+//                new Spare_Part("112UUIY", "Grease")
 //        };
 //
-//        adapterSpare = new ArrayAdapter<Sparepart>(getActivity(), android.R.layout.simple_list_item_1, parts);
+//        adapterSpare = new ArrayAdapter<Spare_Part>(getActivity(), android.R.layout.simple_list_item_1, parts);
 //        completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select);
 //        completionView.setAdapter(adapterSpare);
         return view;

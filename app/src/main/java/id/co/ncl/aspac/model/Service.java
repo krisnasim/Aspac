@@ -1,133 +1,51 @@
-package id.co.ncl.aspac.entities;
-
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-
+package id.co.ncl.aspac.model;
 
 /**
- * Created by Jonathan Simananda on 29/11/2017.
+ * Created by Jonathan Simananda on 30/11/2017.
  */
 
-@Entity(tableName = "service", indices = {@Index("id")})
 public class Service {
 
-    @PrimaryKey(autoGenerate = true)
     private int id;
-
-    @ColumnInfo(name = "date_service")
     private String dateService;
-
-    @ColumnInfo(name = "type_service")
     private int typeService;
-
     //Customer Branch
-
-    @ColumnInfo(name = "cb_id")
     private int CBID;
-
-    @ColumnInfo(name = "cb_code")
     private String code;
-
-    @ColumnInfo(name = "cb_initial")
     private String initial;
-
-    @ColumnInfo(name = "cb_name")
     private String name;
-
-    @ColumnInfo(name = "cb_status")
     private String status;
-
-    @ColumnInfo(name = "cb_pic")
     private String PIC;
-
-    @ColumnInfo(name = "cb_pic_phone_number")
     private String PICPhoneNumber;
-
-    @ColumnInfo(name = "cb_pic_email")
     private String PICEmail;
-
-    @ColumnInfo(name = "cb_kw")
     private int KW;
-
-    @ColumnInfo(name = "cb_sljj")
     private int SLJJ;
     private String address;
-
-    @ColumnInfo(name = "cb_regency_id")
     private String regencyID;
-
-    @ColumnInfo(name = "cb_province_id")
     private int provinceID;
-
-    @ColumnInfo(name = "cb_post_code")
     private int postCode;
-
-    @ColumnInfo(name = "cb_office_phone_number")
     private String officePhoneNumber;
     private String fax;
-
-    @ColumnInfo(name = "cb_customer_id")
     private int customerID;
-
-    @ColumnInfo(name = "cb_coordinator_id")
     private int coordinatorID;
-
-    @ColumnInfo(name = "cb_teknisi_id")
     private int teknisiID;
-
-    @ColumnInfo(name = "cb_sales_id")
     private int salesID;
-
-    @ColumnInfo(name = "cb_username")
     private String username;
-
-    @ColumnInfo(name = "cb_password")
     private String password;
-
-    @ColumnInfo(name = "cb_remember_token")
     private String rememberToken;
-
-    @ColumnInfo(name = "cb_created_at")
     private String createdAt;
-
-    @ColumnInfo(name = "cb_updated_at")
     private String updatedAt;
-
     //Technician
-
-    @ColumnInfo(name = "t_id")
     private int TID;
-
-    @ColumnInfo(name = "t_username")
     private String Tusername;
-
-    @ColumnInfo(name = "t_name")
     private String Tname;
-
-    @ColumnInfo(name = "t_dob")
     private String dob;
-
-    @ColumnInfo(name = "t_email")
     private String email;
-
-    @ColumnInfo(name = "t_api_token")
     private String apiToken;
-
-    @ColumnInfo(name = "t_role_id")
     private String roleID;
-
-    @ColumnInfo(name = "t_branch_id")
     private String branchID;
-
-    @ColumnInfo(name = "t_superior_id")
     private String superiorID;
-
-    @ColumnInfo(name = "t_created_at")
     private String TcreatedAt;
-
-    @ColumnInfo(name = "t_updated_at")
     private String TupdatedAt;
 
     public int getId() {
@@ -445,5 +363,4 @@ public class Service {
     public void setTupdatedAt(String updatedAt) {
         this.TupdatedAt = updatedAt;
     }
-
 }

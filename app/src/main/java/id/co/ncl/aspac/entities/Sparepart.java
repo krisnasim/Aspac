@@ -3,31 +3,47 @@ package id.co.ncl.aspac.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
+
+import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 /**
  * Created by Jonathan Simananda on 29/11/2017.
  */
 
-@Entity(tableName = "sparepart", foreignKeys = @ForeignKey(entity = Machine.class,
+@Entity(tableName = "sparepart", indices = {@Index("id")}, foreignKeys = @ForeignKey(entity = Machine.class,
                                                            parentColumns = "id",
-                                                           childColumns = "machine_id"))
+                                                           childColumns = "machine_id",
+                                                           onDelete = CASCADE))
 public class Sparepart {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
 
     private String name;
     private String description;
     private String number;
     private int stock;
 
-    @ColumnInfo(name = "in_date")
-    private Date inDate;
-
-    @ColumnInfo(name = "out_date")
-    private Date outDate;
+//    @ColumnInfo(name = "in_date")
+//    private String inDate;
+//
+//    @ColumnInfo(name = "out_date")
+//    private String outDate;
 
     @ColumnInfo(name = "machine_id")
     private int machineID;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -61,21 +77,21 @@ public class Sparepart {
         this.stock = stock;
     }
 
-    public Date getInDate() {
-        return inDate;
-    }
-
-    public void setInDate(Date inDate) {
-        this.inDate = inDate;
-    }
-
-    public Date getOutDate() {
-        return outDate;
-    }
-
-    public void setOutDate(Date outDate) {
-        this.outDate = outDate;
-    }
+//    public String getInDate() {
+//        return inDate;
+//    }
+//
+//    public void setInDate(String inDate) {
+//        this.inDate = inDate;
+//    }
+//
+//    public String getOutDate() {
+//        return outDate;
+//    }
+//
+//    public void setOutDate(String outDate) {
+//        this.outDate = outDate;
+//    }
 
     public int getMachineID() {
         return machineID;

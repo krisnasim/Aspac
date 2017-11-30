@@ -49,7 +49,7 @@ public class SparepartFormGenerator extends RelativeLayout {
         setLayoutParams(layPar);
 
         //setting up the elements
-        //1. Sparepart Picker
+        //1. Spare_Part Picker
         LayoutParams lpSpinner = new LayoutParams(DEFAULT_SPINNER_WIDTH, DEFAULT_SPINNER_HEIGHT);
         lpSpinner.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
         lpSpinner.addRule(ALIGN_PARENT_LEFT);

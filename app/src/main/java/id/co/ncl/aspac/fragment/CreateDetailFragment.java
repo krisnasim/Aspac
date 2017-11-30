@@ -1,23 +1,17 @@
 package id.co.ncl.aspac.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,12 +20,9 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
-import id.co.ncl.aspac.customClass.SparepartCompletionView;
 import id.co.ncl.aspac.customClass.SparepartFormGenerator;
-import id.co.ncl.aspac.model.Sparepart;
 
 
 public class CreateDetailFragment extends Fragment {
@@ -49,10 +40,10 @@ public class CreateDetailFragment extends Fragment {
     @BindView(R.id.job_status_ok_radio_btn) RadioButton job_status_ok_radio_btn;
     @BindView(R.id.job_status_bad_radio_btn) RadioButton job_status_bad_radio_btn;
 
-    private Sparepart[] parts;
+    //private Spare_Part[] parts;
     //private LinearLayout layout;
     private Context ctx;
-    private ArrayAdapter<Sparepart> adapterSpare;
+    //private ArrayAdapter<Spare_Part> adapterSpare;
     private JSONArray jsonSpareparts = new JSONArray();
     //private JSONArray jsonMachines = new JSONArray();
     private JSONObject machineStatus = new JSONObject();
@@ -268,16 +259,16 @@ public class CreateDetailFragment extends Fragment {
         getActivity().setTitle("Laporan servis mesin");
         ctx = getActivity();
 
-//        parts = new Sparepart[]{
-//                new Sparepart("AASDC23", "Head counter part"),
-//                new Sparepart("W3CAASD", "Windle cash counter"),
-//                new Sparepart("AB78XYY", "Stopgap brake"),
-//                new Sparepart("LLOP888", "Machine bracket"),
-//                new Sparepart("M0N87YD", "Outer shell"),
-//                new Sparepart("112UUIY", "Grease")
+//        parts = new Spare_Part[]{
+//                new Spare_Part("AASDC23", "Head counter part"),
+//                new Spare_Part("W3CAASD", "Windle cash counter"),
+//                new Spare_Part("AB78XYY", "Stopgap brake"),
+//                new Spare_Part("LLOP888", "Machine bracket"),
+//                new Spare_Part("M0N87YD", "Outer shell"),
+//                new Spare_Part("112UUIY", "Grease")
 //        };
 
-        //adapterSpare = new ArrayAdapter<Sparepart>(getActivity(), android.R.layout.simple_list_item_1, parts);
+        //adapterSpare = new ArrayAdapter<Spare_Part>(getActivity(), android.R.layout.simple_list_item_1, parts);
         //completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select_demo);
         //completionView.setAdapter(adapterSpare);
 

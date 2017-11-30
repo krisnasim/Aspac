@@ -1,74 +1,46 @@
 package id.co.ncl.aspac.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 /**
- * Created by jonat on 15/11/2017.
+ * Created by Jonathan Simananda on 30/11/2017.
  */
 
-public class Sparepart implements Serializable {
-    private String sparepartName;
-    private String sparepartDesc;
-    private String sparepartNumb;
-    private int sparepartStock;
-    private Date sparepartInDate;
-    private Date sparepartOutDate;
+public class Sparepart {
 
-    public Sparepart(String name, String desc) {
-        sparepartName = name;
-        sparepartDesc = desc;
+    private int id;
+    private String code;
+    private String name;
+    //foreign key to machine ID
+    private int machineID;
+
+    public int getId() {
+        return id;
     }
 
-    public String getSparepartName() {
-        return sparepartName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setSparepartName(String sparepartName) {
-        this.sparepartName = sparepartName;
+    public String getCode() {
+        return code;
     }
 
-    public String getSparepartDesc() {
-        return sparepartDesc;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setSparepartDesc(String sparepartDesc) {
-        this.sparepartDesc = sparepartDesc;
+    public String getName() {
+        return name;
     }
 
-    public String getSparepartNumb() {
-        return sparepartNumb;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setSparepartNumb(String sparepartNumb) {
-        this.sparepartNumb = sparepartNumb;
+    public int getMachineID() {
+        return machineID;
     }
 
-    public int getSparepartStock() {
-        return sparepartStock;
+    public void setMachineID(int machineID) {
+        this.machineID = machineID;
     }
-
-    public void setSparepartStock(int sparepartStock) {
-        this.sparepartStock = sparepartStock;
-    }
-
-    public Date getSparepartInDate() {
-        return sparepartInDate;
-    }
-
-    public void setSparepartInDate(Date sparepartInDate) {
-        this.sparepartInDate = sparepartInDate;
-    }
-
-    public Date getSparepartOutDate() {
-        return sparepartOutDate;
-    }
-
-    public void setSparepartOutDate(Date sparepartOutDate) {
-        this.sparepartOutDate = sparepartOutDate;
-    }
-
-    @Override
-    public String toString() { return sparepartName; }
-
 }
