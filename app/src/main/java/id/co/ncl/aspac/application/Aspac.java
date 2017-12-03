@@ -3,6 +3,7 @@ package id.co.ncl.aspac.application;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import id.co.ncl.aspac.database.AspacDatabase;
 
@@ -24,6 +25,7 @@ public class Aspac extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
 //    public AspacDatabase getDatabase() {

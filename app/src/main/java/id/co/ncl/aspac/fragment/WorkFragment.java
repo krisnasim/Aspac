@@ -6,10 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,12 +40,14 @@ import butterknife.ButterKnife;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.WorkListAdapter;
-import id.co.ncl.aspac.application.Aspac;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.database.AspacDatabase;
+import id.co.ncl.aspac.database.AspacSQLite;
+import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.database.ServiceDao;
 import id.co.ncl.aspac.entities.Machine;
-import id.co.ncl.aspac.entities.Service;
 import id.co.ncl.aspac.entities.Sparepart;
+import id.co.ncl.aspac.model.Service;
 import id.co.ncl.aspac.model.Work;
 
 public class WorkFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
@@ -63,9 +61,12 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
     private ArrayList<Work> workData = new ArrayList<>();
-    final List<Service> services = new ArrayList<Service>();
+    //final List<Service> services = new ArrayList<Service>();
     final List<Machine> machines = new ArrayList<Machine>();
     final List<Sparepart> spareparts = new ArrayList<Sparepart>();
+
+    private DatabaseManager dbManager;
+    private AspacSQLite myDb;
 
     public WorkFragment() {
         // Required empty public constructor
@@ -85,6 +86,9 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         ButterKnife.bind(this, view);
         Log.d("onCreate", "MY VIEW IS CREATED!");
         getActivity().setTitle("Daftar Pekerjaan Rutin");
+        myDb = new AspacSQLite(getContext());
+        DatabaseManager.initializeInstance(myDb);
+        dbManager = DatabaseManager.getInstance();
 
         if(savedInstanceState != null) {
             Log.d("onCreate", "SAVEDINSTANCESTATE YEA!");
@@ -177,6 +181,64 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //Log.d("JSONContent", custJSON.getString("branch_address"));
                     //Log.d("JSONContent", custJSON.getString("office_phone_number"));
 
+
+                    //attempt number two. let's do this, SQLite
+                    Service service = new Service();
+                    service.setDateService(obj.getString("date_service"));
+                    service.setTypeService(obj.getInt("type_service"));
+                    service.setCBID(custJSON.getInt("id"));
+                    service.setCode(custJSON.getString("branch_code"));
+                    service.setInitial(custJSON.getString("branch_initial"));
+                    service.setName(custJSON.getString("branch_name"));
+                    service.setStatus(custJSON.getString("branch_status"));
+                    //service.setPIC(custJSON.getString("pic"));
+                    service.setPIC("asd");
+                    //service.setPICPhoneNumber(custJSON.getString("pic_phone_number"));
+                    service.setPICPhoneNumber("asd");
+                    //service.setPICEmail(custJSON.getString("pic_email"));
+                    service.setPICEmail("asd");
+                    service.setKW(custJSON.getInt("kw"));
+                    service.setSLJJ(custJSON.getString("sljj"));
+                    service.setAddress(custJSON.getString("branch_address"));
+                    service.setRegencyID(custJSON.getInt("regency_id"));
+                    service.setProvinceID(custJSON.getInt("province_id"));
+                    //service.setPostCode(custJSON.getString("post_code"));
+                    service.setPostCode("asd");
+                    service.setOfficePhoneNumber(custJSON.getString("office_phone_number"));
+                    //service.setFax(custJSON.getString("fax"));
+                    service.setFax("asd");
+                    service.setCustomerID(custJSON.getInt("customer_id"));
+                    service.setCoordinatorID(custJSON.getInt("koordinator_id"));
+                    service.setTeknisiID(custJSON.getInt("teknisi_id"));
+                    service.setSalesID(custJSON.getInt("sales_id"));
+                    service.setUsername(custJSON.getString("username"));
+                    service.setPassword(custJSON.getString("password"));
+                    //service.setRememberToken(custJSON.getString("remember_token"));
+                    service.setRememberToken("asd");
+                    //service.setCreatedAt(custJSON.getString("created_at"));
+                    service.setCreatedAt("asd");
+                    //service.setUpdatedAt(custJSON.getString("updated_at"));
+                    service.setUpdatedAt("asd");
+
+                    JSONObject teknisiJSON = obj.getJSONObject("teknisi");
+
+                    service.setTID(teknisiJSON.getInt("id"));
+                    service.setTusername(teknisiJSON.getString("username"));
+                    service.setTname(teknisiJSON.getString("name"));
+                    service.setDob(teknisiJSON.getString("dob"));
+                    service.setEmail(teknisiJSON.getString("email"));
+                    service.setApiToken(teknisiJSON.getString("api_token"));
+                    service.setRoleID(teknisiJSON.getInt("role_id"));
+                    service.setBranchID(teknisiJSON.getInt("branch_id"));
+                    service.setSuperiorID(teknisiJSON.getString("superior_id"));
+                    service.setTcreatedAt(teknisiJSON.getString("created_at"));
+                    service.setTupdatedAt(teknisiJSON.getString("updated_at"));
+
+                    ServiceDao serDAO = new ServiceDao(dbManager);
+                    serDAO.insert(service);
+                    //serDAO.closeConnection();
+
+
 //                    final Service service = new Service();
 //                    service.setDateService(obj.getString("date_service"));
 //                    //Customer Branch
@@ -240,6 +302,9 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                         //Log.d("JSONContent", mesinJSON.getString("model"));
                         //Log.d("JSONContent", mesinJSON.getString("serial_number"));
 
+                        //attempt number two. let's do this, SQLite
+                        //Machine machine = new Machine();
+
 //                        final Machine machine = new Machine();
 //                        machine.setMachineID(mesinJSON.getString("id"));
 //                        machine.setBrand(mesinJSON.getString("brand"));
@@ -280,6 +345,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                     workData.add(newWork);
                 }
+                setAdapter();
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -19,11 +19,11 @@ public class Service {
     private String PICPhoneNumber;
     private String PICEmail;
     private int KW;
-    private int SLJJ;
+    private String SLJJ;
     private String address;
-    private String regencyID;
+    private int regencyID;
     private int provinceID;
-    private int postCode;
+    private String postCode;
     private String officePhoneNumber;
     private String fax;
     private int customerID;
@@ -42,8 +42,8 @@ public class Service {
     private String dob;
     private String email;
     private String apiToken;
-    private String roleID;
-    private String branchID;
+    private int roleID;
+    private int branchID;
     private String superiorID;
     private String TcreatedAt;
     private String TupdatedAt;
@@ -146,11 +146,11 @@ public class Service {
         this.KW = KW;
     }
 
-    public int getSLJJ() {
+    public String getSLJJ() {
         return SLJJ;
     }
 
-    public void setSLJJ(int SLJJ) {
+    public void setSLJJ(String SLJJ) {
         this.SLJJ = SLJJ;
     }
 
@@ -162,11 +162,11 @@ public class Service {
         this.address = address;
     }
 
-    public String getRegencyID() {
+    public int getRegencyID() {
         return regencyID;
     }
 
-    public void setRegencyID(String regencyID) {
+    public void setRegencyID(int regencyID) {
         this.regencyID = regencyID;
     }
 
@@ -178,11 +178,11 @@ public class Service {
         this.provinceID = provinceID;
     }
 
-    public int getPostCode() {
+    public String getPostCode() {
         return postCode;
     }
 
-    public void setPostCode(int postCode) {
+    public void setPostCode(String postCode) {
         this.postCode = postCode;
     }
 
@@ -324,19 +324,19 @@ public class Service {
         this.apiToken = apiToken;
     }
 
-    public String getRoleID() {
+    public int getRoleID() {
         return roleID;
     }
 
-    public void setRoleID(String roleID) {
+    public void setRoleID(int roleID) {
         this.roleID = roleID;
     }
 
-    public String getBranchID() {
+    public int getBranchID() {
         return branchID;
     }
 
-    public void setBranchID(String branchID) {
+    public void setBranchID(int branchID) {
         this.branchID = branchID;
     }
 
