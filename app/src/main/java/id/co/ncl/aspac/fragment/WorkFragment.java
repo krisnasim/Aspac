@@ -106,15 +106,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             setAdapter();
         } else {
             Log.d("onCreate", "INIT DATA!");
-            //wait with dialog
-            progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage("Mohon tunggu...");
-            progressDialog.show();
-            //get work API
-            getAllWorkData();
+            checkForLocalData();
         }
 
 //        //create date object
@@ -158,6 +150,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        progressDialog.dismiss();
         Log.d("ErrorJSON", "Error Message: "+error);
     }
 
@@ -165,6 +158,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     public void onResponse(JSONObject response) {
         try {
             progressDialog.dismiss();
+            workData.clear();
             //Log.d("JSONResponse", "JSON Response: "+response.toString(2));
             Log.d("onCreate", "API SUCCESS!");
             //create local JSONObj
@@ -319,15 +313,15 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                         long machineID = macDAO.insert(machine);
                         machineIDs.add(machineID);
 
-                        for (int x = 0; x < 5; x++) {
-                            Sparepart sparepart = new Sparepart();
-                            sparepart.setCode("123");
-                            sparepart.setName("Sparepart X");
-                            sparepart.setMachineID(machineIDs.get(y).intValue());
-
-                            SparepartDao spaDAO = new SparepartDao(dbManager);
-                            long sparepartID = spaDAO.insert(sparepart);
-                        }
+//                        for (int x = 0; x < 5; x++) {
+//                            Sparepart sparepart = new Sparepart();
+//                            sparepart.setCode("123");
+//                            sparepart.setName("Sparepart X");
+//                            sparepart.setMachineID(machineIDs.get(y).intValue());
+//
+//                            SparepartDao spaDAO = new SparepartDao(dbManager);
+//                            long sparepartID = spaDAO.insert(sparepart);
+//                        }
 
 //                        final Machine machine = new Machine();
 //                        machine.setMachineID(mesinJSON.getString("id"));
@@ -428,6 +422,55 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 //        }
     }
 
+    private void checkForLocalData() {
+        ServiceDao serDAO = new ServiceDao(dbManager);
+        int result = serDAO.getCount();
+        //serDAO.closeConnection();
+
+        if(result > 0) {
+            //assume for now if data exists, dont check for API first.
+            Log.d("serviceLocal", "Service has been cached!");
+            workData.clear();
+
+            //get data from sqlite
+            List<Service> services = serDAO.getAll();
+
+            for(int z = 0; z < services.size(); z++) {
+                Service ser = services.get(z);
+                //create date formatting
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = null;
+                try {
+                    date = formatter.parse(ser.getDateService());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                //create new work object
+                Work newWork = new Work();
+                newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
+                newWork.setWorkDescShort(ser.getName());
+                newWork.setWorkStatus("Pending");
+                newWork.setWorkDateTime(date);
+
+                workData.add(newWork);
+            }
+            serDAO.closeConnection();
+            //lastly, setadapter
+            setAdapter();
+        } else {
+            //wait with dialog
+            progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Mohon tunggu...");
+            progressDialog.show();
+            //get work API
+            getAllWorkData();
+        }
+    }
+
     private void getAllWorkData() {
         Log.d("onCreate", "GET SOME API!");
         //set the url
@@ -467,11 +510,11 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //Toast.makeText(getActivity(), "Hey! You clicked on some work!", Toast.LENGTH_SHORT).show();
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
-                    try {
-                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                     Fragment newFrag = new CreateFragment();
                     newFrag.setArguments(args);
                     act.changeFragment(newFrag);

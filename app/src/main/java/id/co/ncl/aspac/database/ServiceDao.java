@@ -2,6 +2,7 @@ package id.co.ncl.aspac.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -72,50 +73,14 @@ public class ServiceDao {
         List<Service> services = new ArrayList<>();
         Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, null, null, null, null, null);
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            Service ser = new Service();
-            ser.setDateService(cursor.getString(1));
-            ser.setTypeService(cursor.getInt(2));
-            ser.setCBID(cursor.getInt(3));
-            ser.setCode(cursor.getString(4));
-            ser.setInitial(cursor.getString(5));
-            ser.setName(cursor.getString(6));
-            ser.setStatus(cursor.getString(7));
-            ser.setPIC(cursor.getString(8));
-            ser.setPICPhoneNumber(cursor.getString(9));
-            ser.setPICEmail(cursor.getString(10));
-            ser.setKW(cursor.getInt(11));
-            ser.setSLJJ(cursor.getString(12));
-            ser.setAddress(cursor.getString(13));
-            ser.setRegencyID(cursor.getInt(14));
-            ser.setProvinceID(cursor.getInt(15));
-            ser.setPostCode(cursor.getString(16));
-            ser.setOfficePhoneNumber(cursor.getString(17));
-            ser.setFax(cursor.getString(18));
-            ser.setCustomerID(cursor.getInt(19));
-            ser.setCoordinatorID(cursor.getInt(20));
-            ser.setTeknisiID(cursor.getInt(21));
-            ser.setSalesID(cursor.getInt(22));
-            ser.setUsername(cursor.getString(23));
-            ser.setPassword(cursor.getString(24));
-            ser.setRememberToken(cursor.getString(25));
-            ser.setCreatedAt(cursor.getString(26));
-            ser.setUpdatedAt(cursor.getString(27));
-            ser.setTID(cursor.getInt(28));
-            ser.setTusername(cursor.getString(29));
-            ser.setTname(cursor.getString(30));
-            ser.setDob(cursor.getString(31));
-            ser.setEmail(cursor.getString(32));
-            ser.setApiToken(cursor.getString(33));
-            ser.setRoleID(cursor.getInt(34));
-            ser.setBranchID(cursor.getInt(35));
-            ser.setSuperiorID(cursor.getString(36));
-            ser.setTcreatedAt(cursor.getString(37));
-            ser.setTupdatedAt(cursor.getString(38));
+        services = cursorToServices(cursor);
 
-            services.add(ser);
-        }
         return services;
+    }
+
+    public Service get(int serviceID) {
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
+        return cursorToService(cursor);
     }
 
     public long insert(Service service) {
@@ -185,6 +150,15 @@ public class ServiceDao {
         Log.d("deleteServiceDao", "Amount deleted rows: "+count);
     }
 
+    public int getCount() {
+        int count = 0;
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, null, null, null, null, null);
+        count = cursor.getCount();
+        Log.d("countResult", "Number of rows: "+count);
+
+        return count;
+    }
+
     public void openConnection() {
         this.db = this.dbManager.openDatabase();
     }
@@ -192,5 +166,100 @@ public class ServiceDao {
     public void closeConnection() {
         this.dbManager.closeDatabase();
         Log.d("databaseCon", "closing database connection..");
+    }
+
+    private Service cursorToService(Cursor cursor) {
+        Service ser = new Service();
+        ser.setDateService(cursor.getString(1));
+        ser.setTypeService(cursor.getInt(2));
+        ser.setCBID(cursor.getInt(3));
+        ser.setCode(cursor.getString(4));
+        ser.setInitial(cursor.getString(5));
+        ser.setName(cursor.getString(6));
+        ser.setStatus(cursor.getString(7));
+        ser.setPIC(cursor.getString(8));
+        ser.setPICPhoneNumber(cursor.getString(9));
+        ser.setPICEmail(cursor.getString(10));
+        ser.setKW(cursor.getInt(11));
+        ser.setSLJJ(cursor.getString(12));
+        ser.setAddress(cursor.getString(13));
+        ser.setRegencyID(cursor.getInt(14));
+        ser.setProvinceID(cursor.getInt(15));
+        ser.setPostCode(cursor.getString(16));
+        ser.setOfficePhoneNumber(cursor.getString(17));
+        ser.setFax(cursor.getString(18));
+        ser.setCustomerID(cursor.getInt(19));
+        ser.setCoordinatorID(cursor.getInt(20));
+        ser.setTeknisiID(cursor.getInt(21));
+        ser.setSalesID(cursor.getInt(22));
+        ser.setUsername(cursor.getString(23));
+        ser.setPassword(cursor.getString(24));
+        ser.setRememberToken(cursor.getString(25));
+        ser.setCreatedAt(cursor.getString(26));
+        ser.setUpdatedAt(cursor.getString(27));
+        ser.setTID(cursor.getInt(28));
+        ser.setTusername(cursor.getString(29));
+        ser.setTname(cursor.getString(30));
+        ser.setDob(cursor.getString(31));
+        ser.setEmail(cursor.getString(32));
+        ser.setApiToken(cursor.getString(33));
+        ser.setRoleID(cursor.getInt(34));
+        ser.setBranchID(cursor.getInt(35));
+        ser.setSuperiorID(cursor.getString(36));
+        ser.setTcreatedAt(cursor.getString(37));
+        ser.setTupdatedAt(cursor.getString(38));
+
+        return ser;
+    }
+
+    private List<Service> cursorToServices(Cursor cursor) {
+        List<Service> services = new ArrayList<>();
+
+        for (int w = 0; w < cursor.getCount(); w++) {
+            Service ser = new Service();
+            ser.setDateService(cursor.getString(1));
+            ser.setTypeService(cursor.getInt(2));
+            ser.setCBID(cursor.getInt(3));
+            ser.setCode(cursor.getString(4));
+            ser.setInitial(cursor.getString(5));
+            ser.setName(cursor.getString(6));
+            ser.setStatus(cursor.getString(7));
+            ser.setPIC(cursor.getString(8));
+            ser.setPICPhoneNumber(cursor.getString(9));
+            ser.setPICEmail(cursor.getString(10));
+            ser.setKW(cursor.getInt(11));
+            ser.setSLJJ(cursor.getString(12));
+            ser.setAddress(cursor.getString(13));
+            ser.setRegencyID(cursor.getInt(14));
+            ser.setProvinceID(cursor.getInt(15));
+            ser.setPostCode(cursor.getString(16));
+            ser.setOfficePhoneNumber(cursor.getString(17));
+            ser.setFax(cursor.getString(18));
+            ser.setCustomerID(cursor.getInt(19));
+            ser.setCoordinatorID(cursor.getInt(20));
+            ser.setTeknisiID(cursor.getInt(21));
+            ser.setSalesID(cursor.getInt(22));
+            ser.setUsername(cursor.getString(23));
+            ser.setPassword(cursor.getString(24));
+            ser.setRememberToken(cursor.getString(25));
+            ser.setCreatedAt(cursor.getString(26));
+            ser.setUpdatedAt(cursor.getString(27));
+            ser.setTID(cursor.getInt(28));
+            ser.setTusername(cursor.getString(29));
+            ser.setTname(cursor.getString(30));
+            ser.setDob(cursor.getString(31));
+            ser.setEmail(cursor.getString(32));
+            ser.setApiToken(cursor.getString(33));
+            ser.setRoleID(cursor.getInt(34));
+            ser.setBranchID(cursor.getInt(35));
+            ser.setSuperiorID(cursor.getString(36));
+            ser.setTcreatedAt(cursor.getString(37));
+            ser.setTupdatedAt(cursor.getString(38));
+
+            services.add(ser);
+            cursor.moveToNext();
+        }
+
+        return services;
     }
 }
