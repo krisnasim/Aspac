@@ -41,12 +41,13 @@ import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.WorkListAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
-import id.co.ncl.aspac.database.AspacDatabase;
 import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.database.MachineDao;
 import id.co.ncl.aspac.database.ServiceDao;
-import id.co.ncl.aspac.entities.Machine;
-import id.co.ncl.aspac.entities.Sparepart;
+import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.model.Machine;
+import id.co.ncl.aspac.model.Sparepart;
 import id.co.ncl.aspac.model.Service;
 import id.co.ncl.aspac.model.Work;
 
@@ -62,8 +63,10 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     private ProgressDialog progressDialog;
     private ArrayList<Work> workData = new ArrayList<>();
     //final List<Service> services = new ArrayList<Service>();
-    final List<Machine> machines = new ArrayList<Machine>();
-    final List<Sparepart> spareparts = new ArrayList<Sparepart>();
+    //final List<Machine> machines = new ArrayList<Machine>();
+    //final List<Sparepart> spareparts = new ArrayList<Sparepart>();
+    List<Long> serviceIDs = new ArrayList<>();
+    List<Long> machineIDs = new ArrayList<>();
 
     private DatabaseManager dbManager;
     private AspacSQLite myDb;
@@ -235,7 +238,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     service.setTupdatedAt(teknisiJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
-                    serDAO.insert(service);
+                    long serviceID = serDAO.insert(service);
+                    serviceIDs.add(serviceID);
                     //serDAO.closeConnection();
 
 
@@ -295,7 +299,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 //                    }
 
                     JSONArray mesinsArray = obj.getJSONArray("machines");
-                    final long[] machineID = new long[mesinsArray.length()];
+                    //final long[] machineIDs = new long[mesinsArray.length()];
                     for (int y = 0; y < mesinsArray.length(); y++) {
                         JSONObject mesinJSON = mesinsArray.getJSONObject(y);
                         //Log.d("JSONContent", mesinJSON.getString("brand"));
@@ -303,7 +307,27 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                         //Log.d("JSONContent", mesinJSON.getString("serial_number"));
 
                         //attempt number two. let's do this, SQLite
-                        //Machine machine = new Machine();
+                        Machine machine = new Machine();
+                        machine.setMachineID(mesinJSON.getString("id"));
+                        machine.setBrand(mesinJSON.getString("brand"));
+                        machine.setModel(mesinJSON.getString("model"));
+                        machine.setSerialNumber(mesinJSON.getString("serial_number"));
+                        machine.setSalesNumber(mesinJSON.getString("sales_number"));
+                        machine.setServiceID(serviceIDs.get(z).intValue());
+
+                        MachineDao macDAO = new MachineDao(dbManager);
+                        long machineID = macDAO.insert(machine);
+                        machineIDs.add(machineID);
+
+                        for (int x = 0; x < 5; x++) {
+                            Sparepart sparepart = new Sparepart();
+                            sparepart.setCode("123");
+                            sparepart.setName("Sparepart X");
+                            sparepart.setMachineID(machineIDs.get(y).intValue());
+
+                            SparepartDao spaDAO = new SparepartDao(dbManager);
+                            long sparepartID = spaDAO.insert(sparepart);
+                        }
 
 //                        final Machine machine = new Machine();
 //                        machine.setMachineID(mesinJSON.getString("id"));

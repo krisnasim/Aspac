@@ -118,7 +118,7 @@ public class ServiceDao {
         return services;
     }
 
-    public void insert(Service service) {
+    public long insert(Service service) {
         ContentValues values = new ContentValues();
         //values.put(dbHelper.SERVICE_COLUMN_ID, "");
         values.put(dbHelper.SERVICE_COLUMN_DATE_SERVICE, service.getDateService());
@@ -162,14 +162,17 @@ public class ServiceDao {
         values.put(dbHelper.SERVICE_COLUMN_T_CREATED_AT, service.getTcreatedAt());
         values.put(dbHelper.SERVICE_COLUMN_T_UPDATED_AT, service.getTupdatedAt());
 
+        long rowID = 0;
+
         try {
-            long rowID = db.insert(dbHelper.TABLE_SERVICE, null, values);
+            rowID = db.insert(dbHelper.TABLE_SERVICE, null, values);
             Log.d("insertServiceDAO", "Insert successful! Row ID: "+rowID);
         }
         catch (RuntimeException exception) {
             exception.getCause();
             exception.getLocalizedMessage();
         }
+        return rowID;
     }
 
     public void update(Service service) {

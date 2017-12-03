@@ -50,8 +50,26 @@ public class MachineDao {
         return machines;
     }
 
-    public void insert(Machine machine) {
+    public long insert(Machine machine) {
         ContentValues values = new ContentValues();
+        values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
+        values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
+        values.put(dbHelper.MACHINE_COLUMN_MODEL, machine.getModel());
+        values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
+        values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+
+        long rowID = 0;
+
+        try {
+            rowID = db.insert(dbHelper.TABLE_MACHINE, null, values);
+            Log.d("insertMachineDAO", "Insert successful! Row ID: "+rowID);
+        }
+        catch (RuntimeException exception) {
+            exception.getCause();
+            exception.getLocalizedMessage();
+        }
+        return rowID;
     }
 
     public void update(Machine machine) {

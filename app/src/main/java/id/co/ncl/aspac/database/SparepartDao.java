@@ -48,8 +48,24 @@ public class SparepartDao {
         return spareparts;
     }
 
-    public void insert(Sparepart sparepart) {
+    public long insert(Sparepart sparepart) {
         ContentValues values = new ContentValues();
+        values.put(dbHelper.SPAREPART_COLUMN_CODE, sparepart.getCode());
+        values.put(dbHelper.SPAREPART_COLUMN_NAME, sparepart.getName());
+        values.put(dbHelper.SPAREPART_COLUMN_MACHINE_ID, sparepart.getMachineID());
+
+        long rowID = 0;
+
+        try {
+            rowID = db.insert(dbHelper.TABLE_SPAREPART, null, values);
+            Log.d("insertSparepartDAO", "Insert successful! Row ID: "+rowID);
+        }
+        catch (RuntimeException exception) {
+            exception.getCause();
+            exception.getLocalizedMessage();
+        }
+        return rowID;
+
     }
 
     public void update(Sparepart sparepart) {
