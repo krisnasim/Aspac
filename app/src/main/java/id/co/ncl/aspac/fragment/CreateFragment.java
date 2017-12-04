@@ -83,6 +83,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private JSONArray dataMachineArray;
     private JSONObject dataKeren;
     private JSONArray machineSpareparts;
+    private JSONArray machineStatusArray;
     private JSONObject machineStatus;
     private JSONObject finalJSONObj;
     private long serviceID = 0;
@@ -157,73 +158,84 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         if(checkforSharedPreferences()) {
             sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
             token = "Bearer "+sharedPref.getString("token", "empty token");
+            try {
+                finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
+                finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.apply();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         //set headers
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", token);
 
-        //array holder. must be changed with delivered from other fragment
-        JSONArray jsonSpareparts1 = new JSONArray();
-        JSONArray jsonSpareparts2 = new JSONArray();
+//        //array holder. must be changed with delivered from other fragment
+//        JSONArray jsonSpareparts1 = new JSONArray();
+//        JSONArray jsonSpareparts2 = new JSONArray();
+//
+//        JSONArray jsonMachines = new JSONArray();
+//        JSONObject jsonMachine1 = new JSONObject();
+//        JSONObject jsonMachine2 = new JSONObject();
+//        JSONObject jsonSparepart1 = new JSONObject();
+//        JSONObject jsonSparepart2 = new JSONObject();
+//        try {
+//            jsonSparepart1.put("sparepart_id", "13");
+//            jsonSpareparts1.put(jsonSparepart1);
+//            jsonSparepart2.put("sparepart_id", "15");
+//            jsonSpareparts2.put(jsonSparepart2);
+//
+//            jsonMachine1.put("machine_id", "11");
+//            jsonMachine1.put("serial_number", "aabbcc");
+//            jsonMachine1.put("rtbs_flag", "11");
+//            jsonMachine1.put("rtas_flag", "11");
+//            jsonMachine1.put("job_status", "11");
+//            jsonMachine1.put("garansi_number", "123456");
+//            jsonMachine1.put("sparepart_consumed",jsonSpareparts1);
+//
+//            jsonMachine2.put("machine_id", "12");
+//            jsonMachine2.put("serial_number", "aabbcc");
+//            jsonMachine2.put("rtbs_flag", "12");
+//            jsonMachine2.put("rtas_flag", "12");
+//            jsonMachine2.put("job_status", "12");
+//            jsonMachine2.put("garansi_number", "123456");
+//            jsonMachine2.put("sparepart_consumed",jsonSpareparts2);
+//
+//            jsonMachines.put(jsonMachine1);
+//            jsonMachines.put(jsonMachine2);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        JSONArray jsonMachines = new JSONArray();
-        JSONObject jsonMachine1 = new JSONObject();
-        JSONObject jsonMachine2 = new JSONObject();
-        JSONObject jsonSparepart1 = new JSONObject();
-        JSONObject jsonSparepart2 = new JSONObject();
-        try {
-            jsonSparepart1.put("sparepart_id", "13");
-            jsonSpareparts1.put(jsonSparepart1);
-            jsonSparepart2.put("sparepart_id", "15");
-            jsonSpareparts2.put(jsonSparepart2);
-
-            jsonMachine1.put("machine_id", "11");
-            jsonMachine1.put("serial_number", "aabbcc");
-            jsonMachine1.put("rtbs_flag", "11");
-            jsonMachine1.put("rtas_flag", "11");
-            jsonMachine1.put("job_status", "11");
-            jsonMachine1.put("garansi_number", "123456");
-            jsonMachine1.put("sparepart_consumed",jsonSpareparts1);
-
-            jsonMachine2.put("machine_id", "12");
-            jsonMachine2.put("serial_number", "aabbcc");
-            jsonMachine2.put("rtbs_flag", "12");
-            jsonMachine2.put("rtas_flag", "12");
-            jsonMachine2.put("job_status", "12");
-            jsonMachine2.put("garansi_number", "123456");
-            jsonMachine2.put("sparepart_consumed",jsonSpareparts2);
-
-            jsonMachines.put(jsonMachine1);
-            jsonMachines.put(jsonMachine2);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("type_lps", 1);
-            jsonObj.put("customer_id", 8);
-            jsonObj.put("customer_branch_id", 7);
-            jsonObj.put("teknisi_id", 69);
-            jsonObj.put("date_lps", date);
-            jsonObj.put("tanggal_jam_selesai", dateTime);
-            jsonObj.put("kerusakan", kerusakan_input.getText().toString());
-            jsonObj.put("perbaikan", perbaikan_input.getText().toString());
-            jsonObj.put("machine", jsonMachines);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        JSONObject jsonObj = new JSONObject();
+//        try {
+//            jsonObj.put("type_lps", 1);
+//            jsonObj.put("customer_id", 8);
+//            jsonObj.put("customer_branch_id", 7);
+//            jsonObj.put("teknisi_id", 69);
+//            jsonObj.put("date_lps", date);
+//            jsonObj.put("tanggal_jam_selesai", dateTime);
+//            jsonObj.put("kerusakan", kerusakan_input.getText().toString());
+//            jsonObj.put("perbaikan", perbaikan_input.getText().toString());
+//            jsonObj.put("machine", jsonMachines);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, jsonObj, this, this);
+        CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, finalJSONObj, this, this);
         customJSONReq.setHeaders(headers);
 
         try {
             //Map<String, String> testH = jsObjRequest.getHeaders();
             //Log.d("headers",testH.get("Content-Type"));
             Log.d("headers", String.valueOf(customJSONReq.getHeaders()));
-            Log.d("content", jsonObj.toString(2));
+            Log.d("content", finalJSONObj.toString(2));
         } catch (AuthFailureError authFailureError) {
             authFailureError.printStackTrace();
         } catch (JSONException e) {
@@ -259,8 +271,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         view = inflater.inflate(R.layout.fragment_create, container, false);
         ButterKnife.bind(this, view);
         getActivity().setTitle("Penulisan LPS");
-        checkForSparepartData();
         dbManager = DatabaseManager.getInstance();
+
 
         if(serviceID != 0) {
 //            Log.d("JSONContent", "Starting new array of values");
@@ -325,9 +337,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             ServiceDao serDAO = new ServiceDao(dbManager);
             Service service = serDAO.get(serviceID);
+            setupFinalJSON(service);
             date_time.setText(service.getDateService());
             cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
             engineer_name.setText(service.getTname());
+
             serDAO.closeConnection();
 
             MachineDao macDAO = new MachineDao(dbManager);
@@ -344,6 +358,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 machineIDs.add(mac.getMachineID());
                 mesinData.add(newMesin);
             }
+            //checkForSparepartData();
             setAdapter();
         } else {
             //create new forum object
@@ -400,6 +415,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
             Log.d("onResponse", response.toString(2));
             Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
+
+            //delete the sharedpref
+            SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            preferences.edit().remove("current_service_json").apply();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -410,7 +430,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         act.changeFragmentNoBS(newFrag);
     }
 
-    private void checkForSparepartData() {
+    private boolean checkForSparepartData() {
+        boolean result = false;
         //check for data from sparepart fragment
         Bundle args = getArguments();
         if(args != null) {
@@ -419,9 +440,75 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 try {
                     machineStatus = new JSONObject(args.getString("machine_status"));
                     machineSpareparts = new JSONArray(args.getString("machine_spareparts"));
+                    result = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+        return result;
+    }
+
+    private void setupFinalJSON(Service service) {
+        //start creating the JSON
+        String token = "";
+        if(checkforSharedPreferences()) {
+            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+
+            //prepare date and datetime here
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+            String date = dateFormat.format(cal.getTime());
+            String dateTime = dateTimeFormat.format(cal.getTime());
+
+            //check if there are any previous json
+            if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
+                //create the new JSOn
+                finalJSONObj = new JSONObject();
+                try {
+                    finalJSONObj.put("type_lps", service.getTypeService());
+                    finalJSONObj.put("customer_id", service.getCustomerID());
+                    finalJSONObj.put("customer_branch_id", service.getCBID());
+                    finalJSONObj.put("teknisi_id", service.getTID());
+                    finalJSONObj.put("date_lps", date);
+                    finalJSONObj.put("tanggal_jam_selesai", dateTime);
+                    //finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
+                    //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.apply();
+            } else {
+                //assign the JSON
+                try {
+                    finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                    if(checkForSparepartData()) {
+                        //put inner object first
+                        machineStatus.put("sparepart_consumed", machineSpareparts);
+                        //and then, put the object into json
+                        if(finalJSONObj.has("machine")) {
+                            //if it HAS the name
+                            machineStatusArray = finalJSONObj.getJSONArray("machine");
+                            machineStatusArray.put(machineStatus);
+                            finalJSONObj.put("machine", machineStatusArray);
+                        } else {
+                            //if it HAS NOT the name
+                            machineStatusArray = new JSONArray();
+                            machineStatusArray.put(machineStatus);
+                            finalJSONObj.put("machine", machineStatusArray);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.apply();
             }
         }
     }

@@ -28,7 +28,9 @@ import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.customClass.SparepartFormGenerator;
 import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.database.MachineDao;
 import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.model.Machine;
 import id.co.ncl.aspac.model.Sparepart;
 
 
@@ -99,34 +101,44 @@ public class CreateDetailFragment extends Fragment {
     @OnClick(R.id.send_job_detail_button)
     public void goBackSir() {
         //get the data first
-        boolean rtas;
-        boolean rtbs;
-        boolean machineOK;
+        //boolean rtas;
+        //boolean rtbs;
+        //boolean machineOK;
+
+        int rtas;
+        int rtbs;
+        int machineOK;
 
         if(rtas_check_box.isChecked()) {
-            rtas = true;
+            //rtas = true;
+            rtas = 1;
         } else {
-            rtas = false;
+            //rtas = false;
+            rtas = 0;
         }
 
         if(rtbs_check_box.isChecked()) {
-            rtbs = true;
+            //rtbs = true;
+            rtbs = 1;
         } else {
-            rtbs = false;
+            //rtbs = false;
+            rtbs = 0;
         }
 
         int choice = radioGroupDetail.getCheckedRadioButtonId();
 
         if(choice == job_status_ok_radio_btn.getId()) {
-            machineOK = true;
+            //machineOK = true;
+            machineOK = 1;
         } else {
-            machineOK = false;
+            //machineOK = false;
+            machineOK = 0;
         }
 
         try {
-            machineStatus.put("rtas_status", rtas);
-            machineStatus.put("rtbs_status", rtbs);
-            machineStatus.put("machine_ok", machineOK);
+            machineStatus.put("rtas_flag", rtas);
+            machineStatus.put("rtbs_flag", rtbs);
+            machineStatus.put("job_status", machineOK);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -141,9 +153,9 @@ public class CreateDetailFragment extends Fragment {
 
             JSONObject machineSparepart = new JSONObject();
             try {
-                machineSparepart.put("sparepart_id", form.getSparepartID());
-                machineSparepart.put("sparepart_name", form.getSparepartName());
-                machineSparepart.put("sparepart_value", form.getQtyValue());
+                machineSparepart.put("sparepart_id", Integer.valueOf(form.getSparepartID()));
+                //machineSparepart.put("sparepart_name", form.getSparepartName());
+                machineSparepart.put("qty", form.getQtyValue());
 
                 machineSpareparts.put(machineSparepart);
             } catch (JSONException e) {
@@ -194,6 +206,21 @@ public class CreateDetailFragment extends Fragment {
         ctx = getActivity();
 
         Log.d("machineID", machineID);
+
+        //get the machineID first
+        MachineDao macDAO = new MachineDao(dbManager);
+        Machine newMachine = macDAO.get(machineID);
+        macDAO.closeConnection();
+        //fill in the machine json
+        try {
+            machineStatus.put("machine_id", Integer.valueOf(newMachine.getMachineID()));
+            machineStatus.put("serial_number", newMachine.getSerialNumber());
+            machineStatus.put("sales_number", newMachine.getSalesNumber());
+            //machineStatus.put("sales_number", 123);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         //get the sparepart array first
         SparepartDao spaDAO = new SparepartDao(dbManager);

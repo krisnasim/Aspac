@@ -64,6 +64,20 @@ public class MachineDao {
         return machines;
     }
 
+    public Machine get(String machineID) {
+        Machine mac = new Machine();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_MACHINE_ID + "=" + machineID, null, null, null, null);
+        cursor.moveToFirst();
+        mac.setMachineID(cursor.getString(1));
+        mac.setBrand(cursor.getString(2));
+        mac.setModel(cursor.getString(3));
+        mac.setSerialNumber(cursor.getString(4));
+        mac.setSalesNumber(cursor.getString(5));
+
+        return mac;
+    }
+
     public long insert(Machine machine) {
         ContentValues values = new ContentValues();
         values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
