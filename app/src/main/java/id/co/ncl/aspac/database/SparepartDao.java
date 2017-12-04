@@ -31,25 +31,44 @@ public class SparepartDao {
         List<Sparepart> spareparts = new ArrayList<>();
         Cursor cursor = db.query(dbHelper.TABLE_SPAREPART, null, null, null, null, null, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        for (int w = 0; w < cursor.getCount(); w++) {
             Sparepart spa = new Sparepart();
-            spa.setCode(cursor.getString(1));
-            spa.setName(cursor.getString(2));
+            spa.setSparepartID(cursor.getString(1));
+            spa.setCode(cursor.getString(2));
+            spa.setName(cursor.getString(3));
 
             spareparts.add(spa);
+            cursor.moveToNext();
         }
 
         return spareparts;
     }
 
-    public List<Sparepart> getAllByMachineID(int machineID) {
+    public List<Sparepart> getAllByMachineID(String machineID) {
         List<Sparepart> spareparts = new ArrayList<>();
+
+        Cursor cursor = db.query(dbHelper.TABLE_SPAREPART, null, dbHelper.SPAREPART_COLUMN_MACHINE_ID + "=" + machineID, null, null, null, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() > 0) {
+            for (int w = 0; w < cursor.getCount(); w++) {
+                Sparepart spa = new Sparepart();
+                spa.setSparepartID(cursor.getString(1));
+                spa.setCode(cursor.getString(2));
+                spa.setName(cursor.getString(3));
+
+                spareparts.add(spa);
+                cursor.moveToNext();
+            }
+        } else {
+            Log.d("getAllByMachineID", "No sparepart found!");
+        }
 
         return spareparts;
     }
 
     public long insert(Sparepart sparepart) {
         ContentValues values = new ContentValues();
+        values.put(dbHelper.SPAREPART_COLUMN_SPAREPART_ID, sparepart.getSparepartID());
         values.put(dbHelper.SPAREPART_COLUMN_CODE, sparepart.getCode());
         values.put(dbHelper.SPAREPART_COLUMN_NAME, sparepart.getName());
         values.put(dbHelper.SPAREPART_COLUMN_MACHINE_ID, sparepart.getMachineID());

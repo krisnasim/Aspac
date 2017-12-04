@@ -92,6 +92,7 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
                 JSONObject sparepartData = sparepartArray.getJSONObject(a);
                 //prepare the sparepart object
                 Sparepart sparepart = new Sparepart();
+                sparepart.setSparepartID(sparepartData.getString("id"));
                 sparepart.setCode(sparepartData.getString("code"));
                 sparepart.setName(sparepartData.getString("name"));
                 sparepart.setMachineID(sparepartData.getInt("machine_id"));

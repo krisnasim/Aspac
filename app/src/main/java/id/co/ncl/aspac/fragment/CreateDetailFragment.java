@@ -12,10 +12,14 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +27,9 @@ import butterknife.OnClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.customClass.SparepartFormGenerator;
+import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.model.Sparepart;
 
 
 public class CreateDetailFragment extends Fragment {
@@ -47,9 +54,17 @@ public class CreateDetailFragment extends Fragment {
     private JSONArray jsonSpareparts = new JSONArray();
     //private JSONArray jsonMachines = new JSONArray();
     private JSONObject machineStatus = new JSONObject();
+    private JSONArray machineSpareparts = new JSONArray();
+    private List<SparepartFormGenerator> sparepartForms = new ArrayList<>();
+    private List<Sparepart> sparepartArray = new ArrayList<>();
     private JSONObject previousDataKeren;
     private JSONObject dataMachine;
     private int machinePosition;
+    private String machineID;
+    private Long serviceID;
+    private boolean sparepartExists = false;
+
+    private DatabaseManager dbManager;
 
 //    @OnClick(R.id.add_number_btn)
 //    public void addNumber() {
@@ -71,104 +86,18 @@ public class CreateDetailFragment extends Fragment {
 
     @OnClick(R.id.add_sparepart_button)
     public void addSparepartLayout() {
-
-        SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity());
-        sparepart_layout.addView(form1);
-
-//        TextView label = new TextView(ctx);
-//        label.setText("Jumlah suara calon "+(x+1));
-//        label.setTextSize(14);
-
-//        int spinnerID = View.generateViewId();
-//        Spinner spinnerSpr = new Spinner(ctx);
-//        spinnerSpr.setId(spinnerID);
-//        int spinnerWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, getResources().getDisplayMetrics());
-//        int spinnerHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.spinner_type_spr));
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
-//        spinnerSpr.setAdapter(spinnerArrayAdapter);
-//
-//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(spinnerWidth, spinnerHeight);
-//        int startMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-//        lp.setMargins(startMargin, 17, 0, 0);
-//        spinnerSpr.setLayoutParams(lp);
-//        sparepart_layout.addView(spinnerSpr);
-//
-//        int qtyID = View.generateViewId();
-//        int addbtnID = View.generateViewId();
-//        Button addBtn = new Button(ctx);
-//        addBtn.setId(addbtnID);
-//        addBtn.setText("+");
-
-//        addBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int value = Integer.parseInt(sparepart_qty.getText().toString());
-//                value += 1;
-//                sparepart_qty.setText(String.valueOf(value));
-//            }
-//        });
-
-//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
-//        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(width, width);
-//        int startMargin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-//        lp2.setMargins(startMargin2, 17, 0, 0);
-//        lp2.addRule(RelativeLayout.RIGHT_OF, spinnerID);
-//        addBtn.setLayoutParams(lp2);
-//        sparepart_layout.addView(addBtn);
-//
-//        TextView qtyValue = new TextView(ctx);
-//        qtyValue.setTextSize(26);
-//        qtyValue.setId(qtyID);
-//        qtyValue.setText("0");
-//
-//        RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(width, width);
-//        int startMargin3 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 28, getResources().getDisplayMetrics());
-//        lp3.setMargins(startMargin3, 17, 0, 0);
-//        lp3.addRule(RelativeLayout.RIGHT_OF, addbtnID);
-//        qtyValue.setLayoutParams(lp3);
-//        sparepart_layout.addView(qtyValue);
-//
-//        int minbtnID = View.generateViewId();
-//        Button minBtn = new Button(ctx);
-//        minBtn.setId(minbtnID);
-//        minBtn.setText("-");
-//        minBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//        RelativeLayout.LayoutParams lp4 = new RelativeLayout.LayoutParams(width, width);
-//        int startMargin4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-//        lp4.setMargins(startMargin4, 17, 0, 0);
-//        lp4.addRule(RelativeLayout.RIGHT_OF, qtyID);
-//        minBtn.setLayoutParams(lp4);
-//        sparepart_layout.addView(minBtn);
+        if(sparepartExists) {
+            SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
+            form1.setSparepartArray(sparepartArray);
+            sparepart_layout.addView(form1);
+            sparepartForms.add(form1);
+        } else {
+            Toast.makeText(ctx, "Tidak ada sparepart untuk mesin ini!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.send_job_detail_button)
     public void goBackSir() {
-
-//        if(dataKeren.length() != 0) {
-//            try {
-//                Log.d("JSONContent", dataKeren.getString("serial_number"));
-//
-//                JSONObject jsonMesin = new JSONObject();
-//                jsonMesin.put("machine_id", 10);
-//                jsonMesin.put("serial_number", dataKeren.getString("serial_number"));
-//                jsonMesin.put("rtbs_flag", 10);
-//                jsonMesin.put("rtas_flag", 10);
-//                jsonMesin.put("job_status", 1);
-//                jsonMesin.put("garansi_mesin", 123456);
-//                jsonMesin.put("sparepart_consumed", jsonSpareparts);
-//                jsonMachines.put(jsonMesin);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         //get the data first
         boolean rtas;
         boolean rtbs;
@@ -202,30 +131,32 @@ public class CreateDetailFragment extends Fragment {
             e.printStackTrace();
         }
 
-        //set the sparepart array
-        JSONObject jsonSparepart = new JSONObject();
-        try {
-            jsonSparepart.put("sparepart_id", "13");
-            jsonSpareparts.put(jsonSparepart);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        //check for sparepart value here
+        for(SparepartFormGenerator form: sparepartForms) {
+            int formID = form.getId();
+            Log.d("sparepartValue", String.valueOf(form.getQtyValue()));
+            Log.d("sparepartName", form.getSparepartName());
+            //get id based on sparepart name
+            Log.d("sparepartID", form.getSparepartID());
 
-        //add machinestatus JSONObj and sparepart JSONArray to previousDataKeren
-        try {
-            JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
-            JSONObject mesin = mesinsArray.getJSONObject(machinePosition);
-            mesin.put("machine_status", machineStatus);
-            mesin.put("machine_spareparts", jsonSpareparts);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            JSONObject machineSparepart = new JSONObject();
+            try {
+                machineSparepart.put("sparepart_id", form.getSparepartID());
+                machineSparepart.put("sparepart_name", form.getSparepartName());
+                machineSparepart.put("sparepart_value", form.getQtyValue());
+
+                machineSpareparts.put(machineSparepart);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         //move to new fragment
         HomeActivity act = (HomeActivity) getActivity();
         Bundle args = new Bundle();
-        args.putString("data", previousDataKeren.toString());
-        //args.putString("dataKeren", dataKeren.toString());
+        args.putString("machine_status", machineStatus.toString());
+        args.putString("machine_spareparts", machineSpareparts.toString());
+        args.putLong("service_id", serviceID);
         Fragment newFrag = new CreateFragment();
         newFrag.setArguments(args);
         act.changeFragmentNoBS(newFrag);
@@ -241,12 +172,14 @@ public class CreateDetailFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null) {
             //get the arguments here
-            try {
-                dataMachine = new JSONObject(args.getString("data"));
-                previousDataKeren = new JSONObject(args.getString("dataKeren"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                dataMachine = new JSONObject(args.getString("data"));
+//                previousDataKeren = new JSONObject(args.getString("dataKeren"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            machineID = args.getString("machine_id");
+            serviceID = args.getLong("service_id");
         }
     }
 
@@ -257,7 +190,27 @@ public class CreateDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_create_detail, container, false);
         ButterKnife.bind(this, view);
         getActivity().setTitle("Laporan servis mesin");
+        dbManager = DatabaseManager.getInstance();
         ctx = getActivity();
+
+        Log.d("machineID", machineID);
+
+        //get the sparepart array first
+        SparepartDao spaDAO = new SparepartDao(dbManager);
+        sparepartArray = spaDAO.getAllByMachineID(machineID);
+        spaDAO.closeConnection();
+
+        if(sparepartArray.size() > 0) {
+            sparepartExists = true;
+//            for(int a = 0; a < sparepartArray.size(); a++) {
+//                Sparepart sparepart = sparepartArray.get(a);
+//                Log.d("SparepartCont", sparepart.getSparepartID());
+//                Log.d("SparepartCont", sparepart.getCode());
+//                Log.d("SparepartCont", sparepart.getName());
+//            }
+        } else {
+            //Toast.makeText(ctx, "Tidak ada sparepart untuk mesin ini!", Toast.LENGTH_SHORT).show();
+        }
 
 //        parts = new Spare_Part[]{
 //                new Spare_Part("AASDC23", "Head counter part"),
@@ -274,71 +227,60 @@ public class CreateDetailFragment extends Fragment {
 
         //sparepart_qty.setText("1");
 
-        if(previousDataKeren.length() != 0) {
-            Log.d("JSONContent", "Starting new array of values");
-            try {
-                Log.d("JSONContent", previousDataKeren.getString("date_service"));
-
-                JSONObject custJSON = previousDataKeren.getJSONObject("customer_branch");
-                Log.d("JSONContent", custJSON.getString("branch_name"));
-                Log.d("JSONContent", custJSON.getString("branch_status"));
-                Log.d("JSONContent", custJSON.getString("branch_address"));
-                Log.d("JSONContent", custJSON.getString("office_phone_number"));
-
-                JSONObject teknisiJSON = previousDataKeren.getJSONObject("teknisi");
-                Log.d("JSONContent", teknisiJSON.getString("username"));
-                Log.d("JSONContent", teknisiJSON.getString("email"));
-                Log.d("JSONContent", teknisiJSON.getString("name"));
-
-                JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
-
-                for(int y = 0; y < mesinsArray.length(); y++) {
-                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-                    Log.d("JSONContent", mesinJSON.getString("brand"));
-                    Log.d("JSONContent", mesinJSON.getString("model"));
-                    Log.d("JSONContent", mesinJSON.getString("serial_number"));
-
-                    if(mesinJSON.getString("brand").equals(dataMachine.getString("brand"))) {
-                        if(mesinJSON.getString("model").equals(dataMachine.getString("model"))) {
-                            if(mesinJSON.getString("serial_number").equals(dataMachine.getString("serial_number"))) {
-                                //same machine picked. remember the position
-                                machinePosition = y;
-
-                                if(mesinJSON.has("machine_status")) {
-                                    JSONObject machineStats = mesinJSON.getJSONObject("machine_status");
-                                    Log.d("JSONContent", machineStats.getString("rtas_status"));
-                                    Log.d("JSONContent", machineStats.getString("rtbs_status"));
-                                    Log.d("JSONContent", machineStats.getString("machine_ok"));
-
-                                    if(machineStats.getString("rtas_status").equals("true")) {
-                                        rtas_check_box.setChecked(true);
-                                    }
-
-                                    if(machineStats.getString("rtbs_status").equals("true")) {
-                                        rtbs_check_box.setChecked(true);
-                                    }
-
-                                    if(machineStats.getString("machine_ok").equals("true")) {
-                                        job_status_ok_radio_btn.setChecked(true);
-                                    } else {
-                                        job_status_bad_radio_btn.setChecked(true);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-//        if(dataMachine.length() != 0) {
-//            Log.d("JSONContent", "Machine data");
+//        if(previousDataKeren.length() != 0) {
+//            Log.d("JSONContent", "Starting new array of values");
 //            try {
-//                Log.d("JSONContent", dataMachine.getString("brand"));
-//                Log.d("JSONContent", dataMachine.getString("model"));
-//                Log.d("JSONContent", dataMachine.getString("serial_number"));
+//                Log.d("JSONContent", previousDataKeren.getString("date_service"));
+//
+//                JSONObject custJSON = previousDataKeren.getJSONObject("customer_branch");
+//                Log.d("JSONContent", custJSON.getString("branch_name"));
+//                Log.d("JSONContent", custJSON.getString("branch_status"));
+//                Log.d("JSONContent", custJSON.getString("branch_address"));
+//                Log.d("JSONContent", custJSON.getString("office_phone_number"));
+//
+//                JSONObject teknisiJSON = previousDataKeren.getJSONObject("teknisi");
+//                Log.d("JSONContent", teknisiJSON.getString("username"));
+//                Log.d("JSONContent", teknisiJSON.getString("email"));
+//                Log.d("JSONContent", teknisiJSON.getString("name"));
+//
+//                JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
+//
+//                for(int y = 0; y < mesinsArray.length(); y++) {
+//                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
+//                    Log.d("JSONContent", mesinJSON.getString("brand"));
+//                    Log.d("JSONContent", mesinJSON.getString("model"));
+//                    Log.d("JSONContent", mesinJSON.getString("serial_number"));
+//
+//                    if(mesinJSON.getString("brand").equals(dataMachine.getString("brand"))) {
+//                        if(mesinJSON.getString("model").equals(dataMachine.getString("model"))) {
+//                            if(mesinJSON.getString("serial_number").equals(dataMachine.getString("serial_number"))) {
+//                                //same machine picked. remember the position
+//                                machinePosition = y;
+//
+//                                if(mesinJSON.has("machine_status")) {
+//                                    JSONObject machineStats = mesinJSON.getJSONObject("machine_status");
+//                                    Log.d("JSONContent", machineStats.getString("rtas_status"));
+//                                    Log.d("JSONContent", machineStats.getString("rtbs_status"));
+//                                    Log.d("JSONContent", machineStats.getString("machine_ok"));
+//
+//                                    if(machineStats.getString("rtas_status").equals("true")) {
+//                                        rtas_check_box.setChecked(true);
+//                                    }
+//
+//                                    if(machineStats.getString("rtbs_status").equals("true")) {
+//                                        rtbs_check_box.setChecked(true);
+//                                    }
+//
+//                                    if(machineStats.getString("machine_ok").equals("true")) {
+//                                        job_status_ok_radio_btn.setChecked(true);
+//                                    } else {
+//                                        job_status_bad_radio_btn.setChecked(true);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 //            } catch (JSONException e) {
 //                e.printStackTrace();
 //            }

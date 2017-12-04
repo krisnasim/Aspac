@@ -31,7 +31,7 @@ public class MachineDao {
         List<Machine> machines = new ArrayList<>();
         Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, null, null, null, null, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        for (int w = 0; w < cursor.getCount(); w++) {
             Machine mac = new Machine();
             mac.setMachineID(cursor.getString(1));
             mac.setBrand(cursor.getString(2));
@@ -40,13 +40,27 @@ public class MachineDao {
             mac.setSalesNumber(cursor.getString(5));
 
             machines.add(mac);
+            cursor.moveToNext();
         }
         return machines;
     }
 
-    public List<Machine> getAllByServiceID(int serviceID) {
+    public List<Machine> getAllByServiceID(long serviceID) {
         List<Machine> machines = new ArrayList<>();
 
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_SERVICE_ID + "=" + serviceID, null, null, null, null);
+        cursor.moveToFirst();
+        for (int w = 0; w < cursor.getCount(); w++) {
+            Machine mac = new Machine();
+            mac.setMachineID(cursor.getString(1));
+            mac.setBrand(cursor.getString(2));
+            mac.setModel(cursor.getString(3));
+            mac.setSerialNumber(cursor.getString(4));
+            mac.setSalesNumber(cursor.getString(5));
+
+            machines.add(mac);
+            cursor.moveToNext();
+        }
         return machines;
     }
 

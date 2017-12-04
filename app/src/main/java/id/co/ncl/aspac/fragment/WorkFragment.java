@@ -69,7 +69,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     List<Long> machineIDs = new ArrayList<>();
 
     private DatabaseManager dbManager;
-    private AspacSQLite myDb;
+
 
     public WorkFragment() {
         // Required empty public constructor
@@ -89,8 +89,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         ButterKnife.bind(this, view);
         Log.d("onCreate", "MY VIEW IS CREATED!");
         getActivity().setTitle("Daftar Pekerjaan Rutin");
-        myDb = new AspacSQLite(getContext());
-        DatabaseManager.initializeInstance(myDb);
         dbManager = DatabaseManager.getInstance();
 
         if(savedInstanceState != null) {
@@ -234,7 +232,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     ServiceDao serDAO = new ServiceDao(dbManager);
                     long serviceID = serDAO.insert(service);
                     serviceIDs.add(serviceID);
-                    //serDAO.closeConnection();
+                    serDAO.closeConnection();
 
 
 //                    final Service service = new Service();
@@ -311,6 +309,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                         MachineDao macDAO = new MachineDao(dbManager);
                         long machineID = macDAO.insert(machine);
+                        macDAO.closeConnection();
                         machineIDs.add(machineID);
 
 //                        for (int x = 0; x < 5; x++) {
@@ -454,6 +453,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 newWork.setWorkDateTime(date);
 
                 workData.add(newWork);
+                serviceIDs.add((long) ser.getId());
             }
             serDAO.closeConnection();
             //lastly, setadapter
@@ -510,6 +510,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //Toast.makeText(getActivity(), "Hey! You clicked on some work!", Toast.LENGTH_SHORT).show();
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
+                    args.putLong("service_id", serviceIDs.get(position));
+                    Log.d("serviceID", String.valueOf(serviceIDs.get(position)));
 //                    try {
 //                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
 //                    } catch (JSONException e) {

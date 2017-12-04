@@ -54,8 +54,14 @@ import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.customClass.PrinterCommands;
+import id.co.ncl.aspac.database.AspacSQLite;
+import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.database.MachineDao;
+import id.co.ncl.aspac.database.ServiceDao;
+import id.co.ncl.aspac.model.Machine;
 import id.co.ncl.aspac.model.Mesin;
 import id.co.ncl.aspac.customClass.ListViewUtility;
+import id.co.ncl.aspac.model.Service;
 
 public class CreateFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
@@ -76,9 +82,17 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private int listViewHeight;
     private JSONArray dataMachineArray;
     private JSONObject dataKeren;
+    private JSONArray machineSpareparts;
+    private JSONObject machineStatus;
+    private JSONObject finalJSONObj;
+    private long serviceID = 0;
+    private List<String> machineIDs = new ArrayList<>();
     private List<Mesin> mesinData = new ArrayList<Mesin>();
+    private List<Machine> mesinArray = new ArrayList<>();
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
+
+    private DatabaseManager dbManager;
 
 //    private SparepartCompletionView completionView;
 //    private Spare_Part[] people;
@@ -186,7 +200,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             e.printStackTrace();
         }
 
-
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("type_lps", 1);
@@ -230,11 +243,12 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         Bundle args = getArguments();
         if(args != null) {
             //get the arguments here
-            try {
-                dataKeren = new JSONObject(args.getString("data"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                dataKeren = new JSONObject(args.getString("data"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            serviceID = args.getLong("service_id");
         }
     }
 
@@ -245,70 +259,92 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         view = inflater.inflate(R.layout.fragment_create, container, false);
         ButterKnife.bind(this, view);
         getActivity().setTitle("Penulisan LPS");
+        checkForSparepartData();
+        dbManager = DatabaseManager.getInstance();
 
-        if(dataKeren.length() != 0) {
-            Log.d("JSONContent", "Starting new array of values");
-            try {
-                Log.d("JSONContent", dataKeren.getString("date_service"));
-                date_time.setText(dataKeren.getString("date_service"));
-                JSONObject custJSON = dataKeren.getJSONObject("customer_branch");
-                //Log.d("JSONContent", custJSON.getString("branch_name"));
-                //Log.d("JSONContent", custJSON.getString("branch_status"));
-                //Log.d("JSONContent", custJSON.getString("branch_address"));
-                //Log.d("JSONContent", custJSON.getString("office_phone_number"));
-                cust_data.setText(custJSON.getString("branch_name") + "\n" + custJSON.getString("branch_status") + "\n" + custJSON.getString("branch_address") + "\n" + custJSON.getString("office_phone_number"));
-                JSONObject teknisiJSON = dataKeren.getJSONObject("teknisi");
-                //Log.d("JSONContent", teknisiJSON.getString("username"));
-                //Log.d("JSONContent", teknisiJSON.getString("email"));
-                //Log.d("JSONContent", teknisiJSON.getString("name"));
-                engineer_name.setText(teknisiJSON.getString("name"));
-                JSONArray mesinsArray = dataKeren.getJSONArray("machines");
-                dataMachineArray = mesinsArray;
-                for(int y = 0; y < mesinsArray.length(); y++) {
-                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-                    //Log.d("JSONContent", mesinJSON.getString("brand"));
-                    //Log.d("JSONContent", mesinJSON.getString("model"));
-                    //Log.d("JSONContent", mesinJSON.getString("serial_number"));
+        if(serviceID != 0) {
+//            Log.d("JSONContent", "Starting new array of values");
+//            try {
+//                Log.d("JSONContent", dataKeren.getString("date_service"));
+//                date_time.setText(dataKeren.getString("date_service"));
+//                JSONObject custJSON = dataKeren.getJSONObject("customer_branch");
+//                //Log.d("JSONContent", custJSON.getString("branch_name"));
+//                //Log.d("JSONContent", custJSON.getString("branch_status"));
+//                //Log.d("JSONContent", custJSON.getString("branch_address"));
+//                //Log.d("JSONContent", custJSON.getString("office_phone_number"));
+//                cust_data.setText(custJSON.getString("branch_name") + "\n" + custJSON.getString("branch_status") + "\n" + custJSON.getString("branch_address") + "\n" + custJSON.getString("office_phone_number"));
+//                JSONObject teknisiJSON = dataKeren.getJSONObject("teknisi");
+//                //Log.d("JSONContent", teknisiJSON.getString("username"));
+//                //Log.d("JSONContent", teknisiJSON.getString("email"));
+//                //Log.d("JSONContent", teknisiJSON.getString("name"));
+//                engineer_name.setText(teknisiJSON.getString("name"));
+//                JSONArray mesinsArray = dataKeren.getJSONArray("machines");
+//                dataMachineArray = mesinsArray;
+//                for(int y = 0; y < mesinsArray.length(); y++) {
+//                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
+//                    //Log.d("JSONContent", mesinJSON.getString("brand"));
+//                    //Log.d("JSONContent", mesinJSON.getString("model"));
+//                    //Log.d("JSONContent", mesinJSON.getString("serial_number"));
+//
+//                    //check data only if exists in mesinJSON
+//                    if(mesinJSON.has("machine_status")) {
+//                        Log.d("GODDAMN", "F*CK YEAH! DIS IS AWESOME");
+//
+//                        JSONObject machineStatus = mesinJSON.getJSONObject("machine_status");
+//                        Log.d("JSONContent", machineStatus.getString("rtas_status"));
+//                        Log.d("JSONContent", machineStatus.getString("rtbs_status"));
+//                        Log.d("JSONContent", machineStatus.getString("machine_ok"));
+//
+//                        JSONArray spareparts = mesinJSON.getJSONArray("spareparts");
+//
+//                        JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
+//                        for(int t = 0; t < machineSpareparts.length(); t++) {
+//                            JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
+//                            if(machineSpareparts.length() > 0) {
+//                                JSONObject sparepart = spareparts.getJSONObject(t);
+//                                Log.d("JSONBaru", sparepart.getString("code"));
+//                                Log.d("JSONBaru", sparepart.getString("name"));
+//                                Log.d("JSONBaru", sparepart.getString("sell_price"));
+//                            }
+//                            Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
+//                        }
+//                    }
+//
+//                    //create new forum object
+//                    Mesin newMesin = new Mesin();
+//                    newMesin.setMesinBrand(mesinJSON.getString("brand"));
+//                    newMesin.setMesinModel(mesinJSON.getString("model"));
+//                    newMesin.setMesinNomorSeri(mesinJSON.getString("serial_number"));
+//                    //newMesin.setMesinStatus("Sehat");
+//
+//                    mesinData.add(newMesin);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
 
-                    //check data only if exists in mesinJSON
-                    if(mesinJSON.has("machine_status")) {
-                        Log.d("GODDAMN", "F*CK YEAH! DIS IS AWESOME");
+            ServiceDao serDAO = new ServiceDao(dbManager);
+            Service service = serDAO.get(serviceID);
+            date_time.setText(service.getDateService());
+            cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+            engineer_name.setText(service.getTname());
+            serDAO.closeConnection();
 
-                        JSONObject machineStatus = mesinJSON.getJSONObject("machine_status");
-                        Log.d("JSONContent", machineStatus.getString("rtas_status"));
-                        Log.d("JSONContent", machineStatus.getString("rtbs_status"));
-                        Log.d("JSONContent", machineStatus.getString("machine_ok"));
+            MachineDao macDAO = new MachineDao(dbManager);
+            mesinArray = macDAO.getAllByServiceID(serviceID);
+            macDAO.closeConnection();
 
-                        JSONArray spareparts = mesinJSON.getJSONArray("spareparts");
-
-                        JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
-                        for(int t = 0; t < machineSpareparts.length(); t++) {
-                            JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
-                            if(machineSpareparts.length() > 0) {
-                                JSONObject sparepart = spareparts.getJSONObject(t);
-                                Log.d("JSONBaru", sparepart.getString("code"));
-                                Log.d("JSONBaru", sparepart.getString("name"));
-                                Log.d("JSONBaru", sparepart.getString("sell_price"));
-                            }
-                            Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
-                        }
-                    }
-
-                    //create new forum object
-                    Mesin newMesin = new Mesin();
-                    newMesin.setMesinBrand(mesinJSON.getString("brand"));
-                    newMesin.setMesinModel(mesinJSON.getString("model"));
-                    newMesin.setMesinNomorSeri(mesinJSON.getString("serial_number"));
-                    //newMesin.setMesinStatus("Sehat");
-
-                    mesinData.add(newMesin);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            for(int h = 0; h < mesinArray.size(); h++) {
+                Machine mac = mesinArray.get(h);
+                //create new forum object
+                Mesin newMesin = new Mesin();
+                newMesin.setMesinBrand(mac.getBrand());
+                newMesin.setMesinModel(mac.getModel());
+                newMesin.setMesinNomorSeri(mac.getSerialNumber());
+                machineIDs.add(mac.getMachineID());
+                mesinData.add(newMesin);
             }
-
             setAdapter();
-
         } else {
             //create new forum object
             Mesin newMesin = new Mesin();
@@ -374,6 +410,22 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         act.changeFragmentNoBS(newFrag);
     }
 
+    private void checkForSparepartData() {
+        //check for data from sparepart fragment
+        Bundle args = getArguments();
+        if(args != null) {
+            //check for special JSON wrapped in String variable
+            if(args.containsKey("machine_status") && args.containsKey("machine_spareparts")) {
+                try {
+                    machineStatus = new JSONObject(args.getString("machine_status"));
+                    machineSpareparts = new JSONArray(args.getString("machine_spareparts"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void setAdapter() {
         if(mesinData.size()>0){
             Log.d("setAdapter", "Setting up mesin adapter");
@@ -403,12 +455,14 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     //move to new fragment
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
-                    try {
-                        args.putString("data", dataMachineArray.getJSONObject(position).toString());
-                        args.putString("dataKeren", dataKeren.toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    args.putLong("service_id", serviceID);
+                    args.putString("machine_id", machineIDs.get(position));
+//                    try {
+//                        args.putString("data", dataMachineArray.getJSONObject(position).toString());
+//                        args.putString("dataKeren", dataKeren.toString());
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                     mesinData.clear();
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();

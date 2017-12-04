@@ -79,6 +79,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String TABLE_SPAREPART = "sparepart";
     //column info
     public static final String SPAREPART_COLUMN_ID = "_id";
+    public static final String SPAREPART_COLUMN_SPAREPART_ID = "sparepart_id";
     public static final String SPAREPART_COLUMN_CODE = "code";
     public static final String SPAREPART_COLUMN_NAME = "name";
     //foreign key to machine
@@ -143,6 +144,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
     private static final String SPAREPART_TABLE_CREATE = "create table "
             + TABLE_SPAREPART + "( "
             + SPAREPART_COLUMN_ID + " integer primary key autoincrement, "
+            + SPAREPART_COLUMN_SPAREPART_ID + " text not null, "
             + SPAREPART_COLUMN_CODE + " text not null, "
             + SPAREPART_COLUMN_NAME + " text not null, "
             + SPAREPART_COLUMN_MACHINE_ID + " integer, "

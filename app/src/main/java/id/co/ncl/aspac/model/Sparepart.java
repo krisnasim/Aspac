@@ -7,6 +7,7 @@ package id.co.ncl.aspac.model;
 public class Sparepart {
 
     private int id;
+    private String sparepartID;
     private String code;
     private String name;
     //foreign key to machine ID
@@ -18,6 +19,14 @@ public class Sparepart {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getSparepartID() {
+        return sparepartID;
+    }
+
+    public void setSparepartID(String sparepartID) {
+        this.sparepartID = sparepartID;
     }
 
     public String getCode() {

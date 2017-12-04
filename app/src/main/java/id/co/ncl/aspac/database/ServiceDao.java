@@ -78,8 +78,9 @@ public class ServiceDao {
         return services;
     }
 
-    public Service get(int serviceID) {
+    public Service get(long serviceID) {
         Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
+        cursor.moveToFirst();
         return cursorToService(cursor);
     }
 
@@ -170,6 +171,7 @@ public class ServiceDao {
 
     private Service cursorToService(Cursor cursor) {
         Service ser = new Service();
+        ser.setId(cursor.getInt(0));
         ser.setDateService(cursor.getString(1));
         ser.setTypeService(cursor.getInt(2));
         ser.setCBID(cursor.getInt(3));
@@ -217,6 +219,7 @@ public class ServiceDao {
 
         for (int w = 0; w < cursor.getCount(); w++) {
             Service ser = new Service();
+            ser.setId(cursor.getInt(0));
             ser.setDateService(cursor.getString(1));
             ser.setTypeService(cursor.getInt(2));
             ser.setCBID(cursor.getInt(3));

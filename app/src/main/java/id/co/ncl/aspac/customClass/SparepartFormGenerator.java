@@ -10,7 +10,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import id.co.ncl.aspac.R;
+import id.co.ncl.aspac.model.Sparepart;
 
 /**
  * Created by jonat on 21/11/2017.
@@ -35,58 +39,50 @@ public class SparepartFormGenerator extends RelativeLayout {
     private static int DEFAULT_HEIGHT_BUTTON;
     private static int DEFAULT_SPINNER_WIDTH;
     private static int DEFAULT_SPINNER_HEIGHT;
+    private List<Sparepart> sparepartArray;
+    private List<String> sparepartNames = new ArrayList<>();
+    private List<String> sparepartIDs = new ArrayList<>();
 
     public SparepartFormGenerator(Context context) {
         super(context);
-        //defining pre-init before layout creation
-        DEFAULT_WIDTH_BUTTON = convertIntToDP(40);
-        DEFAULT_HEIGHT_BUTTON = convertIntToDP(40);
-        DEFAULT_SPINNER_WIDTH = convertIntToDP(180);
-        DEFAULT_SPINNER_HEIGHT = convertIntToDP(40);
-        //the rest of LayoutParams should be defined here
-        LayoutParams layPar = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        layPar.setMargins(convertIntToDP(8), convertIntToDP(8), convertIntToDP(8), convertIntToDP(8));
-        setLayoutParams(layPar);
+        setupLayout(context);
+    }
 
-        //setting up the elements
-        //1. Spare_Part Picker
-        LayoutParams lpSpinner = new LayoutParams(DEFAULT_SPINNER_WIDTH, DEFAULT_SPINNER_HEIGHT);
-        lpSpinner.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
-        lpSpinner.addRule(ALIGN_PARENT_LEFT);
-        createSparepartPicker(context);
-        sparepartPickerID = View.generateViewId();
-        sparepartPicker.setId(sparepartPickerID);
-        sparepartPicker.setLayoutParams(lpSpinner);
-        addView(sparepartPicker);
-        //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
-        //2. Quantity value
-        LayoutParams lpTextView = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        lpTextView.setMargins(convertIntToDP(10), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
-        //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
-        lpTextView.addRule(RelativeLayout.RIGHT_OF, sparepartPickerID);
-        createQtyValue(context);
-        qtyValueID = View.generateViewId();
-        qtyValue.setId(qtyValueID);
-        qtyValue.setLayoutParams(lpTextView);
-        qtyValue.setTextSize(26);
-        addView(qtyValue);
-        //3. Buttons
-        LayoutParams lpAddButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
-        lpAddButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
-        lpAddButton.addRule(RIGHT_OF, qtyValueID);
-        createAddButton(context);
-        addButtonID = View.generateViewId();
-        addButton.setId(addButtonID);
-        addButton.setLayoutParams(lpAddButton);
-        addView(addButton);
-        LayoutParams lpMinButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
-        lpMinButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
-        lpMinButton.addRule(RIGHT_OF, addButtonID);
-        createMinButton(context);
-        minButtonID = View.generateViewId();
-        minButton.setId(minButtonID);
-        minButton.setLayoutParams(lpMinButton);
-        addView(minButton);
+    public SparepartFormGenerator(Context context, List<Sparepart> array) {
+        super(context);
+        setSparepartArray(array);
+        setupLayout(context);
+    }
+
+    public void setSparepartArray(List<Sparepart> array) {
+        this.sparepartArray = array;
+        Log.d("addSpareparts", "Sparepart list added!");
+        for(Sparepart spa: sparepartArray) {
+            sparepartIDs.add(spa.getSparepartID());
+            sparepartNames.add(spa.getName());
+        }
+    }
+
+    public String getSparepartID() {
+        String spID = "empty";
+        //find the same name in sparepartArray
+        String spName = sparepartPicker.getSelectedItem().toString();
+        for(Sparepart spa: sparepartArray) {
+            if(spa.getName().equals(spName)) {
+                Log.d("foundID", "Same name has been found!");
+                spID = spa.getSparepartID();
+                break;
+            }
+        }
+        return spID;
+    }
+
+    public String getSparepartName() {
+        return sparepartPicker.getSelectedItem().toString();
+    }
+
+    public int getQtyValue() {
+        return Integer.valueOf(qtyValue.getText().toString());
     }
 
     public void setQtyValue(int value) {
@@ -112,11 +108,16 @@ public class SparepartFormGenerator extends RelativeLayout {
 
     private Spinner createSparepartPicker(Context ctx) {
         sparepartPicker = new Spinner(ctx);
-        //setUniqueID(sparepartPicker, sparepartPickerID);
-        //Log.d("createSpinner", String.valueOf(sparepartPickerID));
-        //sparepartPicker
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.spinner_name_spr));
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(ctx, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.spinner_name_spr));
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        sparepartPicker.setAdapter(spinnerArrayAdapter);
+        return sparepartPicker;
+    }
+
+    private Spinner createSparepartPicker(Context ctx, List<String> array) {
+        sparepartPicker = new Spinner(ctx);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(ctx, android.R.layout.simple_spinner_item, array);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         sparepartPicker.setAdapter(spinnerArrayAdapter);
         return sparepartPicker;
     }
@@ -195,5 +196,61 @@ public class SparepartFormGenerator extends RelativeLayout {
         reference = View.generateViewId();
         view.setId(reference);
         //Log.d("uniqueID", String.valueOf(reference));
+    }
+
+    private void setupLayout(Context context) {
+        //defining pre-init before layout creation
+        DEFAULT_WIDTH_BUTTON = convertIntToDP(40);
+        DEFAULT_HEIGHT_BUTTON = convertIntToDP(40);
+        DEFAULT_SPINNER_WIDTH = convertIntToDP(180);
+        DEFAULT_SPINNER_HEIGHT = convertIntToDP(40);
+        //the rest of LayoutParams should be defined here
+        LayoutParams layPar = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        layPar.setMargins(convertIntToDP(8), convertIntToDP(8), convertIntToDP(8), convertIntToDP(8));
+        setLayoutParams(layPar);
+
+        //setting up the elements
+        //1. Spare_Part Picker
+        LayoutParams lpSpinner = new LayoutParams(DEFAULT_SPINNER_WIDTH, DEFAULT_SPINNER_HEIGHT);
+        lpSpinner.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
+        lpSpinner.addRule(ALIGN_PARENT_LEFT);
+        if(sparepartNames.size() > 0) {
+            createSparepartPicker(context, this.sparepartNames);
+        } else {
+            createSparepartPicker(context);
+        }
+        sparepartPickerID = View.generateViewId();
+        sparepartPicker.setId(sparepartPickerID);
+        sparepartPicker.setLayoutParams(lpSpinner);
+        addView(sparepartPicker);
+        //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
+        //2. Quantity value
+        LayoutParams lpTextView = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        lpTextView.setMargins(convertIntToDP(10), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
+        //Log.d("sparepartPickerID", String.valueOf(sparepartPickerID));
+        lpTextView.addRule(RelativeLayout.RIGHT_OF, sparepartPickerID);
+        createQtyValue(context);
+        qtyValueID = View.generateViewId();
+        qtyValue.setId(qtyValueID);
+        qtyValue.setLayoutParams(lpTextView);
+        qtyValue.setTextSize(26);
+        addView(qtyValue);
+        //3. Buttons
+        LayoutParams lpAddButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
+        lpAddButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
+        lpAddButton.addRule(RIGHT_OF, qtyValueID);
+        createAddButton(context);
+        addButtonID = View.generateViewId();
+        addButton.setId(addButtonID);
+        addButton.setLayoutParams(lpAddButton);
+        addView(addButton);
+        LayoutParams lpMinButton = new LayoutParams(DEFAULT_WIDTH_BUTTON, DEFAULT_HEIGHT_BUTTON);
+        lpMinButton.setMargins(convertIntToDP(4), convertIntToDP(4), convertIntToDP(8), convertIntToDP(4));
+        lpMinButton.addRule(RIGHT_OF, addButtonID);
+        createMinButton(context);
+        minButtonID = View.generateViewId();
+        minButton.setId(minButtonID);
+        minButton.setLayoutParams(lpMinButton);
+        addView(minButton);
     }
 }

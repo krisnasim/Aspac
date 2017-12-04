@@ -6,6 +6,8 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import id.co.ncl.aspac.database.AspacDatabase;
+import id.co.ncl.aspac.database.AspacSQLite;
+import id.co.ncl.aspac.database.DatabaseManager;
 
 /**
  * Created by Jonathan Simananda on 29/11/2017.
@@ -15,10 +17,13 @@ public class Aspac extends Application {
 
     //public AspacDatabase db;
     //public final static String DATABASE_NAME = "aspac_room_database";
+    private AspacSQLite myDb;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        myDb = new AspacSQLite(getApplicationContext());
+        DatabaseManager.initializeInstance(myDb);
         //db = Room.databaseBuilder(getApplicationContext(), AspacDatabase.class, DATABASE_NAME).build();
     }
 
