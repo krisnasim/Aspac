@@ -1,5 +1,6 @@
 package id.co.ncl.aspac.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -430,6 +432,35 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         act.changeFragmentNoBS(newFrag);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 0:
+                if (requestCode == Activity.RESULT_OK) {
+
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        try {
+            if(bluetoothSocket != null) {
+                bluetoothSocket.close();
+            }
+            if(bluetoothAdapter != null) {
+                bluetoothAdapter.disable();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean checkForSparepartData() {
         boolean result = false;
         //check for data from sparepart fragment
@@ -595,12 +626,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private void FindBluetoothDevice(){
         try {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            bluetoothAdapter.enable();
             if(bluetoothAdapter == null){
                 Toast.makeText(getActivity(), "No Bluetooth Adapter found", Toast.LENGTH_LONG).show();
             }
             if(bluetoothAdapter.isEnabled()){
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBT,0);
+                //startActivityForResult(enableBT,0);
             }
 
             Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
@@ -615,10 +647,43 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                         break;
                     }
                 }
+                //open bluetooth printer
+                openBluetoothPrinter();
             }
 
-            //open bluetooth printer
-            openBluetoothPrinter();
+            //try using thread?
+//            Thread thr = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//                    bluetoothAdapter.enable();
+//                    if(bluetoothAdapter == null){
+//                        Toast.makeText(getActivity(), "No Bluetooth Adapter found", Toast.LENGTH_LONG).show();
+//                    }
+//                    if(bluetoothAdapter.isEnabled()){
+//                        Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                        //startActivityForResult(enableBT,0);
+//                    }
+//
+//                    Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
+//
+//                    if(pairedDevice.size()>0){
+//                        for(BluetoothDevice pairedDev:pairedDevice){
+//                            Log.d("printerName", pairedDev.getName());
+//                            // My Bluetoth printer name is RPP-02
+//                            if(pairedDev.getName().equals("RPP-02")){
+//                                bluetoothDevice = pairedDev;
+//                                Toast.makeText(getActivity(), "Bluetooth Printer Attached: "+pairedDev.getName(), Toast.LENGTH_LONG).show();
+//                                break;
+//                            }
+//                        }
+//                    }
+//
+//                    //open bluetooth printer
+//                    openBluetoothPrinter();
+//                }
+//            });
+//            thr.run();
         } catch(Exception ex){
             ex.printStackTrace();
         }
@@ -626,11 +691,12 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     }
 
     // then, Open Bluetooth Printer connection
-    private void openBluetoothPrinter() throws IOException {
+    private void openBluetoothPrinter() {
         try{
             //Standard uuid from string //
             UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
             bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuidSting);
+            bluetoothAdapter.cancelDiscovery();
             bluetoothSocket.connect();
             outputStream = bluetoothSocket.getOutputStream();
             inputStream = bluetoothSocket.getInputStream();
@@ -638,21 +704,26 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             beginListenData();
         }catch (Exception ex){
             ex.printStackTrace();
+            Log.d("errorMsg", ex.getMessage());
             try {
                 Log.e("errorFall","trying fallback...");
 
-//                UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+                UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 //                final Method m = bluetoothDevice.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
-//                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, uuidSting);
+//                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);
 
-                //bluetoothSocket =(BluetoothSocket) bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(bluetoothDevice,2);
-//                bluetoothSocket.connect();
+                bluetoothSocket =(BluetoothSocket) bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(bluetoothDevice,1);
+                bluetoothSocket.connect();
 
-                Log.e("","Connected");
+                //Log.e("","Connected");
             }
             catch (Exception e2) {
                 Log.e("", "Couldn't establish Bluetooth connection!");
                 e2.printStackTrace();
+                bluetoothAdapter.disable();
+                //bluetoothSocket.close();
+                //inputStream.close();
+                //outputStream.close();
             }
 
         }
@@ -700,12 +771,14 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                                 }
                             }
                         }catch(Exception ex){
+                            Log.d("listenDataError", ex.getMessage());
                             stopWorker=true;
                         }
                     }
                 }
             });
             thread.start();
+            //thread.join();
             //print the data
             printData();
         }catch (Exception ex){
@@ -761,7 +834,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             //lblPrinterName.setText("Printing Text...");
             Toast.makeText(getActivity(), "Mencetak tulisan...", Toast.LENGTH_SHORT).show();
             //after finished, disconnect the printer
-            disconnectBT();
+            //disconnectBT();
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -771,9 +844,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     void disconnectBT() throws IOException {
         try {
             stopWorker=true;
-            outputStream.close();
-            inputStream.close();
-            bluetoothSocket.close();
+            //outputStream.close();
+            //inputStream.close();
+            //bluetoothSocket.close();
+            //bluetoothAdapter.disable();
             //lblPrinterName.setText("Printer Disconnected.");
             Toast.makeText(getActivity(), "Printer Terputus", Toast.LENGTH_SHORT).show();
         }catch (Exception ex){
