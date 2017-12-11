@@ -142,8 +142,12 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d("onCreate", "SAVING INSTANCES!");
-        outState.putString("globalArray", dataGlobalArray.toString());
-        outState.putParcelableArrayList("work", workData);
+        if(dataGlobalArray != null) {
+            outState.putString("globalArray", dataGlobalArray.toString());
+        }
+        if(workData.size() > 0) {
+            outState.putParcelableArrayList("work", workData);
+        }
     }
 
     @Override
