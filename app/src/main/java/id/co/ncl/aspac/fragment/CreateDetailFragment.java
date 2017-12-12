@@ -1,6 +1,7 @@
 package id.co.ncl.aspac.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -59,12 +60,14 @@ public class CreateDetailFragment extends Fragment {
     private JSONArray machineSpareparts = new JSONArray();
     private List<SparepartFormGenerator> sparepartForms = new ArrayList<>();
     private List<Sparepart> sparepartArray = new ArrayList<>();
-    private JSONObject previousDataKeren;
+    private JSONObject finalJSONObj;
     private JSONObject dataMachine;
     private int machinePosition;
     private String machineID;
     private Long serviceID;
     private boolean sparepartExists = false;
+    private int rtbs_flag, rtas_flag, job_status;
+    private SharedPreferences sharedPref;
 
     private DatabaseManager dbManager;
 
@@ -239,6 +242,9 @@ public class CreateDetailFragment extends Fragment {
             //Toast.makeText(ctx, "Tidak ada sparepart untuk mesin ini!", Toast.LENGTH_SHORT).show();
         }
 
+        //get the final JSON
+        setupFinalJSON(Integer.valueOf(newMachine.getMachineID()));
+
 //        parts = new Spare_Part[]{
 //                new Spare_Part("AASDC23", "Head counter part"),
 //                new Spare_Part("W3CAASD", "Windle cash counter"),
@@ -324,5 +330,56 @@ public class CreateDetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    private void setupFinalJSON(int machineID) {
+        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+
+        try {
+            finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+
+            if(finalJSONObj.equals("empty")) {
+                //no JSON created yet. no need to set checked boxes and selected spareparts
+            } else {
+                JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
+                for(int x = 0; x < machineJSONArray.length(); x++) {
+                    JSONObject machineJSON = machineJSONArray.getJSONObject(x);
+                    if(machineJSON.getInt("machine_id") == machineID) {
+                        rtbs_flag = machineJSON.getInt("rtbs_flag");
+                        rtas_flag = machineJSON.getInt("rtas_flag");
+                        job_status = machineJSON.getInt("job_status");
+
+                        if(rtbs_flag == 1) {
+                            rtbs_check_box.setChecked(true);
+                        }
+                        if(rtas_flag == 1) {
+                            rtas_check_box.setChecked(true);
+                        }
+                        if(job_status == 1) {
+                            job_status_ok_radio_btn.setChecked(true);
+                        } else {
+                            job_status_bad_radio_btn.setChecked(true);
+                        }
+
+                        JSONArray sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
+                        if(sparepartJSONArray.length() > 0) {
+                            for(int c = 0; c < sparepartJSONArray.length(); c++) {
+                                JSONObject sparepartJSON = sparepartJSONArray.getJSONObject(c);
+                                SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
+                                form1.setSparepartArray(sparepartArray);
+                                //set the spinner to selected to exact name, and also add qty!
+                                form1.setSparepartPickerSelected(sparepartJSON.getInt("sparepart_id"));
+                                form1.setQtyValue(sparepartJSON.getInt("qty"));
+                                sparepart_layout.addView(form1);
+                                sparepartForms.add(form1);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

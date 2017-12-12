@@ -122,6 +122,32 @@ public class SparepartFormGenerator extends RelativeLayout {
         return sparepartPicker;
     }
 
+    public void setSparepartPickerSelected(int sparepartPickerID) {
+        //Log.d("pickSparepart", "START PICK YOUR SPINNER");
+        //Log.d("pickSparepart", "sparepartID "+sparepartPickerID);
+        String spName = "";
+        for(Sparepart spa: sparepartArray) {
+            //Log.d("loopSparepart", "loop sparepartID "+spa.getSparepartID());
+            if(Integer.valueOf(spa.getSparepartID()) == sparepartPickerID) {
+                Log.d("foundID", "Same ID has been found!");
+                Log.d("foundName", "Sparepart name: "+spa.getName());
+                spName = spa.getName();
+                break;
+            }
+        }
+
+        for(int j = 0; j < sparepartArray.size(); j++) {
+            sparepartPicker.setSelection(j);
+            String selected = sparepartPicker.getSelectedItem().toString();
+            //Log.d("sparepartName", "Selected sparepart name "+selected);
+            if(selected.equals(spName)) {
+                //nice selection
+                Log.d("selectedItem", "found the CHOSEN one!");
+                break;
+            }
+        }
+    }
+
     public void setAddButton(int dpWidth, int dpHeight, String label) {
         //convert integers into dp equivalent first
         int finalDPWidth = convertIntToDP(dpWidth);

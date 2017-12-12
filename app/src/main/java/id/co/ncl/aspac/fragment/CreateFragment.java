@@ -541,7 +541,20 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                         if(finalJSONObj.has("machine")) {
                             //if it HAS the name
                             machineStatusArray = finalJSONObj.getJSONArray("machine");
-                            machineStatusArray.put(machineStatus);
+                            //check if we add NEW machine, or REVISE old machine data
+                            for(int g = 0; g < machineStatusArray.length(); g++) {
+                                JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
+                                if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
+                                    //replace the old on with the new one, instead of ADDING
+                                    machineStatusArray.put(g, machineStatus);
+                                    break;
+                                } else {
+                                    if(g - machineStatusArray.length() == 1) {
+                                        machineStatusArray.put(machineStatus);
+                                    }
+                                }
+                            }
+                            //then put the final array back to json
                             finalJSONObj.put("machine", machineStatusArray);
                         } else {
                             //if it HAS NOT the name
