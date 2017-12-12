@@ -427,6 +427,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
             preferences.edit().remove("current_service_json").apply();
 
+            //delete the sent service
+            ServiceDao serDAO = new ServiceDao(dbManager);
+            serDAO.delete(cachedService);
+            serDAO.closeConnection();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -492,6 +497,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else if(args.containsKey("machine_status")){
+                try {
+                    machineStatus = new JSONObject(args.getString("machine_status"));
+                    result = true;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return result;
@@ -536,7 +548,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                     if(checkForSparepartData()) {
                         //put inner object first
-                        machineStatus.put("sparepart_consumed", machineSpareparts);
+                        if(machineSpareparts.length() > 0) {
+                            machineStatus.put("sparepart_consumed", machineSpareparts);
+                        }
                         //and then, put the object into json
                         if(finalJSONObj.has("machine")) {
                             //if it HAS the name
