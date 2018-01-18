@@ -151,6 +151,11 @@ public class ServiceDao {
         Log.d("deleteServiceDao", "Amount deleted rows: "+count);
     }
 
+    public void deleteAll() {
+        db.execSQL("delete from "+ dbHelper.TABLE_SERVICE);
+        Log.d("deleteServiceDao", "Table deleted");
+    }
+
     public int getCount() {
         int count = 0;
         Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, null, null, null, null, null);

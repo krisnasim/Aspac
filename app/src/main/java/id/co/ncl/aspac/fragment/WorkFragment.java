@@ -1,9 +1,7 @@
 package id.co.ncl.aspac.fragment;
 
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -13,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -25,11 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +34,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.WorkListAdapter;
@@ -54,6 +52,7 @@ import id.co.ncl.aspac.model.Work;
 public class WorkFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
     @BindView(R.id.work_list_listview) ListView work_list_listview;
+    @BindView(R.id.refresh_service_btn) Button refresh_service_btn;
 
     private ListView lv;
     private Resources res;
@@ -68,8 +67,25 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     List<Long> serviceIDs = new ArrayList<>();
     List<Long> machineIDs = new ArrayList<>();
 
-    private DatabaseManager dbManager;
+    @OnClick(R.id.refresh_service_btn)
+    public void refreshData() {
+        //wait with dialog
+        progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Mohon tunggu...");
+        progressDialog.show();
 
+        ServiceDao serDAO = new ServiceDao(dbManager);
+        serDAO.deleteAll();
+        serDAO.closeConnection();
+
+        //get work API
+        getAllWorkData();
+    }
+
+    private DatabaseManager dbManager;
 
     public WorkFragment() {
         // Required empty public constructor

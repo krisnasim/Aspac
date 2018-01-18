@@ -113,7 +113,8 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
         int result = spaDAO.getCount();
         spaDAO.closeConnection();
 
-        if(result == 472) {
+//        if(result == 472) {
+        if(result > 0) {
             //all data is here. no need for API calls
             Log.d("dataLocal", "Data has been cached!");
         } else {
