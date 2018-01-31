@@ -7,6 +7,7 @@ package id.co.ncl.aspac.model;
 public class Machine {
 
     private int id;
+    private int tempServiceID;
     private String machineID;
     private String brand;
     private String model;
@@ -21,6 +22,14 @@ public class Machine {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getTempServiceID() {
+        return tempServiceID;
+    }
+
+    public void setTempServiceID(int tempServiceID) {
+        this.tempServiceID = tempServiceID;
     }
 
     public String getMachineID() {

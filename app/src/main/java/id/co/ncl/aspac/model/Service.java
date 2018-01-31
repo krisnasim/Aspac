@@ -7,6 +7,7 @@ package id.co.ncl.aspac.model;
 public class Service {
 
     private int id;
+    private String noLPS;
     private String dateService;
     private int typeService;
     //Customer Branch
@@ -54,6 +55,14 @@ public class Service {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getNoLPS() {
+        return noLPS;
+    }
+
+    public void setNoLPS(String noLPS) {
+        this.noLPS = noLPS;
     }
 
     public String getDateService() {

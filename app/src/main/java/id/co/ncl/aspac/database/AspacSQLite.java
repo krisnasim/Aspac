@@ -22,6 +22,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String SERVICE_COLUMN_ID = "_id";
     public static final String SERVICE_COLUMN_DATE_SERVICE = "date_service";
     public static final String SERVICE_COLUMN_TYPE_SERVICE = "type_service";
+    public static final String SERVICE_COLUMN_NO_LPS = "no_lps";
     //customer branch portion
     public static final String SERVICE_COLUMN_CB_ID = "cb_id";
     public static final String SERVICE_COLUMN_CB_CODE = "cb_code";
@@ -66,6 +67,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String TABLE_MACHINE = "machine";
     //column info
     public static final String MACHINE_COLUMN_ID = "_id";
+    public static final String MACHINE_COLUMN_TEMP_SERVICE_ID = "temp_service_id";
     public static final String MACHINE_COLUMN_MACHINE_ID = "machine_id";
     public static final String MACHINE_COLUMN_BRAND = "brand";
     public static final String MACHINE_COLUMN_MODEL = "model";
@@ -91,6 +93,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + SERVICE_COLUMN_ID + " integer primary key autoincrement, "
             + SERVICE_COLUMN_DATE_SERVICE + " text, "
             + SERVICE_COLUMN_TYPE_SERVICE + " integer, "
+            + SERVICE_COLUMN_NO_LPS + " text, "
             + SERVICE_COLUMN_CB_ID + " integer, "
             + SERVICE_COLUMN_CB_CODE + " text, "
             + SERVICE_COLUMN_CB_INITIAL + " text, "
@@ -128,11 +131,12 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + SERVICE_COLUMN_T_CREATED_AT + " text, "
             + SERVICE_COLUMN_T_UPDATED_AT + " text);";
 
-    //service table sql creation
+    //machine table sql creation
     private static final String MACHINE_TABLE_CREATE = "create table "
             + TABLE_MACHINE + "( "
             + MACHINE_COLUMN_ID + " integer primary key autoincrement, "
             + MACHINE_COLUMN_MACHINE_ID + " integer, "
+            + MACHINE_COLUMN_TEMP_SERVICE_ID + " integer, "
             + MACHINE_COLUMN_BRAND + " text not null, "
             + MACHINE_COLUMN_MODEL + " text not null, "
             + MACHINE_COLUMN_SERIAL_NUM + " text not null, "
@@ -140,7 +144,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + MACHINE_COLUMN_SERVICE_ID + " integer, "
             + "foreign key (" + MACHINE_COLUMN_SERVICE_ID + ") REFERENCES " + TABLE_SERVICE + " (" + SERVICE_COLUMN_ID + "));";
 
-    //service table sql creation
+    //sparepart table sql creation
     private static final String SPAREPART_TABLE_CREATE = "create table "
             + TABLE_SPAREPART + "( "
             + SPAREPART_COLUMN_ID + " integer primary key autoincrement, "

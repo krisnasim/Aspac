@@ -33,11 +33,13 @@ public class MachineDao {
         cursor.moveToFirst();
         for (int w = 0; w < cursor.getCount(); w++) {
             Machine mac = new Machine();
+            mac.setId(cursor.getInt(0));
             mac.setMachineID(cursor.getString(1));
-            mac.setBrand(cursor.getString(2));
-            mac.setModel(cursor.getString(3));
-            mac.setSerialNumber(cursor.getString(4));
-            mac.setSalesNumber(cursor.getString(5));
+            mac.setTempServiceID(cursor.getInt(2));
+            mac.setBrand(cursor.getString(3));
+            mac.setModel(cursor.getString(4));
+            mac.setSerialNumber(cursor.getString(5));
+            mac.setSalesNumber(cursor.getString(6));
 
             machines.add(mac);
             cursor.moveToNext();
@@ -52,11 +54,13 @@ public class MachineDao {
         cursor.moveToFirst();
         for (int w = 0; w < cursor.getCount(); w++) {
             Machine mac = new Machine();
+            mac.setId(cursor.getInt(0));
             mac.setMachineID(cursor.getString(1));
-            mac.setBrand(cursor.getString(2));
-            mac.setModel(cursor.getString(3));
-            mac.setSerialNumber(cursor.getString(4));
-            mac.setSalesNumber(cursor.getString(5));
+            mac.setTempServiceID(cursor.getInt(2));
+            mac.setBrand(cursor.getString(3));
+            mac.setModel(cursor.getString(4));
+            mac.setSerialNumber(cursor.getString(5));
+            mac.setSalesNumber(cursor.getString(6));
 
             machines.add(mac);
             cursor.moveToNext();
@@ -69,11 +73,31 @@ public class MachineDao {
 
         Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_MACHINE_ID + "=" + machineID, null, null, null, null);
         cursor.moveToFirst();
+        Log.d("result", String.valueOf(cursor.getCount()));
+        mac.setId(cursor.getInt(0));
         mac.setMachineID(cursor.getString(1));
-        mac.setBrand(cursor.getString(2));
-        mac.setModel(cursor.getString(3));
-        mac.setSerialNumber(cursor.getString(4));
-        mac.setSalesNumber(cursor.getString(5));
+        mac.setTempServiceID(cursor.getInt(2));
+        mac.setBrand(cursor.getString(3));
+        mac.setModel(cursor.getString(4));
+        mac.setSerialNumber(cursor.getString(5));
+        mac.setSalesNumber(cursor.getString(6));
+
+        return mac;
+    }
+
+    public Machine getByTempID(String machineID) {
+        Machine mac = new Machine();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID + "=" + machineID, null, null, null, null);
+        cursor.moveToFirst();
+        Log.d("result", String.valueOf(cursor.getCount()));
+        mac.setId(cursor.getInt(0));
+        mac.setMachineID(cursor.getString(1));
+        mac.setTempServiceID(cursor.getInt(2));
+        mac.setBrand(cursor.getString(3));
+        mac.setModel(cursor.getString(4));
+        mac.setSerialNumber(cursor.getString(5));
+        mac.setSalesNumber(cursor.getString(6));
 
         return mac;
     }
@@ -81,6 +105,7 @@ public class MachineDao {
     public long insert(Machine machine) {
         ContentValues values = new ContentValues();
         values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
+        values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
         values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
         values.put(dbHelper.MACHINE_COLUMN_MODEL, machine.getModel());
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());

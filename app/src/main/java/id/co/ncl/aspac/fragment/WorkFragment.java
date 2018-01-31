@@ -200,6 +200,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //attempt number two. let's do this, SQLite
                     Service service = new Service();
                     //service.setDateService(obj.getString("date_service"));
+                    service.setNoLPS(obj.getString("no_lps"));
+                    Log.d("noLPS", obj.getString("no_lps"));
                     service.setTypeService(obj.getInt("type_lps"));
                     service.setCBID(custJSON.getInt("id"));
                     service.setCode(custJSON.getString("branch_code"));
@@ -257,6 +259,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
                     long serviceID = serDAO.insert(service);
+                    Log.d("serviceIDSuccess", String.valueOf(serviceID));
                     serviceIDs.add(serviceID);
                     serDAO.closeConnection();
 
@@ -334,7 +337,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //final long[] machineIDs = new long[detailsArray.length()];
                     for (int y = 0; y < detailsArray.length(); y++) {
                         JSONObject detailObjt = detailsArray.getJSONObject(y);
-                        JSONObject tempSerObj = detailObj.getJSONObject("temporary_service");
+                        JSONObject tempSerObj = detailObjt.getJSONObject("temporary_service");
                         JSONObject mesinObj = tempSerObj.getJSONObject("machine");
                         //Log.d("JSONContent", mesinJSON.getString("brand"));
                         //Log.d("JSONContent", mesinJSON.getString("model"));
@@ -343,6 +346,10 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                         //attempt number two. let's do this, SQLite
                         Machine machine = new Machine();
                         machine.setMachineID(mesinObj.getString("id"));
+                        Log.d("machineID", mesinObj.getString("id"));
+                        Log.d("machineTempID", String.valueOf(detailObjt.getInt("temp_service_id")));
+                        Log.d("detail length", String.valueOf(detailsArray.length()));
+                        machine.setTempServiceID(detailObjt.getInt("temp_service_id"));
                         machine.setBrand(mesinObj.getString("brand"));
                         machine.setModel(mesinObj.getString("model"));
                         machine.setSalesNumber(tempObj.getString("sales_number"));
@@ -351,6 +358,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                         MachineDao macDAO = new MachineDao(dbManager);
                         long machineID = macDAO.insert(machine);
+                        Log.d("machineIDDB", String.valueOf(machineID));
                         macDAO.closeConnection();
                         machineIDs.add(machineID);
                     }
@@ -521,8 +529,9 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //Toast.makeText(getActivity(), "Hey! You clicked on some work!", Toast.LENGTH_SHORT).show();
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
+                    Log.d("position", String.valueOf(position));
+                    Log.d("selectedPosID", String.valueOf(serviceIDs.get(position)));
                     args.putLong("service_id", serviceIDs.get(position));
-                    Log.d("serviceID", String.valueOf(serviceIDs.get(position)));
 //                    try {
 //                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
 //                    } catch (JSONException e) {

@@ -208,17 +208,22 @@ public class CreateDetailFragment extends Fragment {
         dbManager = DatabaseManager.getInstance();
         ctx = getActivity();
 
-        Log.d("machineID", machineID);
+        Log.d("machineIDDetail", machineID);
 
         //get the machineID first
         MachineDao macDAO = new MachineDao(dbManager);
         Machine newMachine = macDAO.get(machineID);
+        Log.d("machineSpec", newMachine.getBrand());
+        Log.d("machineSpec", newMachine.getModel());
+        Log.d("machineSpec", String.valueOf(newMachine.getTempServiceID()));
+        Log.d("machineSpec", newMachine.getMachineID());
         macDAO.closeConnection();
         //fill in the machine json
         try {
-            machineStatus.put("machine_id", Integer.valueOf(newMachine.getMachineID()));
-            machineStatus.put("serial_number", newMachine.getSerialNumber());
-            machineStatus.put("sales_number", newMachine.getSalesNumber());
+//            machineStatus.put("machine_id", Integer.valueOf(newMachine.getMachineID()));
+//            machineStatus.put("serial_number", newMachine.getSerialNumber());
+//            machineStatus.put("sales_number", newMachine.getSalesNumber());
+            machineStatus.put("temp_service_id", newMachine.getTempServiceID());
             //machineStatus.put("sales_number", 123);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -231,6 +236,7 @@ public class CreateDetailFragment extends Fragment {
         spaDAO.closeConnection();
 
         if(sparepartArray.size() > 0) {
+            Log.d("spareExist", "SPAREPART EXIST");
             sparepartExists = true;
 //            for(int a = 0; a < sparepartArray.size(); a++) {
 //                Sparepart sparepart = sparepartArray.get(a);
@@ -239,11 +245,12 @@ public class CreateDetailFragment extends Fragment {
 //                Log.d("SparepartCont", sparepart.getName());
 //            }
         } else {
+            Log.d("spareExist", "SPAREPART NOT EXIST");
             //Toast.makeText(ctx, "Tidak ada sparepart untuk mesin ini!", Toast.LENGTH_SHORT).show();
         }
 
         //get the final JSON
-        setupFinalJSON(Integer.valueOf(newMachine.getMachineID()));
+        setupFinalJSON(newMachine.getTempServiceID());
 
 //        parts = new Spare_Part[]{
 //                new Spare_Part("AASDC23", "Head counter part"),
@@ -338,13 +345,18 @@ public class CreateDetailFragment extends Fragment {
         try {
             finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
 
-            if(finalJSONObj.equals("empty")) {
-                //no JSON created yet. no need to set checked boxes and selected spareparts
-            } else {
+            Log.d("machineIDfinalJSON", String.valueOf(machineID));
+
+            if(finalJSONObj.has("machine")) {
                 JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
                 for(int x = 0; x < machineJSONArray.length(); x++) {
                     JSONObject machineJSON = machineJSONArray.getJSONObject(x);
-                    if(machineJSON.getInt("machine_id") == machineID) {
+                    Log.d("tempServiceID", String.valueOf(machineJSON.getInt("temp_service_id")));
+                    //Log.d("tempServiceID", String.valueOf(machineJSON.getString("brand")));
+                    //Log.d("tempServiceID", String.valueOf(machineJSON.getString("model")));
+                    Log.d("loop", String.valueOf(x));
+                    if(machineJSON.getInt("temp_service_id") == machineID) {
+                        Log.d("tempService", "GOT IT");
                         rtbs_flag = machineJSON.getInt("rtbs_flag");
                         rtas_flag = machineJSON.getInt("rtas_flag");
                         job_status = machineJSON.getInt("job_status");
@@ -360,9 +372,11 @@ public class CreateDetailFragment extends Fragment {
                         } else {
                             job_status_bad_radio_btn.setChecked(true);
                         }
-
-                        JSONArray sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
-                        if(sparepartJSONArray.length() > 0) {
+                        JSONArray sparepartJSONArray = null;
+                        if(machineJSON.has("sparepart_consumed")) {
+                            sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
+                        }
+                        if(sparepartJSONArray != null) {
                             for(int c = 0; c < sparepartJSONArray.length(); c++) {
                                 JSONObject sparepartJSON = sparepartJSONArray.getJSONObject(c);
                                 SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
@@ -374,7 +388,7 @@ public class CreateDetailFragment extends Fragment {
                                 sparepartForms.add(form1);
                             }
                         }
-                        break;
+                        //break;
                     }
                 }
             }

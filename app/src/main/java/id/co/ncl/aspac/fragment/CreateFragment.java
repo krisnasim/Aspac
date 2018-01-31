@@ -267,6 +267,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 //                e.printStackTrace();
 //            }
             serviceID = args.getLong("service_id");
+            Log.d("receivedSerID", String.valueOf(serviceID));
         }
     }
 
@@ -357,12 +358,20 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             for(int h = 0; h < mesinArray.size(); h++) {
                 Machine mac = mesinArray.get(h);
+                Log.d("mesin", mac.getBrand());
+                Log.d("mesin", mac.getModel());
+                Log.d("mesin", mac.getMachineID());
+                Log.d("mesin", String.valueOf(mac.getTempServiceID()));
+                Log.d("mesin", String.valueOf(mac.getId()));
                 //create new forum object
                 Mesin newMesin = new Mesin();
                 newMesin.setMesinBrand(mac.getBrand());
                 newMesin.setMesinModel(mac.getModel());
                 newMesin.setMesinNomorSeri(mac.getSerialNumber());
-                machineIDs.add(mac.getMachineID());
+                //Log.d("machineIDs", mac.getBrand());
+                Log.d("machineTempIDs", String.valueOf(mac.getTempServiceID()));
+                //machineIDs.add(String.valueOf(mac.getTempServiceID()));
+                machineIDs.add(String.valueOf(mac.getMachineID()));
                 mesinData.add(newMesin);
             }
             //checkForSparepartData();
@@ -524,15 +533,18 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             //check if there are any previous json
             if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
+                Log.d("finalJSON", "NO FINAL JSON EXIST!");
                 //create the new JSOn
                 finalJSONObj = new JSONObject();
                 try {
+                    finalJSONObj.put("no_lps", service.getNoLPS());
                     finalJSONObj.put("type_lps", service.getTypeService());
                     finalJSONObj.put("customer_id", service.getCustomerID());
                     finalJSONObj.put("customer_branch_id", service.getCBID());
                     finalJSONObj.put("teknisi_id", service.getTID());
                     finalJSONObj.put("date_lps", date);
                     finalJSONObj.put("tanggal_jam_selesai", dateTime);
+                    finalJSONObj.put("keterangan", "test keterangan. dummy data");
                     //finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
                     //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
                 } catch (JSONException e) {
@@ -543,6 +555,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 editor.putString("current_service_json", String.valueOf(finalJSONObj));
                 editor.apply();
             } else {
+                Log.d("finalJSON", "THERE IS FINAL JSON EXIST!");
                 //assign the JSON
                 try {
                     finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
@@ -558,7 +571,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                             //check if we add NEW machine, or REVISE old machine data
                             for(int g = 0; g < machineStatusArray.length(); g++) {
                                 JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
-                                if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
+                                //if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
+                                if(machineStatusOld.getInt("temp_service_id") == machineStatus.getInt("temp_service_id")) {
                                     //replace the old on with the new one, instead of ADDING
                                     machineStatusArray.put(g, machineStatus);
                                     break;
