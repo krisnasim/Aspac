@@ -80,7 +80,12 @@ public class ServiceDao {
 
     public Service get(long serviceID) {
         Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
-        cursor.moveToFirst();
+        boolean result = cursor.moveToFirst();
+        if(result) {
+
+        } else {
+
+        }
         return cursorToService(cursor);
     }
 

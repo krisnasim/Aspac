@@ -199,8 +199,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                     //attempt number two. let's do this, SQLite
                     Service service = new Service();
-                    service.setDateService(obj.getString("date_service"));
-                    service.setTypeService(obj.getInt("type_service"));
+                    //service.setDateService(obj.getString("date_service"));
+                    service.setTypeService(obj.getInt("type_lps"));
                     service.setCBID(custJSON.getInt("id"));
                     service.setCode(custJSON.getString("branch_code"));
                     service.setInitial(custJSON.getString("branch_initial"));
@@ -235,19 +235,25 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setUpdatedAt(custJSON.getString("updated_at"));
                     service.setUpdatedAt("asd");
 
-                    JSONObject teknisiJSON = obj.getJSONObject("teknisi");
+                    JSONArray detailsArray = obj.getJSONArray("details");
+                    JSONObject detailObj = detailsArray.getJSONObject(0);
+                    JSONObject tempObj = detailObj.getJSONObject("temporary_service");
 
-                    service.setTID(teknisiJSON.getInt("id"));
-                    service.setTusername(teknisiJSON.getString("username"));
-                    service.setTname(teknisiJSON.getString("name"));
-                    service.setDob(teknisiJSON.getString("dob"));
-                    service.setEmail(teknisiJSON.getString("email"));
-                    service.setApiToken(teknisiJSON.getString("api_token"));
-                    service.setRoleID(teknisiJSON.getInt("role_id"));
-                    service.setBranchID(teknisiJSON.getInt("branch_id"));
-                    service.setSuperiorID(teknisiJSON.getString("superior_id"));
-                    service.setTcreatedAt(teknisiJSON.getString("created_at"));
-                    service.setTupdatedAt(teknisiJSON.getString("updated_at"));
+                    service.setDateService(tempObj.getString("date_lps"));
+
+                    //JSONObject teknisiJSON = obj.getJSONObject("teknisi");
+
+                    service.setTID(custJSON.getInt("teknisi_id"));
+                    service.setTusername(custJSON.getString("username"));
+                    //service.setTname(teknisiJSON.getString("name"));
+                    //service.setDob(teknisiJSON.getString("dob"));
+                    //service.setEmail(teknisiJSON.getString("email"));
+                    //service.setApiToken(teknisiJSON.getString("api_token"));
+                    //service.setRoleID(teknisiJSON.getInt("role_id"));
+                    //service.setBranchID(teknisiJSON.getInt("branch_id"));
+                    //service.setSuperiorID(teknisiJSON.getString("superior_id"));
+                    service.setTcreatedAt(custJSON.getString("created_at"));
+                    service.setTupdatedAt(custJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
                     long serviceID = serDAO.insert(service);
@@ -310,65 +316,50 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 //                        machines.clear();
 //                    }
 
-                    JSONArray mesinsArray = obj.getJSONArray("machines");
-                    //final long[] machineIDs = new long[mesinsArray.length()];
-                    for (int y = 0; y < mesinsArray.length(); y++) {
-                        JSONObject mesinJSON = mesinsArray.getJSONObject(y);
+//                    JSONObject mesinObj = tempObj.getJSONObject("machine");
+//                    //attempt number two. let's do this, SQLite
+//                    Machine machine = new Machine();
+//                    machine.setMachineID(mesinObj.getString("id"));
+//                    machine.setBrand(mesinObj.getString("brand"));
+//                    machine.setModel(mesinObj.getString("model"));
+//                    machine.setSalesNumber(tempObj.getString("sales_number"));
+//                    machine.setSerialNumber(tempObj.getString("serial_number"));
+//                    machine.setServiceID(serviceIDs.get(z).intValue());
+//
+//                    MachineDao macDAO = new MachineDao(dbManager);
+//                    long machineID = macDAO.insert(machine);
+//                    macDAO.closeConnection();
+//                    machineIDs.add(machineID);
+
+                    //final long[] machineIDs = new long[detailsArray.length()];
+                    for (int y = 0; y < detailsArray.length(); y++) {
+                        JSONObject detailObjt = detailsArray.getJSONObject(y);
+                        JSONObject tempSerObj = detailObj.getJSONObject("temporary_service");
+                        JSONObject mesinObj = tempSerObj.getJSONObject("machine");
                         //Log.d("JSONContent", mesinJSON.getString("brand"));
                         //Log.d("JSONContent", mesinJSON.getString("model"));
                         //Log.d("JSONContent", mesinJSON.getString("serial_number"));
 
                         //attempt number two. let's do this, SQLite
                         Machine machine = new Machine();
-                        machine.setMachineID(mesinJSON.getString("id"));
-                        machine.setBrand(mesinJSON.getString("brand"));
-                        machine.setModel(mesinJSON.getString("model"));
-                        machine.setSerialNumber(mesinJSON.getString("serial_number"));
-                        machine.setSalesNumber(mesinJSON.getString("sales_number"));
+                        machine.setMachineID(mesinObj.getString("id"));
+                        machine.setBrand(mesinObj.getString("brand"));
+                        machine.setModel(mesinObj.getString("model"));
+                        machine.setSalesNumber(tempObj.getString("sales_number"));
+                        machine.setSerialNumber(tempObj.getString("serial_number"));
                         machine.setServiceID(serviceIDs.get(z).intValue());
 
                         MachineDao macDAO = new MachineDao(dbManager);
                         long machineID = macDAO.insert(machine);
                         macDAO.closeConnection();
                         machineIDs.add(machineID);
-
-//                        for (int x = 0; x < 5; x++) {
-//                            Sparepart sparepart = new Sparepart();
-//                            sparepart.setCode("123");
-//                            sparepart.setName("Sparepart X");
-//                            sparepart.setMachineID(machineIDs.get(y).intValue());
-//
-//                            SparepartDao spaDAO = new SparepartDao(dbManager);
-//                            long sparepartID = spaDAO.insert(sparepart);
-//                        }
-
-//                        final Machine machine = new Machine();
-//                        machine.setMachineID(mesinJSON.getString("id"));
-//                        machine.setBrand(mesinJSON.getString("brand"));
-//                        machine.setModel(mesinJSON.getString("model"));
-//                        machine.setSerialNumber(mesinJSON.getString("serial_number"));
-//                        machine.setSalesNumber(mesinJSON.getString("sales_number"));
-//
-//                        machines.add(machine);
-//
-//                        if(spareparts.size() > 0) {
-//                            spareparts.clear();
-//                        }
-//
-//                        for (int x = 0; x < 5; x++) {
-//                            final Spare_Part sparepart = new Spare_Part();
-//                            sparepart.setName("3RP1340000001");
-//                            sparepart.setDescription("UI RUBBER KEYPAD R");
-//
-//                            spareparts.add(sparepart);
-//                        }
                     }
 
                     //create date formatting
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date date = null;
                     try {
-                        date = formatter.parse(obj.getString("date_service"));
+                        date = formatter.parse(tempObj.getString("date_lps"));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

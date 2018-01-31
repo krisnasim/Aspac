@@ -72,14 +72,14 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     //@BindView(R.id.expandableLayout2) ExpandableRelativeLayout expandableLayout2;
     //@BindView(R.id.expandableButton1) Button expandableButton1;
     @BindView(R.id.cust_data) TextView cust_data;
-    @BindView(R.id.engineer_name) TextView engineer_name;
+    //@BindView(R.id.engineer_name) TextView engineer_name;
     @BindView(R.id.date_time) TextView date_time;
     @BindView(R.id.daftar_mesin_list_view) ListView daftar_mesin_list_view;
     @BindView(R.id.create_form_4_card_view) CardView create_form_4_card_view;
     @BindView(R.id.create_form_button) Button create_form_button;
     @BindView(R.id.kerusakan_input) EditText kerusakan_input;
     @BindView(R.id.perbaikan_input) EditText perbaikan_input;
-    @BindView(R.id.print_button) Button print_button;
+    //@BindView(R.id.print_button) Button print_button;
 
     private View view;
     private MesinLPSAdapter adapter;
@@ -133,11 +133,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 //        expandableButton2(view);
 //    }
 
-    @OnClick(R.id.print_button)
-    public void printDemo() {
-        //begin the bluetooth chain
-        FindBluetoothDevice();
-    }
+//    @OnClick(R.id.print_button)
+//    public void printDemo() {
+//        //begin the bluetooth chain
+//        FindBluetoothDevice();
+//    }
 
     @OnClick(R.id.create_form_button)
     public void sendForm() {
@@ -347,7 +347,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setupFinalJSON(service);
             date_time.setText(service.getDateService());
             cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
-            engineer_name.setText(service.getTname());
+            //engineer_name.setText(service.getTname());
 
             serDAO.closeConnection();
 
@@ -942,7 +942,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             Toast.makeText(getActivity(), "Mencetak tulisan...", Toast.LENGTH_SHORT).show();
             //after finished, disconnect the printer
             //disconnectBT();
-            print_button.setEnabled(false);
+            //print_button.setEnabled(false);
         }catch (Exception ex){
             ex.printStackTrace();
         }
