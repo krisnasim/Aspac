@@ -37,12 +37,8 @@ import id.co.ncl.aspac.model.Sparepart;
 
 public class CreateDetailFragment extends Fragment {
 
-    //@BindView(R.id.add_number_btn) Button add_number_btn;
-    //@BindView(R.id.min_number_btn) Button min_number_btn;
     @BindView(R.id.add_sparepart_button) Button add_sparepart_button;
-    //@BindView(R.id.sparepart_qty) TextView sparepart_qty;
     @BindView(R.id.send_job_detail_button) Button send_job_detail_button;
-    //@BindView(R.id.input_part_select_demo) SparepartCompletionView completionView;
     @BindView(R.id.sparepart_layout) LinearLayout sparepart_layout;
     @BindView(R.id.rtas_check_box) CheckBox rtas_check_box;
     @BindView(R.id.rtbs_check_box) CheckBox rtbs_check_box;
@@ -50,12 +46,8 @@ public class CreateDetailFragment extends Fragment {
     @BindView(R.id.job_status_ok_radio_btn) RadioButton job_status_ok_radio_btn;
     @BindView(R.id.job_status_bad_radio_btn) RadioButton job_status_bad_radio_btn;
 
-    //private Spare_Part[] parts;
-    //private LinearLayout layout;
     private Context ctx;
-    //private ArrayAdapter<Spare_Part> adapterSpare;
     private JSONArray jsonSpareparts = new JSONArray();
-    //private JSONArray jsonMachines = new JSONArray();
     private JSONObject machineStatus = new JSONObject();
     private JSONArray machineSpareparts = new JSONArray();
     private List<SparepartFormGenerator> sparepartForms = new ArrayList<>();
@@ -68,26 +60,10 @@ public class CreateDetailFragment extends Fragment {
     private boolean sparepartExists = false;
     private int rtbs_flag, rtas_flag, job_status;
     private SharedPreferences sharedPref;
+    private String noLPS;
 
     private DatabaseManager dbManager;
 
-//    @OnClick(R.id.add_number_btn)
-//    public void addNumber() {
-//        int value = Integer.parseInt(sparepart_qty.getText().toString());
-//        value += 1;
-//        sparepart_qty.setText(String.valueOf(value));
-//    }
-//
-//    @OnClick(R.id.min_number_btn)
-//    public void minNumber() {
-//        int value = Integer.parseInt(sparepart_qty.getText().toString());
-//        value -= 1;
-//        if(value < 0) {
-//            sparepart_qty.setText("0");
-//        } else {
-//            sparepart_qty.setText(String.valueOf(value));
-//        }
-//    }
 
     @OnClick(R.id.add_sparepart_button)
     public void addSparepartLayout() {
@@ -186,15 +162,9 @@ public class CreateDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            //get the arguments here
-//            try {
-//                dataMachine = new JSONObject(args.getString("data"));
-//                previousDataKeren = new JSONObject(args.getString("dataKeren"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
             machineID = args.getString("machine_id");
             serviceID = args.getLong("service_id");
+            noLPS = args.getString("no_lps");
         }
     }
 
@@ -220,9 +190,6 @@ public class CreateDetailFragment extends Fragment {
         macDAO.closeConnection();
         //fill in the machine json
         try {
-//            machineStatus.put("machine_id", Integer.valueOf(newMachine.getMachineID()));
-//            machineStatus.put("serial_number", newMachine.getSerialNumber());
-//            machineStatus.put("sales_number", newMachine.getSalesNumber());
             machineStatus.put("temp_service_id", newMachine.getTempServiceID());
             //machineStatus.put("sales_number", 123);
         } catch (JSONException e) {
@@ -238,12 +205,6 @@ public class CreateDetailFragment extends Fragment {
         if(sparepartArray.size() > 0) {
             Log.d("spareExist", "SPAREPART EXIST");
             sparepartExists = true;
-//            for(int a = 0; a < sparepartArray.size(); a++) {
-//                Sparepart sparepart = sparepartArray.get(a);
-//                Log.d("SparepartCont", sparepart.getSparepartID());
-//                Log.d("SparepartCont", sparepart.getCode());
-//                Log.d("SparepartCont", sparepart.getName());
-//            }
         } else {
             Log.d("spareExist", "SPAREPART NOT EXIST");
             //Toast.makeText(ctx, "Tidak ada sparepart untuk mesin ini!", Toast.LENGTH_SHORT).show();
@@ -251,80 +212,6 @@ public class CreateDetailFragment extends Fragment {
 
         //get the final JSON
         setupFinalJSON(newMachine.getTempServiceID());
-
-//        parts = new Spare_Part[]{
-//                new Spare_Part("AASDC23", "Head counter part"),
-//                new Spare_Part("W3CAASD", "Windle cash counter"),
-//                new Spare_Part("AB78XYY", "Stopgap brake"),
-//                new Spare_Part("LLOP888", "Machine bracket"),
-//                new Spare_Part("M0N87YD", "Outer shell"),
-//                new Spare_Part("112UUIY", "Grease")
-//        };
-
-        //adapterSpare = new ArrayAdapter<Spare_Part>(getActivity(), android.R.layout.simple_list_item_1, parts);
-        //completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select_demo);
-        //completionView.setAdapter(adapterSpare);
-
-        //sparepart_qty.setText("1");
-
-//        if(previousDataKeren.length() != 0) {
-//            Log.d("JSONContent", "Starting new array of values");
-//            try {
-//                Log.d("JSONContent", previousDataKeren.getString("date_service"));
-//
-//                JSONObject custJSON = previousDataKeren.getJSONObject("customer_branch");
-//                Log.d("JSONContent", custJSON.getString("branch_name"));
-//                Log.d("JSONContent", custJSON.getString("branch_status"));
-//                Log.d("JSONContent", custJSON.getString("branch_address"));
-//                Log.d("JSONContent", custJSON.getString("office_phone_number"));
-//
-//                JSONObject teknisiJSON = previousDataKeren.getJSONObject("teknisi");
-//                Log.d("JSONContent", teknisiJSON.getString("username"));
-//                Log.d("JSONContent", teknisiJSON.getString("email"));
-//                Log.d("JSONContent", teknisiJSON.getString("name"));
-//
-//                JSONArray mesinsArray = previousDataKeren.getJSONArray("machines");
-//
-//                for(int y = 0; y < mesinsArray.length(); y++) {
-//                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-//                    Log.d("JSONContent", mesinJSON.getString("brand"));
-//                    Log.d("JSONContent", mesinJSON.getString("model"));
-//                    Log.d("JSONContent", mesinJSON.getString("serial_number"));
-//
-//                    if(mesinJSON.getString("brand").equals(dataMachine.getString("brand"))) {
-//                        if(mesinJSON.getString("model").equals(dataMachine.getString("model"))) {
-//                            if(mesinJSON.getString("serial_number").equals(dataMachine.getString("serial_number"))) {
-//                                //same machine picked. remember the position
-//                                machinePosition = y;
-//
-//                                if(mesinJSON.has("machine_status")) {
-//                                    JSONObject machineStats = mesinJSON.getJSONObject("machine_status");
-//                                    Log.d("JSONContent", machineStats.getString("rtas_status"));
-//                                    Log.d("JSONContent", machineStats.getString("rtbs_status"));
-//                                    Log.d("JSONContent", machineStats.getString("machine_ok"));
-//
-//                                    if(machineStats.getString("rtas_status").equals("true")) {
-//                                        rtas_check_box.setChecked(true);
-//                                    }
-//
-//                                    if(machineStats.getString("rtbs_status").equals("true")) {
-//                                        rtbs_check_box.setChecked(true);
-//                                    }
-//
-//                                    if(machineStats.getString("machine_ok").equals("true")) {
-//                                        job_status_ok_radio_btn.setChecked(true);
-//                                    } else {
-//                                        job_status_bad_radio_btn.setChecked(true);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         return view;
     }
@@ -343,13 +230,16 @@ public class CreateDetailFragment extends Fragment {
         sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
 
         try {
-            finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+            //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+            finalJSONObj = new JSONObject(sharedPref.getString(noLPS, "empty"));
 
             Log.d("machineIDfinalJSON", String.valueOf(machineID));
 
             if(finalJSONObj.has("machine")) {
                 JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
                 for(int x = 0; x < machineJSONArray.length(); x++) {
+                    Log.d("countMachineLoop", String.valueOf(x));
+                    Log.d("machineLength", String.valueOf(machineJSONArray.length()));
                     JSONObject machineJSON = machineJSONArray.getJSONObject(x);
                     Log.d("tempServiceID", String.valueOf(machineJSON.getInt("temp_service_id")));
                     //Log.d("tempServiceID", String.valueOf(machineJSON.getString("brand")));
@@ -375,9 +265,11 @@ public class CreateDetailFragment extends Fragment {
                         JSONArray sparepartJSONArray = null;
                         if(machineJSON.has("sparepart_consumed")) {
                             sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
+                            Log.d("sparepartJSON", sparepartJSONArray.toString(2));
                         }
                         if(sparepartJSONArray != null) {
                             for(int c = 0; c < sparepartJSONArray.length(); c++) {
+                                Log.d("arrayLength", String.valueOf(sparepartJSONArray.length()));
                                 JSONObject sparepartJSON = sparepartJSONArray.getJSONObject(c);
                                 SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
                                 form1.setSparepartArray(sparepartArray);

@@ -15,8 +15,6 @@ import id.co.ncl.aspac.database.DatabaseManager;
 
 public class Aspac extends Application {
 
-    //public AspacDatabase db;
-    //public final static String DATABASE_NAME = "aspac_room_database";
     private AspacSQLite myDb;
 
     @Override
@@ -24,7 +22,6 @@ public class Aspac extends Application {
         super.onCreate();
         myDb = new AspacSQLite(getApplicationContext());
         DatabaseManager.initializeInstance(myDb);
-        //db = Room.databaseBuilder(getApplicationContext(), AspacDatabase.class, DATABASE_NAME).build();
     }
 
     @Override
@@ -32,8 +29,4 @@ public class Aspac extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
-//    public AspacDatabase getDatabase() {
-//        return db;
-//    }
 }

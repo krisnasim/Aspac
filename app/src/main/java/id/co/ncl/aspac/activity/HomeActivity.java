@@ -91,8 +91,6 @@ public class HomeActivity extends AppCompatActivity
         previousMenu = selectedMenu;
         selectedMenu = id;
 
-        //Log.d("previousMenu", String.valueOf(previousMenu));
-        //Log.d("selectedMenu", String.valueOf(selectedMenu));
 
         if (id == R.id.nav_dashboard) {
             fragment = new HomeFragment();

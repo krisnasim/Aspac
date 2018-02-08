@@ -47,7 +47,6 @@ public class MesinLPSAdapter extends BaseAdapter implements View.OnClickListener
         }
     }
 
-
     @Override
     public void onClick(View view) {
 

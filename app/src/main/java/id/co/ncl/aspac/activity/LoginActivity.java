@@ -54,12 +54,8 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("username", input_username.getText().toString());
-//        params.put("password", input_pwd.getText().toString());
-
         JSONObject jsonObj = new JSONObject();
+
         try {
             jsonObj.put("username", input_username.getText().toString());
             jsonObj.put("password", input_pwd.getText().toString());
@@ -72,8 +68,6 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
         customJSONReq.setHeaders(headers);
 
         try {
-            //Map<String, String> testH = jsObjRequest.getHeaders();
-            //Log.d("headers",testH.get("Content-Type"));
             Log.d("headers", String.valueOf(customJSONReq.getHeaders()));
             Log.d("content", jsonObj.toString(2));
         } catch (AuthFailureError authFailureError) {
@@ -108,8 +102,6 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
         try {
             Log.d("onResponse", response.toString(2));
             JSONObject jsonObj = response;
-//            Log.d("JSON", jsonObj.getString("token"));
-//            Log.d("JSON", jsonObj.getString("name"));
 
             SharedPreferences sharedPref = getSharedPreferences("userCred", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();

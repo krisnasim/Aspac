@@ -30,6 +30,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.github.gcacace.signaturepad.views.SignaturePad;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,18 +69,17 @@ import id.co.ncl.aspac.model.Service;
 
 public class CreateFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
-    //@BindView(R.id.expandableLayout1) ExpandableRelativeLayout expandableLayout1;
-    //@BindView(R.id.expandableLayout2) ExpandableRelativeLayout expandableLayout2;
-    //@BindView(R.id.expandableButton1) Button expandableButton1;
     @BindView(R.id.cust_data) TextView cust_data;
-    //@BindView(R.id.engineer_name) TextView engineer_name;
     @BindView(R.id.date_time) TextView date_time;
     @BindView(R.id.daftar_mesin_list_view) ListView daftar_mesin_list_view;
     @BindView(R.id.create_form_4_card_view) CardView create_form_4_card_view;
     @BindView(R.id.create_form_button) Button create_form_button;
     @BindView(R.id.kerusakan_input) EditText kerusakan_input;
     @BindView(R.id.perbaikan_input) EditText perbaikan_input;
-    //@BindView(R.id.print_button) Button print_button;
+    @BindView(R.id.keterangan_input) EditText keterangan_input;
+    @BindView(R.id.nik_pic_input) EditText nik_pic_input;
+    @BindView(R.id.no_pic_input) EditText no_pic_input;
+    @BindView(R.id.signature_pad) SignaturePad signature_pad;
 
     private View view;
     private MesinLPSAdapter adapter;
@@ -97,12 +97,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
     private Service cachedService;
-
     private DatabaseManager dbManager;
-
-//    private SparepartCompletionView completionView;
-//    private Spare_Part[] people;
-//    private ArrayAdapter<Spare_Part> adapterSpare;
 
     //new variables for the printing
     private BluetoothAdapter bluetoothAdapter;
@@ -117,27 +112,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private byte[] readBuffer;
     private int readBufferPosition;
     private volatile boolean stopWorker;
-
-//    @OnClick(R.id.expandableButton1)
-//    public void clickMe() {
-//        expandableLayout1.toggle();
-//    }
-
-//    @OnClick(R.id.expandableLayout1)
-//    public void clickme() {
-//        expandableButton1(view);
-//    }
-
-//    @OnClick(R.id.expandableLayout2)
-//    public void clickme2() {
-//        expandableButton2(view);
-//    }
-
-//    @OnClick(R.id.print_button)
-//    public void printDemo() {
-//        //begin the bluetooth chain
-//        FindBluetoothDevice();
-//    }
 
     @OnClick(R.id.create_form_button)
     public void sendForm() {
@@ -165,12 +139,19 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
             token = "Bearer "+sharedPref.getString("token", "empty token");
             try {
-                finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
                 finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
                 finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+                finalJSONObj.put("keterangan", keterangan_input.getText().toString());
+                finalJSONObj.put("nik_pic", nik_pic_input.getText().toString());
+                finalJSONObj.put("no_pic", no_pic_input.getText().toString());
+                finalJSONObj.put("date_lps", date);
+                finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                //editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.putString(cachedService.getNoLPS(), String.valueOf(finalJSONObj));
                 editor.apply();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -180,58 +161,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", token);
-
-//        //array holder. must be changed with delivered from other fragment
-//        JSONArray jsonSpareparts1 = new JSONArray();
-//        JSONArray jsonSpareparts2 = new JSONArray();
-//
-//        JSONArray jsonMachines = new JSONArray();
-//        JSONObject jsonMachine1 = new JSONObject();
-//        JSONObject jsonMachine2 = new JSONObject();
-//        JSONObject jsonSparepart1 = new JSONObject();
-//        JSONObject jsonSparepart2 = new JSONObject();
-//        try {
-//            jsonSparepart1.put("sparepart_id", "13");
-//            jsonSpareparts1.put(jsonSparepart1);
-//            jsonSparepart2.put("sparepart_id", "15");
-//            jsonSpareparts2.put(jsonSparepart2);
-//
-//            jsonMachine1.put("machine_id", "11");
-//            jsonMachine1.put("serial_number", "aabbcc");
-//            jsonMachine1.put("rtbs_flag", "11");
-//            jsonMachine1.put("rtas_flag", "11");
-//            jsonMachine1.put("job_status", "11");
-//            jsonMachine1.put("garansi_number", "123456");
-//            jsonMachine1.put("sparepart_consumed",jsonSpareparts1);
-//
-//            jsonMachine2.put("machine_id", "12");
-//            jsonMachine2.put("serial_number", "aabbcc");
-//            jsonMachine2.put("rtbs_flag", "12");
-//            jsonMachine2.put("rtas_flag", "12");
-//            jsonMachine2.put("job_status", "12");
-//            jsonMachine2.put("garansi_number", "123456");
-//            jsonMachine2.put("sparepart_consumed",jsonSpareparts2);
-//
-//            jsonMachines.put(jsonMachine1);
-//            jsonMachines.put(jsonMachine2);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
-//        JSONObject jsonObj = new JSONObject();
-//        try {
-//            jsonObj.put("type_lps", 1);
-//            jsonObj.put("customer_id", 8);
-//            jsonObj.put("customer_branch_id", 7);
-//            jsonObj.put("teknisi_id", 69);
-//            jsonObj.put("date_lps", date);
-//            jsonObj.put("tanggal_jam_selesai", dateTime);
-//            jsonObj.put("kerusakan", kerusakan_input.getText().toString());
-//            jsonObj.put("perbaikan", perbaikan_input.getText().toString());
-//            jsonObj.put("machine", jsonMachines);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, finalJSONObj, this, this);
@@ -260,12 +189,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            //get the arguments here
-//            try {
-//                dataKeren = new JSONObject(args.getString("data"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
             serviceID = args.getLong("service_id");
             Log.d("receivedSerID", String.valueOf(serviceID));
         }
@@ -279,69 +202,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         ButterKnife.bind(this, view);
         getActivity().setTitle("Penulisan LPS");
         dbManager = DatabaseManager.getInstance();
-
+        setupSignature();
 
         if(serviceID != 0) {
-//            Log.d("JSONContent", "Starting new array of values");
-//            try {
-//                Log.d("JSONContent", dataKeren.getString("date_service"));
-//                date_time.setText(dataKeren.getString("date_service"));
-//                JSONObject custJSON = dataKeren.getJSONObject("customer_branch");
-//                //Log.d("JSONContent", custJSON.getString("branch_name"));
-//                //Log.d("JSONContent", custJSON.getString("branch_status"));
-//                //Log.d("JSONContent", custJSON.getString("branch_address"));
-//                //Log.d("JSONContent", custJSON.getString("office_phone_number"));
-//                cust_data.setText(custJSON.getString("branch_name") + "\n" + custJSON.getString("branch_status") + "\n" + custJSON.getString("branch_address") + "\n" + custJSON.getString("office_phone_number"));
-//                JSONObject teknisiJSON = dataKeren.getJSONObject("teknisi");
-//                //Log.d("JSONContent", teknisiJSON.getString("username"));
-//                //Log.d("JSONContent", teknisiJSON.getString("email"));
-//                //Log.d("JSONContent", teknisiJSON.getString("name"));
-//                engineer_name.setText(teknisiJSON.getString("name"));
-//                JSONArray mesinsArray = dataKeren.getJSONArray("machines");
-//                dataMachineArray = mesinsArray;
-//                for(int y = 0; y < mesinsArray.length(); y++) {
-//                    JSONObject mesinJSON = mesinsArray.getJSONObject(y);
-//                    //Log.d("JSONContent", mesinJSON.getString("brand"));
-//                    //Log.d("JSONContent", mesinJSON.getString("model"));
-//                    //Log.d("JSONContent", mesinJSON.getString("serial_number"));
-//
-//                    //check data only if exists in mesinJSON
-//                    if(mesinJSON.has("machine_status")) {
-//                        Log.d("GODDAMN", "F*CK YEAH! DIS IS AWESOME");
-//
-//                        JSONObject machineStatus = mesinJSON.getJSONObject("machine_status");
-//                        Log.d("JSONContent", machineStatus.getString("rtas_status"));
-//                        Log.d("JSONContent", machineStatus.getString("rtbs_status"));
-//                        Log.d("JSONContent", machineStatus.getString("machine_ok"));
-//
-//                        JSONArray spareparts = mesinJSON.getJSONArray("spareparts");
-//
-//                        JSONArray machineSpareparts = mesinJSON.getJSONArray("machine_spareparts");
-//                        for(int t = 0; t < machineSpareparts.length(); t++) {
-//                            JSONObject machineSparepart = machineSpareparts.getJSONObject(t);
-//                            if(machineSpareparts.length() > 0) {
-//                                JSONObject sparepart = spareparts.getJSONObject(t);
-//                                Log.d("JSONBaru", sparepart.getString("code"));
-//                                Log.d("JSONBaru", sparepart.getString("name"));
-//                                Log.d("JSONBaru", sparepart.getString("sell_price"));
-//                            }
-//                            Log.d("JSONContent", machineSparepart.getString("sparepart_id"));
-//                        }
-//                    }
-//
-//                    //create new forum object
-//                    Mesin newMesin = new Mesin();
-//                    newMesin.setMesinBrand(mesinJSON.getString("brand"));
-//                    newMesin.setMesinModel(mesinJSON.getString("model"));
-//                    newMesin.setMesinNomorSeri(mesinJSON.getString("serial_number"));
-//                    //newMesin.setMesinStatus("Sehat");
-//
-//                    mesinData.add(newMesin);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-
             ServiceDao serDAO = new ServiceDao(dbManager);
             Service service = serDAO.get(serviceID);
             cachedService = service;
@@ -390,19 +253,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             setAdapter();
         }
-
-//        Spare_Part[] parts = new Spare_Part[]{
-//                new Spare_Part("AASDC23", "Head counter part"),
-//                new Spare_Part("W3CAASD", "Windle cash counter"),
-//                new Spare_Part("AB78XYY", "Stopgap brake"),
-//                new Spare_Part("LLOP888", "Machine bracket"),
-//                new Spare_Part("M0N87YD", "Outer shell"),
-//                new Spare_Part("112UUIY", "Grease")
-//        };
-//
-//        adapterSpare = new ArrayAdapter<Spare_Part>(getActivity(), android.R.layout.simple_list_item_1, parts);
-//        completionView = (SparepartCompletionView) getActivity().findViewById(R.id.input_part_select);
-//        completionView.setAdapter(adapterSpare);
         return view;
     }
 
@@ -434,7 +284,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             //delete the sharedpref
             SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-            preferences.edit().remove("current_service_json").apply();
+            //preferences.edit().remove("current_service_json").apply();
+            preferences.edit().remove(cachedService.getNoLPS()).apply();
 
             //delete the sent service
             ServiceDao serDAO = new ServiceDao(dbManager);
@@ -480,16 +331,29 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         super.onDestroy();
 
         try {
-//            if(bluetoothSocket != null) {
-//                bluetoothSocket.close();
-//            }
-//            if(bluetoothAdapter != null) {
-//                bluetoothAdapter.disable();
-//            }
             disconnectBT();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupSignature() {
+        signature_pad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+
+            }
+
+            @Override
+            public void onSigned() {
+
+            }
+
+            @Override
+            public void onClear() {
+
+            }
+        });
     }
 
     private boolean checkForSparepartData() {
@@ -502,6 +366,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 try {
                     machineStatus = new JSONObject(args.getString("machine_status"));
                     machineSpareparts = new JSONArray(args.getString("machine_spareparts"));
+                    Log.d("sparepartArray", args.getString("machine_spareparts"));
                     result = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -524,15 +389,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         if(checkforSharedPreferences()) {
             sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
 
-            //prepare date and datetime here
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
-            String date = dateFormat.format(cal.getTime());
-            String dateTime = dateTimeFormat.format(cal.getTime());
-
             //check if there are any previous json
-            if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
+            //if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
+            if(sharedPref.getString(service.getNoLPS(), "empty").equals("empty")) {
                 Log.d("finalJSON", "NO FINAL JSON EXIST!");
                 //create the new JSOn
                 finalJSONObj = new JSONObject();
@@ -542,23 +401,22 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     finalJSONObj.put("customer_id", service.getCustomerID());
                     finalJSONObj.put("customer_branch_id", service.getCBID());
                     finalJSONObj.put("teknisi_id", service.getTID());
-                    finalJSONObj.put("date_lps", date);
-                    finalJSONObj.put("tanggal_jam_selesai", dateTime);
-                    finalJSONObj.put("keterangan", "test keterangan. dummy data");
-                    //finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
-                    //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+                    //finalJSONObj.put("date_lps", date);
+                    //finalJSONObj.put("tanggal_jam_selesai", dateTime);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                //editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.putString(service.getNoLPS(), String.valueOf(finalJSONObj));
                 editor.apply();
             } else {
                 Log.d("finalJSON", "THERE IS FINAL JSON EXIST!");
                 //assign the JSON
                 try {
-                    finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                    //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
+                    finalJSONObj = new JSONObject(sharedPref.getString(service.getNoLPS(), "empty"));
                     if(checkForSparepartData()) {
                         //put inner object first
                         if(machineSpareparts.length() > 0) {
@@ -573,13 +431,17 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                                 JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
                                 //if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
                                 if(machineStatusOld.getInt("temp_service_id") == machineStatus.getInt("temp_service_id")) {
+                                    Log.d("loopCountFinal", "SAME ID TEMP?");
                                     //replace the old on with the new one, instead of ADDING
+                                    machineStatusArray.remove(g);
                                     machineStatusArray.put(g, machineStatus);
                                     break;
                                 } else {
-                                    if(g - machineStatusArray.length() == 1) {
+                                    Log.d("loopCountFinal", String.valueOf(g));
+                                    Log.d("lengthArray", String.valueOf(machineStatusArray.length()));
+                                    //if(g - machineStatusArray.length() == 1) {
                                         machineStatusArray.put(machineStatus);
-                                    }
+                                    //}
                                 }
                             }
                             //then put the final array back to json
@@ -590,13 +452,15 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                             machineStatusArray.put(machineStatus);
                             finalJSONObj.put("machine", machineStatusArray);
                         }
+                        Log.d("JSONArray", finalJSONObj.toString(2));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                //editor.putString("current_service_json", String.valueOf(finalJSONObj));
+                editor.putString(service.getNoLPS(), String.valueOf(finalJSONObj));
                 editor.apply();
             }
         }
@@ -612,33 +476,12 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             daftar_mesin_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    //Log.d("log", "mesin clicked");
-//                    //make a new customDialog instead now
-//                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-//                    // Get the layout inflater
-//                    LayoutInflater inflater = getActivity().getLayoutInflater();
-//                    mBuilder.setView(inflater.inflate(R.layout.dialog_mesin_service_list, null));
-//                    mBuilder.setNeutralButton("Tutup", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            dialogInterface.dismiss();
-//                        }
-//                    });
-//
-//                    AlertDialog dialog = mBuilder.create();
-//                    dialog.show();
-
                     //move to new fragment
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
                     args.putLong("service_id", serviceID);
                     args.putString("machine_id", machineIDs.get(position));
-//                    try {
-//                        args.putString("data", dataMachineArray.getJSONObject(position).toString());
-//                        args.putString("dataKeren", dataKeren.toString());
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+                    args.putString("no_lps", cachedService.getNoLPS());
                     mesinData.clear();
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();
@@ -650,21 +493,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         else {
             Log.d("setAdapter", "The mesinData array is empty!");
         }
-
-//        daftar_mesin_list_view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//
-//            public void onGlobalLayout() {
-//                listViewHeight = daftar_mesin_list_view.getHeight();
-//                Log.d("ListViewHeight", String.valueOf(listViewHeight));
-//            }
-//        });
-//
-//        // Set the CardView layoutParams
-//        ViewGroup.LayoutParams params = create_form_4_card_view.getLayoutParams();
-//        params.height = listViewHeight;
-//
-//        create_form_4_card_view.setLayoutParams(params);
-
         ListViewUtility.setListViewHeightBasedOnChildren(daftar_mesin_list_view);
     }
 
@@ -702,40 +530,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     pairBluetoothDevice();
                 }
             }
-
-            //try using thread?
-//            Thread thr = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//                    bluetoothAdapter.enable();
-//                    if(bluetoothAdapter == null){
-//                        Toast.makeText(getActivity(), "No Bluetooth Adapter found", Toast.LENGTH_LONG).show();
-//                    }
-//                    if(bluetoothAdapter.isEnabled()){
-//                        Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//                        //startActivityForResult(enableBT,0);
-//                    }
-//
-//                    Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
-//
-//                    if(pairedDevice.size()>0){
-//                        for(BluetoothDevice pairedDev:pairedDevice){
-//                            Log.d("printerName", pairedDev.getName());
-//                            // My Bluetoth printer name is RPP-02
-//                            if(pairedDev.getName().equals("RPP-02")){
-//                                bluetoothDevice = pairedDev;
-//                                Toast.makeText(getActivity(), "Bluetooth Printer Attached: "+pairedDev.getName(), Toast.LENGTH_LONG).show();
-//                                break;
-//                            }
-//                        }
-//                    }
-//
-//                    //open bluetooth printer
-//                    openBluetoothPrinter();
-//                }
-//            });
-//            thr.run();
         } catch(Exception ex){
             ex.printStackTrace();
         }
@@ -798,26 +592,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     ex.printStackTrace();
                     Log.d("errorMsg", ex.getMessage());
                     mHandler.sendEmptyMessage(1);
-//            try {
-//                Log.e("errorFall","trying fallback...");
-//
-//                UUID uuidSting = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-////                final Method m = bluetoothDevice.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
-////                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);
-//
-//                bluetoothSocket =(BluetoothSocket) bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(bluetoothDevice,1);
-//                bluetoothSocket.connect();
-//
-//                //Log.e("","Connected");
-//            }
-//            catch (Exception e2) {
-//                Log.e("", "Couldn't establish Bluetooth connection!");
-//                e2.printStackTrace();
-//                bluetoothAdapter.disable();
-//                //bluetoothSocket.close();
-//                //inputStream.close();
-//                //outputStream.close();
-//            }
                 }
             }
         });
@@ -884,12 +658,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     // Printing Text to Bluetooth Printer //
     void printData() throws IOException {
         try{
-//            String msg = textBox.getText().toString();
-//            msg+="\n";
-//            Log.d("message", msg);
-//            byte[] msgBuffer = msg.getBytes();
-//            outputStream.write(msgBuffer);
-
             printCustom(finalJSONObj.getString("tanggal_jam_selesai"), 0, 0);
             printNewLine();
             printCustom("Asia Pacific", 3, 1);
@@ -916,47 +684,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             printNewLine();
             printNewLine();
 
-//            printCustom("Font sizes", 5, 1);
-//            printNewLine();
-//            printCustom("Text Size 0", 0, 0);
-//            printCustom("Text Size 0", 0, 1);
-//            printCustom("Text Size 0", 0, 2);
-//
-//            printCustom("Text Size 1", 1, 0);
-//            printCustom("Text Size 2", 2, 0);
-//            printCustom("Text Size 3", 3, 0);
-//            printCustom("Text Size 4", 4, 0); //these sizes are experimental byte I made my own
-//            printCustom("Text Size 5", 5, 0); //these sizes are experimental byte I made my own
-//
-//            printNewLine();
-//            printNewLine();
-//            printCustom("Bill example", 5, 1);
-//            printNewLine();
-//
-//            printCustom("Fair Group BD",2,1);
-//            printCustom("Pepperoni Foods Ltd.",0,1);
-//            //printPhoto(R.drawable.ic_icon_pos);
-//            printCustom("H-123, R-123, Dhanmondi, Dhaka-1212",0,1);
-//            printCustom("Hot Line: +88000 000000",0,1);
-//            printCustom("Vat Reg : 0000000000,Mushak : 11",0,1);
-//            String dateTime[] = getDateTime();
-//            printText(leftRightAlign(dateTime[0], dateTime[1]));
-//            printNewLine();
-//            printText(leftRightAlign("Qty: Name" , "Price "));
-//            printNewLine();
-//            printCustom(new String(new char[32]).replace("\0", "."),0,1);
-//            printText(leftRightAlign("Total" , "2,0000/="));
-//            printNewLine();
-//            printCustom("Thank you for coming & we look",0,1);
-//            printCustom("forward to serve you again",0,1);
-//            printNewLine();
-//            printNewLine();
-
-            //lblPrinterName.setText("Printing Text...");
             Toast.makeText(getActivity(), "Mencetak tulisan...", Toast.LENGTH_SHORT).show();
-            //after finished, disconnect the printer
-            //disconnectBT();
-            //print_button.setEnabled(false);
         }catch (Exception ex){
             ex.printStackTrace();
         }

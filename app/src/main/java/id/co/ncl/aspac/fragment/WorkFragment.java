@@ -61,9 +61,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
     private ArrayList<Work> workData = new ArrayList<>();
-    //final List<Service> services = new ArrayList<Service>();
-    //final List<Machine> machines = new ArrayList<Machine>();
-    //final List<Sparepart> spareparts = new ArrayList<Sparepart>();
     List<Long> serviceIDs = new ArrayList<>();
     List<Long> machineIDs = new ArrayList<>();
 
@@ -122,25 +119,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             Log.d("onCreate", "INIT DATA!");
             checkForLocalData();
         }
-
-//        //create date object
-//        Calendar myCalendar = Calendar.getInstance();
-//        myCalendar.set(2017, 8, 31);
-//        Date myDate = myCalendar.getTime();
-//        //myDate = myCalendar.getTime();
-//
-//        for(int x = 0; x < 7; x++) {
-//            //create new work object
-//            Work newWork = new Work();
-//            newWork.setWorkTitle("Benerin Mesin nomor "+(x+1));
-//            newWork.setWorkDescShort("Benerin mesin dari klien. Mesin dapat komplain tidak jalan");
-//            newWork.setWorkStatus("Pending");
-//            newWork.setWorkDateTime(myDate);
-//
-//            workData.add(newWork);
-//        }
-//
-//        setAdapter();
         return view;
     }
 
@@ -195,7 +173,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //Log.d("JSONContent", custJSON.getString("branch_status"));
                     //Log.d("JSONContent", custJSON.getString("branch_address"));
                     //Log.d("JSONContent", custJSON.getString("office_phone_number"));
-
 
                     //attempt number two. let's do this, SQLite
                     Service service = new Service();
@@ -263,77 +240,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     serviceIDs.add(serviceID);
                     serDAO.closeConnection();
 
-
-//                    final Service service = new Service();
-//                    service.setDateService(obj.getString("date_service"));
-//                    //Customer Branch
-//                    service.setCBID(custJSON.getInt("id"));
-//                    service.setCode(custJSON.getString("branch_code"));
-//                    service.setInitial(custJSON.getString("branch_initial"));
-//                    service.setName(custJSON.getString("branch_name"));
-//                    service.setStatus(custJSON.getString("branch_status"));
-//                    service.setPIC(custJSON.getString("pic"));
-//                    service.setPICPhoneNumber(custJSON.getString("pic_phone_number"));
-//                    service.setPICEmail(custJSON.getString("pic_email"));
-//                    service.setKW(custJSON.getInt("kw"));
-//                    service.setSLJJ(Integer.parseInt(custJSON.getString("sljj")));
-//                    service.setAddress(custJSON.getString("branch_address"));
-//                    service.setRegencyID(custJSON.getString("regency_id"));
-//                    service.setProvinceID(custJSON.getInt("province_id"));
-//                    //service.setPostCode(Integer.parseInt(custJSON.getString("post_code")));
-//                    service.setPostCode(11111);
-//                    service.setOfficePhoneNumber(custJSON.getString("office_phone_number"));
-//                    //service.setFax(custJSON.getString("fax"));
-//                    service.setFax("123-123123");
-//                    service.setCustomerID(custJSON.getInt("customer_id"));
-//                    service.setCoordinatorID(custJSON.getInt("koordinator_id"));
-//                    service.setTeknisiID(custJSON.getInt("teknisi_id"));
-//                    service.setSalesID(custJSON.getInt("sales_id"));
-//                    service.setUsername(custJSON.getString("username"));
-//                    service.setPassword(custJSON.getString("password"));
-//                    service.setRememberToken(custJSON.getString("remember_token"));
-//                    service.setCreatedAt(custJSON.getString("created_at"));
-//                    service.setUpdatedAt(custJSON.getString("updated_at"));
-//
-//                    JSONObject teknisiJSON = obj.getJSONObject("teknisi");
-//                    //Log.d("JSONContent", teknisiJSON.getString("username"));
-//                    //Log.d("JSONContent", teknisiJSON.getString("email"));
-//                    //Log.d("JSONContent", teknisiJSON.getString("name"));
-//
-//                    //Technician
-//                    service.setTID(teknisiJSON.getInt("id"));
-//                    service.setTusername(teknisiJSON.getString("username"));
-//                    service.setTname(teknisiJSON.getString("name"));
-//                    service.setDob(teknisiJSON.getString("dob"));
-//                    service.setEmail(teknisiJSON.getString("email"));
-//                    service.setApiToken(teknisiJSON.getString("api_token"));
-//                    service.setRoleID(teknisiJSON.getString("role_id"));
-//                    service.setBranchID(teknisiJSON.getString("branch_id"));
-//                    service.setSuperiorID(teknisiJSON.getString("superior_id"));
-//                    service.setTcreatedAt(teknisiJSON.getString("created_at"));
-//                    service.setTupdatedAt(teknisiJSON.getString("updated_at"));
-//
-//                    services.add(service);
-//
-//                    if(machines.size() > 0) {
-//                        machines.clear();
-//                    }
-
-//                    JSONObject mesinObj = tempObj.getJSONObject("machine");
-//                    //attempt number two. let's do this, SQLite
-//                    Machine machine = new Machine();
-//                    machine.setMachineID(mesinObj.getString("id"));
-//                    machine.setBrand(mesinObj.getString("brand"));
-//                    machine.setModel(mesinObj.getString("model"));
-//                    machine.setSalesNumber(tempObj.getString("sales_number"));
-//                    machine.setSerialNumber(tempObj.getString("serial_number"));
-//                    machine.setServiceID(serviceIDs.get(z).intValue());
-//
-//                    MachineDao macDAO = new MachineDao(dbManager);
-//                    long machineID = macDAO.insert(machine);
-//                    macDAO.closeConnection();
-//                    machineIDs.add(machineID);
-
                     //final long[] machineIDs = new long[detailsArray.length()];
                     for (int y = 0; y < detailsArray.length(); y++) {
                         JSONObject detailObjt = detailsArray.getJSONObject(y);
@@ -386,58 +292,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        //WOHOO ADDING NEW ROOM PERSISTENCE LIBRARY
-//        try {
-//            Thread t = new Thread(new Runnable() {
-//                public void run() {
-//                    AspacDatabase testDB = ((Aspac) getActivity().getApplication()).getDatabase();
-//                    int counter = 0;
-//                    for(Service ser : services) {
-//                        long serviceID = testDB.serviceDao().insert(ser);
-//                        //create date formatting
-//                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//                        Date date = null;
-//                        try {
-//                            date = formatter.parse(ser.getDateService());
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        for (Machine mac: machines) {
-//                            mac.setServiceID((int) serviceID);
-//                            long machineID = testDB.machineDao().insert(mac);
-//                            for (Spare_Part spa: spareparts) {
-//                                spa.setMachineID((int) machineID);
-//                                testDB.sparepartDao().insert(spa);
-//                            }
-//                        }
-//
-//                        //create new work object
-//                        Work newWork = new Work();
-//                        newWork.setWorkTitle("Pekerjaan Rutin " + (counter + 1));
-//                        newWork.setWorkDescShort(ser.getName());
-//                        newWork.setWorkStatus("Pending");
-//                        newWork.setWorkDateTime(date);
-//                        Log.d("loopCount", "counting loop "+(counter+1));
-//
-//                        workData.add(newWork);
-//                        counter += 1;
-//                    }
-//                }
-//            }, "Thread Hope");
-//            //start thread
-//            t.start();
-//            //t.join();
-//            progressDialog.dismiss();
-//            setAdapter();
-//        } catch (NumberFormatException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void checkForLocalData() {
@@ -532,11 +386,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     Log.d("position", String.valueOf(position));
                     Log.d("selectedPosID", String.valueOf(serviceIDs.get(position)));
                     args.putLong("service_id", serviceIDs.get(position));
-//                    try {
-//                        args.putString("data", dataGlobalArray.getJSONObject(position).toString());
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
                     Fragment newFrag = new CreateFragment();
                     newFrag.setArguments(args);
                     act.changeFragment(newFrag);
@@ -546,26 +395,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         else {
             Log.d("setAdapter", "The workData array is empty!");
         }
-
-        //WOHOO ADDING NEW ROOM PERSISTENCE LIBRARY
-//        try {
-//            Thread t = new Thread(new Runnable() {
-//                public void run() {
-//                    AspacDatabase testDB = ((Aspac) getActivity().getApplication()).getDatabase();
-//                    List<Service> services = testDB.serviceDao().getAll();
-//                    for(Service service : services) {
-//                        Log.d("RoomDemo", service.getName());
-//                        Log.d("RoomDemo", service.getStatus());
-//                        Log.d("RoomDemo", service.getAddress());
-//                        Log.d("RoomDemo", service.getOfficePhoneNumber());
-//                    }
-//                }
-//            }, "Thread Demo");
-//            t.start();
-//        } catch (NumberFormatException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
     }
 
     private boolean checkforSharedPreferences() {

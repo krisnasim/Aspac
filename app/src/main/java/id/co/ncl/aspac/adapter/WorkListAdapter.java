@@ -100,7 +100,6 @@ public class WorkListAdapter extends BaseAdapter implements View.OnClickListener
             //Log.d("GetViewData", tempValues.getWorkDescShort());
             //Log.d("GetViewData", String.valueOf(tempValues.getWorkDateTime()));
 
-
             Format formatter = new SimpleDateFormat("yyyy-MM-dd");
             //Format formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy");
             Date date = tempValues.getWorkDateTime();
