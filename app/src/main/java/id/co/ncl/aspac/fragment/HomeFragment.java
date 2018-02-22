@@ -1,11 +1,12 @@
 package id.co.ncl.aspac.fragment;
 
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,16 @@ import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
 import id.co.ncl.aspac.database.SparepartDao;
 import id.co.ncl.aspac.model.Sparepart;
+
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class HomeFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
@@ -60,6 +71,60 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
         dbManager = DatabaseManager.getInstance();
 
         checkForLocalData();
+
+        //trying pusher
+        PusherOptions options = new PusherOptions();
+        options.setCluster("ap1");
+
+        //Pusher pusher = new Pusher("3d6a42461cacee58e688", options);
+        Pusher pusher = new Pusher("022752ce180999f4a3ed", options);
+        //pusher.connect();
+
+        //Channel channel = pusher.subscribe("my-channel");
+        Channel channel = pusher.subscribe("android-notification-channel");
+
+        //channel.bind("my-event", new SubscriptionEventListener() {
+        channel.bind("new-service-request", new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String channelName, String eventName, final String data) {
+                Log.d("data", data);
+                JSONObject dataJSON;
+                try {
+                    dataJSON = new JSONObject(data);
+
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(getContext(), "001")
+                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setContentTitle("Aspac New Job!")
+                                    .setContentText(dataJSON.getString("text"));
+
+                    // Sets an ID for the notification
+                    int mNotificationId = 001;
+                    // Gets an instance of the NotificationManager service
+                    NotificationManager mNotifyMgr = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+                    // Builds the notification and issues it.
+                    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+                Log.d("connectLog", "State changed to " + change.getCurrentState() +
+                        " from " + change.getPreviousState());
+            }
+
+            @Override
+            public void onError(String message, String code, Exception e) {
+                Log.d("ErrorCon", "There was a problem connecting!");
+            }
+        }, ConnectionState.ALL);
+
+
 
         return view;
     }
