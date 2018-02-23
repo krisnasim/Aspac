@@ -1,5 +1,6 @@
 package id.co.ncl.aspac.fragment;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -76,15 +77,15 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
         PusherOptions options = new PusherOptions();
         options.setCluster("ap1");
 
-        //Pusher pusher = new Pusher("3d6a42461cacee58e688", options);
-        Pusher pusher = new Pusher("022752ce180999f4a3ed", options);
+        Pusher pusher = new Pusher("3d6a42461cacee58e688", options);
+        //Pusher pusher = new Pusher("022752ce180999f4a3ed", options);
         //pusher.connect();
 
-        //Channel channel = pusher.subscribe("my-channel");
-        Channel channel = pusher.subscribe("android-notification-channel");
+        Channel channel = pusher.subscribe("my-channel");
+        //Channel channel = pusher.subscribe("android-notification-channel");
 
-        //channel.bind("my-event", new SubscriptionEventListener() {
-        channel.bind("new-service-request", new SubscriptionEventListener() {
+        channel.bind("my-event", new SubscriptionEventListener() {
+        //channel.bind("new-service-request", new SubscriptionEventListener() {
             @Override
             public void onEvent(String channelName, String eventName, final String data) {
                 Log.d("data", data);
@@ -96,7 +97,11 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
                             new NotificationCompat.Builder(getContext(), "001")
                                     .setSmallIcon(R.mipmap.ic_launcher)
                                     .setContentTitle("Aspac New Job!")
-                                    .setContentText(dataJSON.getString("text"));
+                                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                                    .setDefaults(Notification.DEFAULT_ALL)
+                                    .setPriority(Notification.PRIORITY_HIGH)
+                                    .setContentText(dataJSON.getString("message"));
+                                    //.setContentText(dataJSON.getString("text"));
 
                     // Sets an ID for the notification
                     int mNotificationId = 001;
