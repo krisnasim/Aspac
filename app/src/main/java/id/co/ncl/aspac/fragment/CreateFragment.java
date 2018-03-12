@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -98,6 +99,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private ProgressDialog progressDialog;
     private Service cachedService;
     private DatabaseManager dbManager;
+    private Bitmap signedBitmap;
 
     //new variables for the printing
     private BluetoothAdapter bluetoothAdapter;
@@ -126,6 +128,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Mohon tunggu...");
         progressDialog.show();
+
+        //final check bitmap null or not
+        Log.d("FINAL sig width: ", String.valueOf(signedBitmap.getWidth()));
+        Log.d("FINAL sig height: ", String.valueOf(signedBitmap.getHeight()));
 
         //prepare date and datetime here
         Calendar cal = Calendar.getInstance();
@@ -178,6 +184,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         }
 
         requestQueue.add(customJSONReq);
+    }
+
+    @OnClick(R.id.clear_signature_button)
+    public void clearSignture() {
+        signature_pad.clear();
     }
 
     public CreateFragment() {
@@ -346,7 +357,16 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             @Override
             public void onSigned() {
+                //this one return normal imaage with white background
+                signedBitmap = signature_pad.getSignatureBitmap();
+                //this one return png signture with no background
+                //signedBitmap = signature_pad.getTransparentSignatureBitmap();
+                //this one return vector. No idea how to store this
+                //String signedVcotor = signature_pad.getSignatureSvg();
 
+                //check bitmap null or not
+                Log.d("signature width: ", String.valueOf(signedBitmap.getWidth()));
+                Log.d("signature height: ", String.valueOf(signedBitmap.getHeight()));
             }
 
             @Override

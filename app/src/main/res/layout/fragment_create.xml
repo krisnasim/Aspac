@@ -370,7 +370,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/create_form_10_card_view"
             android:layout_width="344dp"
-            android:layout_height="180dp"
+            android:layout_height="240dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="20dp"
@@ -397,14 +397,15 @@
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/signature_pad"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="14dp"
                     android:layout_marginEnd="14dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="140dp"
                     app:penColor="@android:color/black"
                     android:background="@drawable/border_layout"
+                    app:layout_constraintTop_toBottomOf="@id/tanda_tangan_label"
                     />
 
                 <TextView
@@ -413,7 +414,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="14dp"
-                    android:layout_marginTop="130dp"
+                    android:layout_marginTop="150dp"
                     android:textAlignment="center"
                     android:text="Tanda tangan di atas"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -429,6 +430,22 @@
                     android:layout_marginBottom="15dp"
                     android:layout_gravity="center"
                     android:background="#534F4F" />
+
+                <Button
+                    android:id="@+id/clear_signature_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:text="Hapus"
+                    android:textColor="@color/md_white_1000"
+                    app:layout_constraintTop_toBottomOf="@id/notes_label"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 

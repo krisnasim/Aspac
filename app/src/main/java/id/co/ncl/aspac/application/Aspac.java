@@ -3,8 +3,10 @@ package id.co.ncl.aspac.application;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.Intent;
 import android.support.multidex.MultiDex;
 
+import id.co.ncl.aspac.background.PusherListener;
 import id.co.ncl.aspac.database.AspacDatabase;
 import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
@@ -22,6 +24,8 @@ public class Aspac extends Application {
         super.onCreate();
         myDb = new AspacSQLite(getApplicationContext());
         DatabaseManager.initializeInstance(myDb);
+        Intent pusherIntent = new Intent(this, PusherListener.class);
+        startService(pusherIntent);
     }
 
     @Override
