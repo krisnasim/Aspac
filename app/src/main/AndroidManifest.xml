@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:name=".application.Aspac"
@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme">
         <service
             android:name=".background.PusherListener"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity
             android:name=".activity.LoginActivity"
@@ -39,8 +39,8 @@
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.SignatureActivity"></activity>
     </application>
 
 </manifest>

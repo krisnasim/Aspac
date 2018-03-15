@@ -20,6 +20,7 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.fragment.AttendanceFragment;
+import id.co.ncl.aspac.fragment.CreateFragment;
 import id.co.ncl.aspac.fragment.HomeFragment;
 import id.co.ncl.aspac.fragment.LeaveFragment;
 import id.co.ncl.aspac.fragment.MachineFragment;
@@ -157,8 +158,18 @@ public class HomeActivity extends AppCompatActivity
 
     private void setFirstFragment() {
         boolean boolIntent = checkforBundle();
-        Fragment fragment = new HomeFragment();
-        //Fragment fragment = new InputTaskFragment();
+        Fragment fragment = new Fragment();
+        if(getIntent().getByteArrayExtra("signature_image") != null) {
+            fragment = new CreateFragment();
+            Bundle extra = new Bundle();
+            extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
+            extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
+            fragment.setArguments(extra);
+        } else {
+            fragment = new HomeFragment();
+            //Fragment fragment = new InputTaskFragment();
+        }
+
         Log.d("boolIntent", String.valueOf(boolIntent));
 
         FragmentManager manager = getSupportFragmentManager();

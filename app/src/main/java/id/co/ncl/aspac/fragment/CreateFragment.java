@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +58,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
+import id.co.ncl.aspac.activity.SignatureActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.customClass.PrinterCommands;
@@ -80,7 +83,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     @BindView(R.id.keterangan_input) EditText keterangan_input;
     @BindView(R.id.nik_pic_input) EditText nik_pic_input;
     @BindView(R.id.no_pic_input) EditText no_pic_input;
-    @BindView(R.id.signature_pad) SignaturePad signature_pad;
+    @BindView(R.id.signature_preview_img) ImageView signature_preview_img;
 
     private View view;
     private MesinLPSAdapter adapter;
@@ -187,8 +190,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     }
 
     @OnClick(R.id.clear_signature_button)
-    public void clearSignture() {
-        signature_pad.clear();
+    public void clearSignature() {
+        //signature_pad.clear();
+        //Bundle extra = new Bundle();
+        //extra.putLong("service_ID", serviceID);
+        Intent intent = new Intent(getActivity(), SignatureActivity.class);
+        intent.putExtra("service_id", serviceID);
+        startActivity(intent);
     }
 
     public CreateFragment() {
@@ -202,6 +210,17 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         if(args != null) {
             serviceID = args.getLong("service_id");
             Log.d("receivedSerID", String.valueOf(serviceID));
+
+            //check if signature image exist in arguments
+            if(args.getByteArray("signature_image") != null) {
+                byte[] byteArray = args.getByteArray("signature_image");
+                signedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                //check bitmap null or not
+                Log.d("got signature width: ", String.valueOf(signedBitmap.getWidth()));
+                Log.d("got signature height: ", String.valueOf(signedBitmap.getHeight()));
+
+            }
         }
     }
 
@@ -213,7 +232,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         ButterKnife.bind(this, view);
         getActivity().setTitle("Penulisan LPS");
         dbManager = DatabaseManager.getInstance();
-        setupSignature();
+        //setupSignature();
+        if(signedBitmap != null) {
+            signature_preview_img.setImageBitmap(signedBitmap);
+        }
 
         if(serviceID != 0) {
             ServiceDao serDAO = new ServiceDao(dbManager);
@@ -349,31 +371,31 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     }
 
     private void setupSignature() {
-        signature_pad.setOnSignedListener(new SignaturePad.OnSignedListener() {
-            @Override
-            public void onStartSigning() {
-
-            }
-
-            @Override
-            public void onSigned() {
-                //this one return normal imaage with white background
-                signedBitmap = signature_pad.getSignatureBitmap();
-                //this one return png signture with no background
-                //signedBitmap = signature_pad.getTransparentSignatureBitmap();
-                //this one return vector. No idea how to store this
-                //String signedVcotor = signature_pad.getSignatureSvg();
-
-                //check bitmap null or not
-                Log.d("signature width: ", String.valueOf(signedBitmap.getWidth()));
-                Log.d("signature height: ", String.valueOf(signedBitmap.getHeight()));
-            }
-
-            @Override
-            public void onClear() {
-
-            }
-        });
+//        signature_pad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+//            @Override
+//            public void onStartSigning() {
+//
+//            }
+//
+//            @Override
+//            public void onSigned() {
+//                //this one return normal imaage with white background
+//                signedBitmap = signature_pad.getSignatureBitmap();
+//                //this one return png signture with no background
+//                //signedBitmap = signature_pad.getTransparentSignatureBitmap();
+//                //this one return vector. No idea how to store this
+//                //String signedVcotor = signature_pad.getSignatureSvg();
+//
+//                //check bitmap null or not
+//                Log.d("signature width: ", String.valueOf(signedBitmap.getWidth()));
+//                Log.d("signature height: ", String.valueOf(signedBitmap.getHeight()));
+//            }
+//
+//            @Override
+//            public void onClear() {
+//
+//            }
+//        });
     }
 
     private boolean checkForSparepartData() {

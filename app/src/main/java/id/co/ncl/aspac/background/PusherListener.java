@@ -42,12 +42,12 @@ public class PusherListener extends IntentService {
         PusherOptions options = new PusherOptions();
         options.setCluster("ap1");
 
-        pusher = new Pusher("3d6a42461cacee58e688", options);
-        //pusher = new Pusher("022752ce180999f4a3ed", options);
+        //pusher = new Pusher("3d6a42461cacee58e688", options);
+        pusher = new Pusher("022752ce180999f4a3ed", options);
         //pusher.connect();
 
-        channel = pusher.subscribe("my-channel");
-        //channel = pusher.subscribe("android-notification-channel");
+        //channel = pusher.subscribe("my-channel");
+        channel = pusher.subscribe("android-notification-channel");
     }
 
     @Override
@@ -64,8 +64,8 @@ public class PusherListener extends IntentService {
 
         //Toast.makeText(this, "Listening!", Toast.LENGTH_SHORT).show();
 
-        channel.bind("my-event", new SubscriptionEventListener() {
-        //channel.bind("new-service-request", new SubscriptionEventListener() {
+        //channel.bind("my-event", new SubscriptionEventListener() {
+        channel.bind("new-service-request", new SubscriptionEventListener() {
             @Override
             public void onEvent(String channelName, String eventName, final String data) {
                 //Toast.makeText(getApplicationContext(), "Capturing!", Toast.LENGTH_SHORT).show();
