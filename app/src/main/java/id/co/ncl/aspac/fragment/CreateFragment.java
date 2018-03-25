@@ -28,21 +28,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +67,8 @@ import id.co.ncl.aspac.activity.SignatureActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.customClass.PrinterCommands;
+import id.co.ncl.aspac.customClass.VolleyMultipartRequest;
+import id.co.ncl.aspac.customClass.VolleySingleton;
 import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
 import id.co.ncl.aspac.database.MachineDao;
@@ -140,8 +147,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
-        String date = dateFormat.format(cal.getTime());
-        String dateTime = dateTimeFormat.format(cal.getTime());
+        final String date = dateFormat.format(cal.getTime());
+        final String dateTime = dateTimeFormat.format(cal.getTime());
 
         String token = "";
         if(checkforSharedPreferences()) {
@@ -168,25 +175,87 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         }
         //set headers
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, finalJSONObj, this, this);
-        customJSONReq.setHeaders(headers);
+        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                progressDialog.dismiss();
+                try {
+                    Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
+                    Log.d("onResponse", response.toString());
+                    Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
-        try {
-            //Map<String, String> testH = jsObjRequest.getHeaders();
-            //Log.d("headers",testH.get("Content-Type"));
-            Log.d("headers", String.valueOf(customJSONReq.getHeaders()));
-            Log.d("content", finalJSONObj.toString(2));
-        } catch (AuthFailureError authFailureError) {
-            authFailureError.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                    //delete the sharedpref
+                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+                    //preferences.edit().remove("current_service_json").apply();
+                    preferences.edit().remove(cachedService.getNoLPS()).apply();
 
-        requestQueue.add(customJSONReq);
+                    //delete the sent service
+                    ServiceDao serDAO = new ServiceDao(dbManager);
+                    serDAO.delete(cachedService);
+                    serDAO.closeConnection();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //move to new fragment
+                HomeActivity act = (HomeActivity) getActivity();
+                Fragment newFrag = new WorkFragment();
+                act.changeFragmentNoBS(newFrag);
+            }
+        }, this) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                //convert JSON into Map
+                Type type = new TypeToken<Map<String, String>>(){}.getType();
+                Gson gson = new Gson();
+                params = gson.fromJson(String.valueOf(finalJSONObj), type);
+
+                Log.d("params", params.get("kerusakan"));
+                Log.d("params", params.get("perbaikan"));
+                Log.d("params", params.get("keterangan"));
+                Log.d("params", params.get("nik_pic"));
+                Log.d("params", params.get("no_pic"));
+                Log.d("params", params.get("date_lps"));
+                Log.d("params", params.get("tanggal_jam_selesai"));
+
+                return params;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() throws AuthFailureError {
+                Map<String, DataPart> params = new HashMap<>();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
+
+                return params;
+            }
+        };
+        VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+//        CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, finalJSONObj, this, this);
+//        customJSONReq.setHeaders(headers);
+
+//        try {
+//            //Map<String, String> testH = jsObjRequest.getHeaders();
+//            //Log.d("headers",testH.get("Content-Type"));
+//            Log.d("headers", String.valueOf(customJSONReq.getHeaders()));
+//            Log.d("content", finalJSONObj.toString(2));
+//        } catch (AuthFailureError authFailureError) {
+//            authFailureError.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        requestQueue.add(customJSONReq);
     }
 
     @OnClick(R.id.clear_signature_button)
