@@ -6,26 +6,30 @@
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_dashboard"
             android:title="Beranda" />
-        <item
-            android:id="@+id/nav_attendance"
-            android:icon="@drawable/ic_attendance"
-            android:title="Absensi" />
-        <item
-            android:id="@+id/nav_leave"
-            android:icon="@drawable/ic_leave"
-            android:title="Ambil Cuti" />
+        <!--<item-->
+            <!--android:id="@+id/nav_attendance"-->
+            <!--android:icon="@drawable/ic_attendance"-->
+            <!--android:title="Absensi" />-->
+        <!--<item-->
+            <!--android:id="@+id/nav_leave"-->
+            <!--android:icon="@drawable/ic_leave"-->
+            <!--android:title="Ambil Cuti" />-->
         <item
             android:id="@+id/nav_work"
             android:icon="@drawable/ic_work"
-            android:title="Pekerjaan" />
+            android:title="Pekerjaan Rutin" />
+        <item
+            android:id="@+id/nav_work2"
+            android:icon="@drawable/ic_work"
+            android:title="Pekerjaan Perbaikan" />
         <item
             android:id="@+id/nav_sparepart"
             android:icon="@drawable/ic_sparepart"
             android:title="Sparepart" />
-        <item
-            android:id="@+id/nav_machine"
-            android:icon="@drawable/ic_machine"
-            android:title="Mesin" />
+        <!--<item-->
+            <!--android:id="@+id/nav_machine"-->
+            <!--android:icon="@drawable/ic_machine"-->
+            <!--android:title="Mesin" />-->
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"

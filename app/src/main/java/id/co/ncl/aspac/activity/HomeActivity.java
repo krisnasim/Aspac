@@ -72,10 +72,11 @@ public class HomeActivity extends AppCompatActivity
 
         //navigationView.getMenu().getItem(2).setChecked(true);
         //Log.d("previousMenu", "Changing "+String.valueOf(previousMenu));
-        navigationView.getMenu().findItem(previousMenu).setChecked(true);
-        int switcher = previousMenu;
-        previousMenu = selectedMenu;
-        selectedMenu = switcher;
+
+//        navigationView.getMenu().findItem(previousMenu).setChecked(true);
+//        int switcher = previousMenu;
+//        previousMenu = selectedMenu;
+//        selectedMenu = switcher;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -95,17 +96,22 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_dashboard) {
             fragment = new HomeFragment();
-        } else if (id == R.id.nav_attendance) {
-            fragment = new AttendanceFragment();
-        } else if (id == R.id.nav_leave) {
-            fragment = new LeaveFragment();
-        } else if (id == R.id.nav_work) {
+        }
+//        else if (id == R.id.nav_attendance) {
+//            fragment = new AttendanceFragment();
+//        } else if (id == R.id.nav_leave) {
+//            fragment = new LeaveFragment();
+//        }
+        else if (id == R.id.nav_work) {
             fragment = new WorkFragment();
+        } else if (id == R.id.nav_work2) {
+            //create new fragment class
         } else if (id == R.id.nav_sparepart) {
             fragment = new SparepartFragment();
-        } else if (id == R.id.nav_machine) {
-            fragment = new MachineFragment();
         }
+//        else if (id == R.id.nav_machine) {
+//            fragment = new MachineFragment();
+//        }
 //        else if (id == R.id.nav_create) {
 //            fragment = new CreateFragment();
 //        }
