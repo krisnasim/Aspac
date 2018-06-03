@@ -128,7 +128,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     @OnClick(R.id.create_form_button)
     public void sendForm() {
         //set the url
-        String url = "http://aspac.noti-technologies.com/api/submitdatalps";
+        String url = "http://103.26.208.118/api/submitdatalps";
 
         create_form_button.setEnabled(false);
 

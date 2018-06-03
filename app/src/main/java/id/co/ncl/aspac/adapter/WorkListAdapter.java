@@ -77,8 +77,8 @@ public class WorkListAdapter extends BaseAdapter implements View.OnClickListener
             holder = new ViewHolder();
             holder.workTitle = (TextView) rowView.findViewById(R.id.work_title);
             holder.workShortDesc = (TextView) rowView.findViewById(R.id.work_short_desc);
-            holder.workStatus = (TextView) rowView.findViewById(R.id.work_status);
-            holder.workDateTime = (TextView) rowView.findViewById(R.id.work_datetime);
+            //holder.workStatus = (TextView) rowView.findViewById(R.id.work_status);
+            //holder.workDateTime = (TextView) rowView.findViewById(R.id.work_datetime);
 
             //getting ride data for each row
             Work work = workData.get(position);
@@ -100,15 +100,15 @@ public class WorkListAdapter extends BaseAdapter implements View.OnClickListener
             //Log.d("GetViewData", tempValues.getWorkDescShort());
             //Log.d("GetViewData", String.valueOf(tempValues.getWorkDateTime()));
 
-            Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+            //Format formatter = new SimpleDateFormat("yyyy-MM-dd");
             //Format formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy");
-            Date date = tempValues.getWorkDateTime();
-            String datetoString = formatter.format(date);
+            //Date date = tempValues.getWorkDateTime();
+            //String datetoString = formatter.format(date);
 
             holder.workTitle.setText(tempValues.getWorkTitle());
             holder.workShortDesc.setText(tempValues.getWorkDescShort());
-            holder.workStatus.setText(tempValues.getWorkStatus());
-            holder.workDateTime.setText(datetoString);
+            //holder.workStatus.setText(tempValues.getWorkStatus());
+            //holder.workDateTime.setText(datetoString);
         }
 
         return rowView;

@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
     @OnClick(R.id.loginButton)
     public void login() {
         //set the url
-        String url = "http://aspac.noti-technologies.com/api/login";
+        String url = "http://103.26.208.118/api/login";
 
         loginButton.setEnabled(false);
 

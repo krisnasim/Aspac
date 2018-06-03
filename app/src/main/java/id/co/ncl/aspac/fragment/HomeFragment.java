@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment implements Response.ErrorListener, Re
     private void getAllSparepartData() {
         Log.d("onCreate", "GET SOME API!");
         //set the url
-        String url = "http://aspac.noti-technologies.com/api/getallsparepart";
+        String url = "http://103.26.208.118/api/getallsparepart";
 
         String token = "";
         if(checkforSharedPreferences()) {

@@ -168,7 +168,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     JSONObject obj = dataArray.getJSONObject(z);
                     //Log.d("JSONContent", "Starting new array of values "+z);
                     //Log.d("JSONContent", obj.getString("date_service"));
-                    JSONObject custJSON = obj.getJSONObject("customer_branch");
+                    JSONObject custJSON = obj.getJSONObject("customer");
                     //Log.d("JSONContent", custJSON.getString("branch_name"));
                     //Log.d("JSONContent", custJSON.getString("branch_status"));
                     //Log.d("JSONContent", custJSON.getString("branch_address"));
@@ -179,51 +179,53 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setDateService(obj.getString("date_service"));
                     service.setNoLPS(obj.getString("no_lps"));
                     Log.d("noLPS", obj.getString("no_lps"));
-                    service.setTypeService(obj.getInt("type_lps"));
-                    service.setCBID(custJSON.getInt("id"));
-                    service.setCode(custJSON.getString("branch_code"));
-                    service.setInitial(custJSON.getString("branch_initial"));
-                    service.setName(custJSON.getString("branch_name"));
-                    service.setStatus(custJSON.getString("branch_status"));
+                    //service.setTypeService(obj.getInt("type_lps"));
+                    service.setCBID(custJSON.getInt("customer_branch_id"));
+                    //service.setCode(custJSON.getString("branch_code"));
+                    //service.setInitial(custJSON.getString("branch_initial"));
+                    service.setName(custJSON.getString("customer_branch_name"));
+                    //service.setStatus(custJSON.getString("branch_status"));
                     //service.setPIC(custJSON.getString("pic"));
-                    service.setPIC("asd");
+                    //service.setPIC("asd");
                     //service.setPICPhoneNumber(custJSON.getString("pic_phone_number"));
-                    service.setPICPhoneNumber("asd");
+                    //service.setPICPhoneNumber("asd");
                     //service.setPICEmail(custJSON.getString("pic_email"));
-                    service.setPICEmail("asd");
-                    service.setKW(custJSON.getInt("kw"));
-                    service.setSLJJ(custJSON.getString("sljj"));
-                    service.setAddress(custJSON.getString("branch_address"));
-                    service.setRegencyID(custJSON.getInt("regency_id"));
-                    service.setProvinceID(custJSON.getInt("province_id"));
+                    //service.setPICEmail("asd");
+                    //service.setKW(custJSON.getInt("kw"));
+                    //service.setSLJJ(custJSON.getString("sljj"));
+                    service.setAddress(custJSON.getString("customer_branch_address"));
+                    //service.setRegencyID(custJSON.getInt("regency_id"));
+                    //service.setProvinceID(custJSON.getInt("province_id"));
                     //service.setPostCode(custJSON.getString("post_code"));
-                    service.setPostCode("asd");
-                    service.setOfficePhoneNumber(custJSON.getString("office_phone_number"));
+                    //service.setPostCode("asd");
+                    //service.setOfficePhoneNumber(obj.getString("customer_branch_office_phone_number"));
+                    service.setOfficePhoneNumber("123123123");
                     //service.setFax(custJSON.getString("fax"));
-                    service.setFax("asd");
-                    service.setCustomerID(custJSON.getInt("customer_id"));
-                    service.setCoordinatorID(custJSON.getInt("koordinator_id"));
-                    service.setTeknisiID(custJSON.getInt("teknisi_id"));
-                    service.setSalesID(custJSON.getInt("sales_id"));
-                    service.setUsername(custJSON.getString("username"));
-                    service.setPassword(custJSON.getString("password"));
+                    //service.setFax("asd");
+                    //service.setCustomerID(custJSON.getInt("customer_id"));
+                    //service.setCoordinatorID(custJSON.getInt("koordinator_id"));
+                    //service.setTeknisiID(custJSON.getInt("teknisi_id"));
+                    //service.setSalesID(custJSON.getInt("sales_id"));
+                    //service.setUsername(custJSON.getString("username"));
+                    //service.setPassword(custJSON.getString("password"));
                     //service.setRememberToken(custJSON.getString("remember_token"));
-                    service.setRememberToken("asd");
+                    //service.setRememberToken("asd");
                     //service.setCreatedAt(custJSON.getString("created_at"));
-                    service.setCreatedAt("asd");
+                    //service.setCreatedAt("asd");
                     //service.setUpdatedAt(custJSON.getString("updated_at"));
-                    service.setUpdatedAt("asd");
+                    //service.setUpdatedAt("asd");
 
-                    JSONArray detailsArray = obj.getJSONArray("details");
-                    JSONObject detailObj = detailsArray.getJSONObject(0);
-                    JSONObject tempObj = detailObj.getJSONObject("temporary_service");
+                    //JSONArray detailsArray = obj.getJSONArray("details");
+                    JSONArray machinesArray = obj.getJSONArray("machines");
+                    //JSONObject detailObj = detailsArray.getJSONObject(0);
+                    //JSONObject tempObj = detailObj.getJSONObject("temporary_service");
 
-                    service.setDateService(tempObj.getString("date_lps"));
+                    //service.setDateService(tempObj.getString("date_lps"));
 
                     //JSONObject teknisiJSON = obj.getJSONObject("teknisi");
 
-                    service.setTID(custJSON.getInt("teknisi_id"));
-                    service.setTusername(custJSON.getString("username"));
+                    //service.setTID(custJSON.getInt("teknisi_id"));
+                    //service.setTusername(custJSON.getString("username"));
                     //service.setTname(teknisiJSON.getString("name"));
                     //service.setDob(teknisiJSON.getString("dob"));
                     //service.setEmail(teknisiJSON.getString("email"));
@@ -231,8 +233,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setRoleID(teknisiJSON.getInt("role_id"));
                     //service.setBranchID(teknisiJSON.getInt("branch_id"));
                     //service.setSuperiorID(teknisiJSON.getString("superior_id"));
-                    service.setTcreatedAt(custJSON.getString("created_at"));
-                    service.setTupdatedAt(custJSON.getString("updated_at"));
+                    //service.setTcreatedAt(custJSON.getString("created_at"));
+                    //service.setTupdatedAt(custJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
                     long serviceID = serDAO.insert(service);
@@ -241,25 +243,25 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     serDAO.closeConnection();
 
                     //final long[] machineIDs = new long[detailsArray.length()];
-                    for (int y = 0; y < detailsArray.length(); y++) {
-                        JSONObject detailObjt = detailsArray.getJSONObject(y);
-                        JSONObject tempSerObj = detailObjt.getJSONObject("temporary_service");
-                        JSONObject mesinObj = tempSerObj.getJSONObject("machine");
+                    for (int y = 0; y < machinesArray.length(); y++) {
+                        //JSONObject detailObjt = detailsArray.getJSONObject(y);
+                        //JSONObject tempSerObj = detailObjt.getJSONObject("temporary_service");
+                        JSONObject mesinObj = machinesArray.getJSONObject(y);
                         //Log.d("JSONContent", mesinJSON.getString("brand"));
                         //Log.d("JSONContent", mesinJSON.getString("model"));
                         //Log.d("JSONContent", mesinJSON.getString("serial_number"));
 
                         //attempt number two. let's do this, SQLite
                         Machine machine = new Machine();
-                        machine.setMachineID(mesinObj.getString("id"));
-                        Log.d("machineID", mesinObj.getString("id"));
-                        Log.d("machineTempID", String.valueOf(detailObjt.getInt("temp_service_id")));
-                        Log.d("detail length", String.valueOf(detailsArray.length()));
-                        machine.setTempServiceID(detailObjt.getInt("temp_service_id"));
-                        machine.setBrand(mesinObj.getString("brand"));
-                        machine.setModel(mesinObj.getString("model"));
-                        machine.setSalesNumber(tempObj.getString("sales_number"));
-                        machine.setSerialNumber(tempObj.getString("serial_number"));
+                        machine.setMachineID(mesinObj.getString("temporary_service_id"));
+                        Log.d("machineID", mesinObj.getString("temporary_service_id"));
+                        //Log.d("machineTempID", String.valueOf(detailObjt.getInt("temp_service_id")));
+                        //Log.d("detail length", String.valueOf(detailsArray.length()));
+                        //machine.setTempServiceID(detailObjt.getInt("temp_service_id"));
+                        //machine.setBrand(mesinObj.getString("brand"));
+                        machine.setModel(mesinObj.getString("machine_name"));
+                        //machine.setSalesNumber(tempObj.getString("sales_number"));
+                        machine.setSerialNumber(mesinObj.getString("serial_number"));
                         machine.setServiceID(serviceIDs.get(z).intValue());
 
                         MachineDao macDAO = new MachineDao(dbManager);
@@ -270,20 +272,20 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     }
 
                     //create date formatting
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date = null;
-                    try {
-                        date = formatter.parse(tempObj.getString("date_lps"));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+//                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//                    Date date = null;
+//                    try {
+//                        date = formatter.parse(tempObj.getString("date_lps"));
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
 
                     //create new work object
                     Work newWork = new Work();
                     newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
-                    newWork.setWorkDescShort(custJSON.getString("branch_name"));
-                    newWork.setWorkStatus("Pending");
-                    newWork.setWorkDateTime(date);
+                    newWork.setWorkDescShort(custJSON.getString("customer_branch_name"));
+                    //newWork.setWorkStatus("Pending");
+                    //newWork.setWorkDateTime(date);
 
                     workData.add(newWork);
                 }
@@ -310,20 +312,20 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             for(int z = 0; z < services.size(); z++) {
                 Service ser = services.get(z);
                 //create date formatting
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = null;
-                try {
-                    date = formatter.parse(ser.getDateService());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+//                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//                Date date = null;
+//                try {
+//                    date = formatter.parse(ser.getDateService());
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
 
                 //create new work object
                 Work newWork = new Work();
                 newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
                 newWork.setWorkDescShort(ser.getName());
-                newWork.setWorkStatus("Pending");
-                newWork.setWorkDateTime(date);
+//                newWork.setWorkStatus("Pending");
+//                newWork.setWorkDateTime(date);
 
                 workData.add(newWork);
                 serviceIDs.add((long) ser.getId());
@@ -348,7 +350,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         Log.d("onCreate", "GET SOME API!");
         //set the url
         //String url = getString(R.string.list_all_post);
-        String url = "http://aspac.noti-technologies.com/api/getserviceschedule";
+        String url = "http://103.26.208.118/api/getRoutineServiceSchedule";
 
         String token = "";
         if(checkforSharedPreferences()) {
