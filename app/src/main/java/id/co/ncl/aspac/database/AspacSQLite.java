@@ -137,10 +137,10 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + MACHINE_COLUMN_ID + " integer primary key autoincrement, "
             + MACHINE_COLUMN_MACHINE_ID + " integer, "
             + MACHINE_COLUMN_TEMP_SERVICE_ID + " integer, "
-            + MACHINE_COLUMN_BRAND + " text not null, "
-            + MACHINE_COLUMN_MODEL + " text not null, "
-            + MACHINE_COLUMN_SERIAL_NUM + " text not null, "
-            + MACHINE_COLUMN_SALES_NUM + " text not null, "
+            + MACHINE_COLUMN_BRAND + " text, "
+            + MACHINE_COLUMN_MODEL + " text, "
+            + MACHINE_COLUMN_SERIAL_NUM + " text, "
+            + MACHINE_COLUMN_SALES_NUM + " text, "
             + MACHINE_COLUMN_SERVICE_ID + " integer, "
             + "foreign key (" + MACHINE_COLUMN_SERVICE_ID + ") REFERENCES " + TABLE_SERVICE + " (" + SERVICE_COLUMN_ID + "));";
 
@@ -148,9 +148,9 @@ public class AspacSQLite extends SQLiteOpenHelper {
     private static final String SPAREPART_TABLE_CREATE = "create table "
             + TABLE_SPAREPART + "( "
             + SPAREPART_COLUMN_ID + " integer primary key autoincrement, "
-            + SPAREPART_COLUMN_SPAREPART_ID + " text not null, "
-            + SPAREPART_COLUMN_CODE + " text not null, "
-            + SPAREPART_COLUMN_NAME + " text not null, "
+            + SPAREPART_COLUMN_SPAREPART_ID + " text, "
+            + SPAREPART_COLUMN_CODE + " text, "
+            + SPAREPART_COLUMN_NAME + " text, "
             + SPAREPART_COLUMN_MACHINE_ID + " integer, "
             + "foreign key (" + SPAREPART_COLUMN_MACHINE_ID + ") REFERENCES " + TABLE_MACHINE + " (" + MACHINE_COLUMN_ID + "));";
 

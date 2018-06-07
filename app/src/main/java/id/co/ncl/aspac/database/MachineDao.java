@@ -105,11 +105,11 @@ public class MachineDao {
     public long insert(Machine machine) {
         ContentValues values = new ContentValues();
         values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
-        values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
-        values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
+        //values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
+        //values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
         values.put(dbHelper.MACHINE_COLUMN_MODEL, machine.getModel());
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
-        values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
+        //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
         values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
 
         long rowID = 0;

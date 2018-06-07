@@ -1,7 +1,9 @@
 package id.co.ncl.aspac.fragment;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -21,10 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -48,6 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +83,7 @@ import id.co.ncl.aspac.model.Mesin;
 import id.co.ncl.aspac.customClass.ListViewUtility;
 import id.co.ncl.aspac.model.Service;
 
-public class CreateFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
+public class CreateFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject>, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     @BindView(R.id.cust_data) TextView cust_data;
     @BindView(R.id.date_time) TextView date_time;
@@ -110,6 +115,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private Service cachedService;
     private DatabaseManager dbManager;
     private Bitmap signedBitmap;
+    private Calendar finalCalendar;
 
     //new variables for the printing
     private BluetoothAdapter bluetoothAdapter;
@@ -258,6 +264,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 //        requestQueue.add(customJSONReq);
     }
 
+    @OnClick(R.id.date_time)
+    public void setDateTime() {
+        finalCalendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, finalCalendar.get(Calendar.YEAR), finalCalendar.get(Calendar.MONTH), finalCalendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
     @OnClick(R.id.clear_signature_button)
     public void clearSignature() {
         //signature_pad.clear();
@@ -311,7 +324,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             Service service = serDAO.get(serviceID);
             cachedService = service;
             setupFinalJSON(service);
-            date_time.setText(service.getDateService());
+            //date_time.setText(service.getDateService());
             cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
             //engineer_name.setText(service.getTname());
 
@@ -323,18 +336,18 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             for(int h = 0; h < mesinArray.size(); h++) {
                 Machine mac = mesinArray.get(h);
-                Log.d("mesin", mac.getBrand());
+                //Log.d("mesin", mac.getBrand());
                 Log.d("mesin", mac.getModel());
                 Log.d("mesin", mac.getMachineID());
-                Log.d("mesin", String.valueOf(mac.getTempServiceID()));
+                //Log.d("mesin", String.valueOf(mac.getTempServiceID()));
                 Log.d("mesin", String.valueOf(mac.getId()));
                 //create new forum object
                 Mesin newMesin = new Mesin();
-                newMesin.setMesinBrand(mac.getBrand());
+                //newMesin.setMesinBrand(mac.getBrand());
                 newMesin.setMesinModel(mac.getModel());
                 newMesin.setMesinNomorSeri(mac.getSerialNumber());
                 //Log.d("machineIDs", mac.getBrand());
-                Log.d("machineTempIDs", String.valueOf(mac.getTempServiceID()));
+                //Log.d("machineTempIDs", String.valueOf(mac.getTempServiceID()));
                 //machineIDs.add(String.valueOf(mac.getTempServiceID()));
                 machineIDs.add(String.valueOf(mac.getMachineID()));
                 mesinData.add(newMesin);
@@ -356,6 +369,22 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setAdapter();
         }
         return view;
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        finalCalendar.set(i, i1, i2);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), this, finalCalendar.get(Calendar.HOUR_OF_DAY), finalCalendar.get(Calendar.MINUTE), true);
+        timePickerDialog.show();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+        finalCalendar.set(Calendar.HOUR_OF_DAY, i);
+        finalCalendar.set(Calendar.MINUTE, i1);
+        //set the date and time
+        SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy, HH:mm");
+        date_time.setText(format.format(finalCalendar.getTime()));
     }
 
     @Override

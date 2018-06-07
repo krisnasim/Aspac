@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +53,8 @@ import id.co.ncl.aspac.model.Work;
 public class WorkFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 
     @BindView(R.id.work_list_listview) ListView work_list_listview;
-    @BindView(R.id.refresh_service_btn) Button refresh_service_btn;
+    @BindView(R.id.swipeLayoutWork) SwipeRefreshLayout swipeLayoutWork;
+    //@BindView(R.id.refresh_service_btn) Button refresh_service_btn;
 
     private ListView lv;
     private Resources res;
@@ -64,23 +66,23 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     List<Long> serviceIDs = new ArrayList<>();
     List<Long> machineIDs = new ArrayList<>();
 
-    @OnClick(R.id.refresh_service_btn)
-    public void refreshData() {
-        //wait with dialog
-        progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Mohon tunggu...");
-        progressDialog.show();
-
-        ServiceDao serDAO = new ServiceDao(dbManager);
-        serDAO.deleteAll();
-        serDAO.closeConnection();
-
-        //get work API
-        getAllWorkData();
-    }
+//    @OnClick(R.id.refresh_service_btn)
+//    public void refreshData() {
+//        //wait with dialog
+//        progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
+//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setMessage("Mohon tunggu...");
+//        progressDialog.show();
+//
+//        ServiceDao serDAO = new ServiceDao(dbManager);
+//        serDAO.deleteAll();
+//        serDAO.closeConnection();
+//
+//        //get work API
+//        getAllWorkData();
+//    }
 
     private DatabaseManager dbManager;
 
@@ -103,6 +105,36 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         Log.d("onCreate", "MY VIEW IS CREATED!");
         getActivity().setTitle("Daftar Pekerjaan Rutin");
         dbManager = DatabaseManager.getInstance();
+
+        //create listener for the swipe behaviour
+        swipeLayoutWork.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //wait with dialog
+                progressDialog = new ProgressDialog(getActivity(), R.style.CustomDialog);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Mohon tunggu...");
+                progressDialog.show();
+
+                ServiceDao serDAO = new ServiceDao(dbManager);
+                serDAO.deleteAll();
+                serDAO.closeConnection();
+
+                //get work API
+                getAllWorkData();
+            }
+        });
+
+        // Scheme colors for animation
+        swipeLayoutWork.setColorSchemeColors(
+                getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_blue_bright),
+                getResources().getColor(android.R.color.holo_orange_light),
+                getResources().getColor(android.R.color.holo_red_light)
+        );
+
 
         if(savedInstanceState != null) {
             Log.d("onCreate", "SAVEDINSTANCESTATE YEA!");
@@ -147,6 +179,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     @Override
     public void onErrorResponse(VolleyError error) {
         progressDialog.dismiss();
+        swipeLayoutWork.setRefreshing(false);
         Log.d("ErrorJSON", "Error Message: "+error);
     }
 
@@ -154,6 +187,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     public void onResponse(JSONObject response) {
         try {
             progressDialog.dismiss();
+            swipeLayoutWork.setRefreshing(false);
             workData.clear();
             //Log.d("JSONResponse", "JSON Response: "+response.toString(2));
             Log.d("onCreate", "API SUCCESS!");
