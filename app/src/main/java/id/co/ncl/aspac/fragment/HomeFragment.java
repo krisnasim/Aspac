@@ -1,12 +1,10 @@
 package id.co.ncl.aspac.fragment;
 
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,18 +28,8 @@ import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
-import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.dao.SparepartDao;
 import id.co.ncl.aspac.model.Sparepart;
-
-import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class HomeFragment extends Fragment implements Response.ErrorListener, Response.Listener<JSONObject> {
 

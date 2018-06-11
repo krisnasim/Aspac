@@ -33,12 +33,8 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -50,9 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,14 +64,12 @@ import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.activity.SignatureActivity;
 import id.co.ncl.aspac.adapter.MesinLPSAdapter;
-import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
 import id.co.ncl.aspac.customClass.PrinterCommands;
 import id.co.ncl.aspac.customClass.VolleyMultipartRequest;
 import id.co.ncl.aspac.customClass.VolleySingleton;
-import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
-import id.co.ncl.aspac.database.MachineDao;
-import id.co.ncl.aspac.database.ServiceDao;
+import id.co.ncl.aspac.dao.MachineDao;
+import id.co.ncl.aspac.dao.ServiceDao;
 import id.co.ncl.aspac.model.Machine;
 import id.co.ncl.aspac.model.Mesin;
 import id.co.ncl.aspac.customClass.ListViewUtility;
@@ -163,13 +155,15 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             try {
                 //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                 finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
+                finalJSONObj.put("no_lps", cachedService.getNoLPS());
+                finalJSONObj.put("teknisi_id", 121);
                 finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
-                finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+                //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
                 finalJSONObj.put("keterangan", keterangan_input.getText().toString());
                 finalJSONObj.put("nik_pic", nik_pic_input.getText().toString());
                 finalJSONObj.put("no_pic", no_pic_input.getText().toString());
                 finalJSONObj.put("date_lps", date);
-                finalJSONObj.put("tanggal_jam_selesai", dateTime);
+                //finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));
@@ -219,15 +213,22 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 //convert JSON into Map
                 Type type = new TypeToken<Map<String, String>>(){}.getType();
                 Gson gson = new Gson();
+
+                try {
+                    Log.d("checkFinalJSON", finalJSONObj.toString(2));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 params = gson.fromJson(String.valueOf(finalJSONObj), type);
 
                 Log.d("params", params.get("kerusakan"));
-                Log.d("params", params.get("perbaikan"));
+                //Log.d("params", params.get("perbaikan"));
                 Log.d("params", params.get("keterangan"));
                 Log.d("params", params.get("nik_pic"));
                 Log.d("params", params.get("no_pic"));
                 Log.d("params", params.get("date_lps"));
-                Log.d("params", params.get("tanggal_jam_selesai"));
+                //Log.d("params", params.get("tanggal_jam_selesai"));
 
                 return params;
             }
@@ -244,24 +245,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 return params;
             }
         };
+
         VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-//        CustomJSONObjectRequest customJSONReq = new CustomJSONObjectRequest(Request.Method.POST, url, finalJSONObj, this, this);
-//        customJSONReq.setHeaders(headers);
-
-//        try {
-//            //Map<String, String> testH = jsObjRequest.getHeaders();
-//            //Log.d("headers",testH.get("Content-Type"));
-//            Log.d("headers", String.valueOf(customJSONReq.getHeaders()));
-//            Log.d("content", finalJSONObj.toString(2));
-//        } catch (AuthFailureError authFailureError) {
-//            authFailureError.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        requestQueue.add(customJSONReq);
     }
 
     @OnClick(R.id.date_time)
@@ -273,9 +258,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
     @OnClick(R.id.clear_signature_button)
     public void clearSignature() {
-        //signature_pad.clear();
-        //Bundle extra = new Bundle();
-        //extra.putLong("service_ID", serviceID);
         Intent intent = new Intent(getActivity(), SignatureActivity.class);
         intent.putExtra("service_id", serviceID);
         startActivity(intent);
@@ -326,7 +308,6 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
             cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
-            //engineer_name.setText(service.getTname());
 
             serDAO.closeConnection();
 
@@ -337,19 +318,19 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             for(int h = 0; h < mesinArray.size(); h++) {
                 Machine mac = mesinArray.get(h);
                 //Log.d("mesin", mac.getBrand());
-                Log.d("mesin", mac.getModel());
-                Log.d("mesin", mac.getMachineID());
+                Log.d("mesin", mac.getName());
+                Log.d("mesin", String.valueOf(mac.getTempServiceID()));
                 //Log.d("mesin", String.valueOf(mac.getTempServiceID()));
                 Log.d("mesin", String.valueOf(mac.getId()));
                 //create new forum object
                 Mesin newMesin = new Mesin();
                 //newMesin.setMesinBrand(mac.getBrand());
-                newMesin.setMesinModel(mac.getModel());
+                newMesin.setMesinModel(mac.getName());
                 newMesin.setMesinNomorSeri(mac.getSerialNumber());
                 //Log.d("machineIDs", mac.getBrand());
                 //Log.d("machineTempIDs", String.valueOf(mac.getTempServiceID()));
                 //machineIDs.add(String.valueOf(mac.getTempServiceID()));
-                machineIDs.add(String.valueOf(mac.getMachineID()));
+                machineIDs.add(String.valueOf(mac.getTempServiceID()));
                 mesinData.add(newMesin);
             }
             //checkForSparepartData();
@@ -357,7 +338,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         } else {
             //create new forum object
             Mesin newMesin = new Mesin();
-            newMesin.setMesinBrand("NCL");
+            //newMesin.setMesinBrand("NCL");
             newMesin.setMesinModel("Super 3000");
             newMesin.setMesinNomorSeri("201730001127839");
             newMesin.setMesinStatus("Sehat");
@@ -409,7 +390,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     public void onResponse(JSONObject response) {
         progressDialog.dismiss();
         try {
-            Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
+            //Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
             Log.d("onResponse", response.toString(2));
             Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
@@ -537,10 +518,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 finalJSONObj = new JSONObject();
                 try {
                     finalJSONObj.put("no_lps", service.getNoLPS());
-                    finalJSONObj.put("type_lps", service.getTypeService());
+                    //finalJSONObj.put("type_lps", service.getTypeService());
                     finalJSONObj.put("customer_id", service.getCustomerID());
                     finalJSONObj.put("customer_branch_id", service.getCBID());
-                    finalJSONObj.put("teknisi_id", service.getTID());
+                    finalJSONObj.put("teknisi_id", 111);
                     //finalJSONObj.put("date_lps", date);
                     //finalJSONObj.put("tanggal_jam_selesai", dateTime);
                 } catch (JSONException e) {

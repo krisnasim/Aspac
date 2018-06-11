@@ -11,6 +11,7 @@ public class Machine {
     private String machineID;
     private String brand;
     private String model;
+    private String name;
     private String serialNumber;
     private String salesNumber;
     //foreign key to service ID
@@ -54,6 +55,14 @@ public class Machine {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSerialNumber() {

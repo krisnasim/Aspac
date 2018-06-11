@@ -1,45 +1,145 @@
 package id.co.ncl.aspac.dao;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-import android.arch.lifecycle.LiveData;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import id.co.ncl.aspac.entities.Service;
+import id.co.ncl.aspac.database.AspacSQLite;
+import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.model.Service;
 
 /**
- * Created by Jonathan Simananda on 29/11/2017.
+ * Created by jonat on 30/11/2017.
  */
 
-@Dao
-public interface ServiceDao {
+public class ServiceDao {
 
-    @Query("SELECT * FROM service")
-    List<Service> getAll();
+    //fields required
+    private SQLiteDatabase db;
+    private AspacSQLite dbHelper;
+    private DatabaseManager dbManager;
 
-    @Query("SELECT * FROM service")
-    LiveData<List<Service>> getAllSync();
+    public ServiceDao(DatabaseManager manager) {
+        this.dbManager = manager;
+        this.dbHelper = this.dbManager.getHelper();
+        this.db = this.dbManager.openDatabase();
+    }
 
-    @Query("SELECT * FROM service WHERE id LIKE :id LIMIT 1")
-    Service findByID(int id);
+    public List<Service> getAll() {
+        List<Service> services = new ArrayList<>();
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, null, null, null, null, null);
+        cursor.moveToFirst();
+        services = cursorToServices(cursor);
 
-    @Insert
-    void insertAll(List<Service> services);
+        return services;
+    }
 
-    @Insert
-    long insert(Service service);
+    public Service get(long serviceID) {
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
+        boolean result = cursor.moveToFirst();
+        if(result) {
 
-    @Update
-    void update(Service service);
+        } else {
 
-    @Delete
-    void delete(Service service);
+        }
+        return cursorToService(cursor);
+    }
 
-    @Query("DELETE FROM service")
-    void deleteAll();
+    public long insert(Service service) {
+        ContentValues values = new ContentValues();
+        values.put(dbHelper.SERVICE_COLUMN_NO_LPS, service.getNoLPS());
+        //CUSTOMER BRANCH
+        values.put(dbHelper.SERVICE_COLUMN_CB_ID, service.getCBID());
+        values.put(dbHelper.SERVICE_COLUMN_CB_NAME, service.getName());
+        values.put(dbHelper.SERVICE_COLUMN_CB_ADDRESS, service.getAddress());
+        values.put(dbHelper.SERVICE_COLUMN_CB_OFFICE_PHONE_NUM, service.getOfficePhoneNumber());
+        values.put(dbHelper.SERVICE_COLUMN_CB_CUST_ID, service.getCustomerID());
+        values.put(dbHelper.SERVICE_COLUMN_CB_CUST_NAME, service.getCustomerName());
+        //TECHNICIAN
 
+        long rowID = 0;
+
+        try {
+            rowID = db.insert(dbHelper.TABLE_SERVICE, null, values);
+            Log.d("insertServiceDAO", "Insert successful! Row ID: "+rowID);
+        }
+        catch (RuntimeException exception) {
+            exception.getCause();
+            exception.getLocalizedMessage();
+        }
+        return rowID;
+    }
+
+    public void update(Service service) {
+
+    }
+
+    public void delete(Service service) {
+        long id = service.getId();
+        int count = db.delete(dbHelper.TABLE_SERVICE, dbHelper.SERVICE_COLUMN_ID + " = " + id, null);
+        Log.d("deleteServiceDao", "Amount deleted rows: "+count);
+    }
+
+    public void deleteAll() {
+        db.execSQL("delete from "+ dbHelper.TABLE_SERVICE);
+        Log.d("deleteServiceDao", "Table deleted");
+    }
+
+    public int getCount() {
+        int count = 0;
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, null, null, null, null, null);
+        count = cursor.getCount();
+        Log.d("countResult", "Number of rows: "+count);
+
+        return count;
+    }
+
+    public void openConnection() {
+        this.db = this.dbManager.openDatabase();
+    }
+
+    public void closeConnection() {
+        this.dbManager.closeDatabase();
+        Log.d("databaseCon", "closing database connection..");
+    }
+
+    private Service cursorToService(Cursor cursor) {
+        Service ser = new Service();
+        ser.setId(cursor.getInt(0));
+        ser.setNoLPS(cursor.getString(1));
+        ser.setCBID(cursor.getInt(2));
+        ser.setName(cursor.getString(3));
+        ser.setAddress(cursor.getString(4));
+        ser.setOfficePhoneNumber(cursor.getString(5));
+        ser.setCustomerID(cursor.getInt(6));
+        ser.setCustomerName(cursor.getString(7));
+
+        return ser;
+    }
+
+    private List<Service> cursorToServices(Cursor cursor) {
+        List<Service> services = new ArrayList<>();
+
+        for (int w = 0; w < cursor.getCount(); w++) {
+            Service ser = new Service();
+            ser.setId(cursor.getInt(0));
+            ser.setNoLPS(cursor.getString(1));
+            ser.setCBID(cursor.getInt(2));
+            ser.setName(cursor.getString(3));
+            ser.setAddress(cursor.getString(4));
+            ser.setOfficePhoneNumber(cursor.getString(5));
+            ser.setCustomerID(cursor.getInt(6));
+            ser.setCustomerName(cursor.getString(7));
+
+            services.add(ser);
+            cursor.moveToNext();
+        }
+        return services;
+    }
 }

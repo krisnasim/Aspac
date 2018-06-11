@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -25,28 +24,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.adapter.WorkListAdapter;
 import id.co.ncl.aspac.customClass.CustomJSONObjectRequest;
-import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
-import id.co.ncl.aspac.database.MachineDao;
-import id.co.ncl.aspac.database.ServiceDao;
-import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.dao.MachineDao;
+import id.co.ncl.aspac.dao.ServiceDao;
 import id.co.ncl.aspac.model.Machine;
-import id.co.ncl.aspac.model.Sparepart;
 import id.co.ncl.aspac.model.Service;
 import id.co.ncl.aspac.model.Work;
 
@@ -93,7 +85,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("onCreate", "I AM CREATED!");
+        //Log.d("onCreate", "I AM CREATED!");
     }
 
     @Override
@@ -102,7 +94,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_work, container, false);
         ButterKnife.bind(this, view);
-        Log.d("onCreate", "MY VIEW IS CREATED!");
+        //Log.d("onCreate", "MY VIEW IS CREATED!");
         getActivity().setTitle("Daftar Pekerjaan Rutin");
         dbManager = DatabaseManager.getInstance();
 
@@ -126,7 +118,6 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 getAllWorkData();
             }
         });
-
         // Scheme colors for animation
         swipeLayoutWork.setColorSchemeColors(
                 getResources().getColor(android.R.color.holo_green_light),
@@ -135,9 +126,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 getResources().getColor(android.R.color.holo_red_light)
         );
 
-
         if(savedInstanceState != null) {
-            Log.d("onCreate", "SAVEDINSTANCESTATE YEA!");
+            //Log.d("onCreate", "SAVEDINSTANCESTATE YEA!");
             workData = savedInstanceState.getParcelableArrayList("work");
             String dataGlobalArrayString = savedInstanceState.getString("globalArray");
             try {
@@ -148,7 +138,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
             setAdapter();
         } else {
-            Log.d("onCreate", "INIT DATA!");
+            //Log.d("onCreate", "INIT DATA!");
             checkForLocalData();
         }
         return view;
@@ -167,7 +157,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d("onCreate", "SAVING INSTANCES!");
+        //Log.d("onCreate", "SAVING INSTANCES!");
         if(dataGlobalArray != null) {
             outState.putString("globalArray", dataGlobalArray.toString());
         }
@@ -190,7 +180,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             swipeLayoutWork.setRefreshing(false);
             workData.clear();
             //Log.d("JSONResponse", "JSON Response: "+response.toString(2));
-            Log.d("onCreate", "API SUCCESS!");
+            //Log.d("onCreate", "API SUCCESS!");
             //create local JSONObj
             JSONObject jsonObj = response;
             JSONArray dataArray = jsonObj.getJSONArray("data");
@@ -248,6 +238,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setCreatedAt("asd");
                     //service.setUpdatedAt(custJSON.getString("updated_at"));
                     //service.setUpdatedAt("asd");
+                    service.setCustomerID(custJSON.getInt("customer_id"));
+                    service.setCustomerName(custJSON.getString("customer_name"));
 
                     //JSONArray detailsArray = obj.getJSONArray("details");
                     JSONArray machinesArray = obj.getJSONArray("machines");
@@ -287,13 +279,13 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                         //attempt number two. let's do this, SQLite
                         Machine machine = new Machine();
-                        machine.setMachineID(mesinObj.getString("temporary_service_id"));
+                        machine.setTempServiceID(mesinObj.getInt("temporary_service_id"));
                         Log.d("machineID", mesinObj.getString("temporary_service_id"));
                         //Log.d("machineTempID", String.valueOf(detailObjt.getInt("temp_service_id")));
                         //Log.d("detail length", String.valueOf(detailsArray.length()));
                         //machine.setTempServiceID(detailObjt.getInt("temp_service_id"));
                         //machine.setBrand(mesinObj.getString("brand"));
-                        machine.setModel(mesinObj.getString("machine_name"));
+                        machine.setName(mesinObj.getString("machine_name"));
                         //machine.setSalesNumber(tempObj.getString("sales_number"));
                         machine.setSerialNumber(mesinObj.getString("serial_number"));
                         machine.setServiceID(serviceIDs.get(z).intValue());
@@ -381,7 +373,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     }
 
     private void getAllWorkData() {
-        Log.d("onCreate", "GET SOME API!");
+        //Log.d("onCreate", "GET SOME API!");
         //set the url
         //String url = getString(R.string.list_all_post);
         String url = "http://103.26.208.118/api/getRoutineServiceSchedule";
@@ -407,7 +399,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     }
 
     private void setAdapter() {
-        Log.d("onCreate", "SET ADAPTERS!");
+        //Log.d("onCreate", "SET ADAPTERS!");
         if(workData.size()>0){
             Log.d("setAdapter", "Setting up work list adapter");
 

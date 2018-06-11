@@ -20,47 +20,14 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String TABLE_SERVICE = "service";
     //column info
     public static final String SERVICE_COLUMN_ID = "_id";
-    public static final String SERVICE_COLUMN_DATE_SERVICE = "date_service";
-    public static final String SERVICE_COLUMN_TYPE_SERVICE = "type_service";
     public static final String SERVICE_COLUMN_NO_LPS = "no_lps";
     //customer branch portion
     public static final String SERVICE_COLUMN_CB_ID = "cb_id";
-    public static final String SERVICE_COLUMN_CB_CODE = "cb_code";
-    public static final String SERVICE_COLUMN_CB_INITIAL = "cb_initial";
     public static final String SERVICE_COLUMN_CB_NAME = "cb_name";
-    public static final String SERVICE_COLUMN_CB_STATUS = "cb_status";
-    public static final String SERVICE_COLUMN_CB_PIC = "cb_pic";
-    public static final String SERVICE_COLUMN_CB_PIC_PHONE_NUM = "cb_pic_phone_number";
-    public static final String SERVICE_COLUMN_CB_PIC_EMAIL = "cb_pic_email";
-    public static final String SERVICE_COLUMN_CB_KW = "cb_kw";
-    public static final String SERVICE_COLUMN_CB_SLJJ = "cb_sljj";
     public static final String SERVICE_COLUMN_CB_ADDRESS = "cb_address";
-    public static final String SERVICE_COLUMN_CB_REGENCY_ID = "cb_regency_id";
-    public static final String SERVICE_COLUMN_CB_PROVINCE_ID = "cb_province_id";
-    public static final String SERVICE_COLUMN_CB_POST_CODE = "cb_post_code";
     public static final String SERVICE_COLUMN_CB_OFFICE_PHONE_NUM = "cb_office_phone_number";
-    public static final String SERVICE_COLUMN_CB_FAX = "cb_fax";
     public static final String SERVICE_COLUMN_CB_CUST_ID = "cb_customer_id";
-    public static final String SERVICE_COLUMN_CB_COOR_ID = "cb_coordinator_id";
-    public static final String SERVICE_COLUMN_CB_TECH_ID = "cb_teknisi_id";
-    public static final String SERVICE_COLUMN_CB_SALES_ID = "cb_sales_id";
-    public static final String SERVICE_COLUMN_CB_USERNAME = "cb_username";
-    public static final String SERVICE_COLUMN_CB_PASSWORD = "cb_password";
-    public static final String SERVICE_COLUMN_CB_REMEMBER_TOKEN = "cb_remember_token";
-    public static final String SERVICE_COLUMN_CB_CREATED_AT = "cb_created_at";
-    public static final String SERVICE_COLUMN_CB_UPDATED_AT = "cb_updated_at";
-    //technician portion
-    public static final String SERVICE_COLUMN_T_ID = "t_id";
-    public static final String SERVICE_COLUMN_T_USERNAME = "t_username";
-    public static final String SERVICE_COLUMN_T_NAME = "t_name";
-    public static final String SERVICE_COLUMN_T_DOB = "t_dob";
-    public static final String SERVICE_COLUMN_T_EMAIL = "t_email";
-    public static final String SERVICE_COLUMN_T_API_TOKEN = "t_api_token";
-    public static final String SERVICE_COLUMN_T_ROLE_ID = "t_role_id";
-    public static final String SERVICE_COLUMN_T_BRANCH_ID = "t_branch_id";
-    public static final String SERVICE_COLUMN_T_SUPERIOR_ID = "t_superior_id";
-    public static final String SERVICE_COLUMN_T_CREATED_AT = "t_created_at";
-    public static final String SERVICE_COLUMN_T_UPDATED_AT = "t_updated_at";
+    public static final String SERVICE_COLUMN_CB_CUST_NAME = "cb_customer_name";
 
     //the machine table info
     //table name
@@ -68,11 +35,8 @@ public class AspacSQLite extends SQLiteOpenHelper {
     //column info
     public static final String MACHINE_COLUMN_ID = "_id";
     public static final String MACHINE_COLUMN_TEMP_SERVICE_ID = "temp_service_id";
-    public static final String MACHINE_COLUMN_MACHINE_ID = "machine_id";
-    public static final String MACHINE_COLUMN_BRAND = "brand";
-    public static final String MACHINE_COLUMN_MODEL = "model";
+    public static final String MACHINE_COLUMN_NAME = "namee";
     public static final String MACHINE_COLUMN_SERIAL_NUM = "serial_number";
-    public static final String MACHINE_COLUMN_SALES_NUM = "sales_number";
     //foreign key to service
     public static final String MACHINE_COLUMN_SERVICE_ID = "service_id";
 
@@ -91,56 +55,21 @@ public class AspacSQLite extends SQLiteOpenHelper {
     private static final String SERVICE_TABLE_CREATE = "create table "
             + TABLE_SERVICE + "( "
             + SERVICE_COLUMN_ID + " integer primary key autoincrement, "
-            + SERVICE_COLUMN_DATE_SERVICE + " text, "
-            + SERVICE_COLUMN_TYPE_SERVICE + " integer, "
             + SERVICE_COLUMN_NO_LPS + " text, "
             + SERVICE_COLUMN_CB_ID + " integer, "
-            + SERVICE_COLUMN_CB_CODE + " text, "
-            + SERVICE_COLUMN_CB_INITIAL + " text, "
             + SERVICE_COLUMN_CB_NAME + " text, "
-            + SERVICE_COLUMN_CB_STATUS + " text, "
-            + SERVICE_COLUMN_CB_PIC + " text, "
-            + SERVICE_COLUMN_CB_PIC_PHONE_NUM + " text, "
-            + SERVICE_COLUMN_CB_PIC_EMAIL + " text, "
-            + SERVICE_COLUMN_CB_KW + " integer, "
-            + SERVICE_COLUMN_CB_SLJJ + " text, "
             + SERVICE_COLUMN_CB_ADDRESS + " text, "
-            + SERVICE_COLUMN_CB_REGENCY_ID + " integer, "
-            + SERVICE_COLUMN_CB_PROVINCE_ID + " integer, "
-            + SERVICE_COLUMN_CB_POST_CODE + " text, "
             + SERVICE_COLUMN_CB_OFFICE_PHONE_NUM + " text, "
-            + SERVICE_COLUMN_CB_FAX + " text, "
             + SERVICE_COLUMN_CB_CUST_ID + " integer, "
-            + SERVICE_COLUMN_CB_COOR_ID + " integer, "
-            + SERVICE_COLUMN_CB_TECH_ID + " integer, "
-            + SERVICE_COLUMN_CB_SALES_ID + " integer, "
-            + SERVICE_COLUMN_CB_USERNAME + " text, "
-            + SERVICE_COLUMN_CB_PASSWORD + " text, "
-            + SERVICE_COLUMN_CB_REMEMBER_TOKEN + " text, "
-            + SERVICE_COLUMN_CB_CREATED_AT + " text, "
-            + SERVICE_COLUMN_CB_UPDATED_AT + " text, "
-            + SERVICE_COLUMN_T_ID + " integer, "
-            + SERVICE_COLUMN_T_USERNAME + " text, "
-            + SERVICE_COLUMN_T_NAME + " text, "
-            + SERVICE_COLUMN_T_DOB + " text, "
-            + SERVICE_COLUMN_T_EMAIL + " text, "
-            + SERVICE_COLUMN_T_API_TOKEN + " text, "
-            + SERVICE_COLUMN_T_ROLE_ID + " integer, "
-            + SERVICE_COLUMN_T_BRANCH_ID + " integer, "
-            + SERVICE_COLUMN_T_SUPERIOR_ID + " text, "
-            + SERVICE_COLUMN_T_CREATED_AT + " text, "
-            + SERVICE_COLUMN_T_UPDATED_AT + " text);";
+            + SERVICE_COLUMN_CB_CUST_NAME + " string);";
 
     //machine table sql creation
     private static final String MACHINE_TABLE_CREATE = "create table "
             + TABLE_MACHINE + "( "
             + MACHINE_COLUMN_ID + " integer primary key autoincrement, "
-            + MACHINE_COLUMN_MACHINE_ID + " integer, "
             + MACHINE_COLUMN_TEMP_SERVICE_ID + " integer, "
-            + MACHINE_COLUMN_BRAND + " text, "
-            + MACHINE_COLUMN_MODEL + " text, "
+            + MACHINE_COLUMN_NAME + " string, "
             + MACHINE_COLUMN_SERIAL_NUM + " text, "
-            + MACHINE_COLUMN_SALES_NUM + " text, "
             + MACHINE_COLUMN_SERVICE_ID + " integer, "
             + "foreign key (" + MACHINE_COLUMN_SERVICE_ID + ") REFERENCES " + TABLE_SERVICE + " (" + SERVICE_COLUMN_ID + "));";
 

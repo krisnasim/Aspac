@@ -29,8 +29,8 @@ import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.activity.HomeActivity;
 import id.co.ncl.aspac.customClass.SparepartFormGenerator;
 import id.co.ncl.aspac.database.DatabaseManager;
-import id.co.ncl.aspac.database.MachineDao;
-import id.co.ncl.aspac.database.SparepartDao;
+import id.co.ncl.aspac.dao.MachineDao;
+import id.co.ncl.aspac.dao.SparepartDao;
 import id.co.ncl.aspac.model.Machine;
 import id.co.ncl.aspac.model.Sparepart;
 
@@ -182,11 +182,11 @@ public class CreateDetailFragment extends Fragment {
 
         //get the machineID first
         MachineDao macDAO = new MachineDao(dbManager);
-        Machine newMachine = macDAO.get(machineID);
-        Log.d("machineSpec", newMachine.getBrand());
-        Log.d("machineSpec", newMachine.getModel());
+        Machine newMachine = macDAO.getByTempID(machineID);
+        //Log.d("machineSpec", newMachine.getBrand());
+        Log.d("machineSpec", newMachine.getName());
         Log.d("machineSpec", String.valueOf(newMachine.getTempServiceID()));
-        Log.d("machineSpec", newMachine.getMachineID());
+        //Log.d("machineSpec", newMachine.getMachineID());
         macDAO.closeConnection();
         //fill in the machine json
         try {
@@ -262,6 +262,8 @@ public class CreateDetailFragment extends Fragment {
                         } else {
                             job_status_bad_radio_btn.setChecked(true);
                         }
+
+                        //prepare this area to be commented
                         JSONArray sparepartJSONArray = null;
                         if(machineJSON.has("sparepart_consumed")) {
                             sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");

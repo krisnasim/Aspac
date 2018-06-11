@@ -25,6 +25,7 @@ import id.co.ncl.aspac.fragment.HomeFragment;
 import id.co.ncl.aspac.fragment.LeaveFragment;
 import id.co.ncl.aspac.fragment.MachineFragment;
 import id.co.ncl.aspac.fragment.SparepartFragment;
+import id.co.ncl.aspac.fragment.SpecialWorkFragment;
 import id.co.ncl.aspac.fragment.WorkFragment;
 
 public class HomeActivity extends AppCompatActivity
@@ -93,7 +94,6 @@ public class HomeActivity extends AppCompatActivity
         previousMenu = selectedMenu;
         selectedMenu = id;
 
-
         if (id == R.id.nav_dashboard) {
             fragment = new HomeFragment();
         }
@@ -105,10 +105,11 @@ public class HomeActivity extends AppCompatActivity
         else if (id == R.id.nav_work) {
             fragment = new WorkFragment();
         } else if (id == R.id.nav_work2) {
-            //create new fragment class
-        } else if (id == R.id.nav_sparepart) {
-            fragment = new SparepartFragment();
+            fragment = new SpecialWorkFragment();
         }
+//        else if (id == R.id.nav_sparepart) {
+//            fragment = new SparepartFragment();
+//        }
 //        else if (id == R.id.nav_machine) {
 //            fragment = new MachineFragment();
 //        }
@@ -139,14 +140,6 @@ public class HomeActivity extends AppCompatActivity
         transaction = manager.beginTransaction();
         transaction.replace(R.id.home_main_frame, fragment);
         transaction.addToBackStack(null);
-
-//        manager.addOnBackStackChangedListener(
-//                new FragmentManager.OnBackStackChangedListener() {
-//                    public void onBackStackChanged() {
-//                        // Update your UI here.
-//                        navigationView.getMenu().findItem(1).setChecked(true);
-//                    }
-//                });
         transaction.commit();
     }
 
