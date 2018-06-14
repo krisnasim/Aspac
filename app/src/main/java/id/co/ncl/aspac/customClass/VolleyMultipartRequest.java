@@ -4,6 +4,8 @@ package id.co.ncl.aspac.customClass;
  * Created by jonat on 01/12/2016.
  */
 
+import android.util.Log;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -147,6 +149,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     private void textParse(DataOutputStream dataOutputStream, Map<String, String> params, String encoding) throws IOException {
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
+                Log.d("loopData", entry.getValue());
                 buildTextPart(dataOutputStream, entry.getKey(), entry.getValue());
             }
         } catch (UnsupportedEncodingException uee) {

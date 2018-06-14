@@ -138,8 +138,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         progressDialog.show();
 
         //final check bitmap null or not
-        Log.d("FINAL sig width: ", String.valueOf(signedBitmap.getWidth()));
-        Log.d("FINAL sig height: ", String.valueOf(signedBitmap.getHeight()));
+        //Log.d("FINAL sig width: ", String.valueOf(signedBitmap.getWidth()));
+        //Log.d("FINAL sig height: ", String.valueOf(signedBitmap.getHeight()));
 
         //prepare date and datetime here
         Calendar cal = Calendar.getInstance();
@@ -156,13 +156,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                 finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
                 finalJSONObj.put("no_lps", cachedService.getNoLPS());
-                finalJSONObj.put("teknisi_id", 121);
+                //finalJSONObj.put("teknisi_id", 121);
                 finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
                 //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
                 finalJSONObj.put("keterangan", keterangan_input.getText().toString());
                 finalJSONObj.put("nik_pic", nik_pic_input.getText().toString());
                 finalJSONObj.put("no_pic", no_pic_input.getText().toString());
-                finalJSONObj.put("date_lps", date);
+                //finalJSONObj.put("date_lps", date);
                 //finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
                 SharedPreferences.Editor editor = sharedPref.edit();
@@ -211,7 +211,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 //convert JSON into Map
-                Type type = new TypeToken<Map<String, String>>(){}.getType();
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
                 Gson gson = new Gson();
 
                 try {
@@ -220,6 +220,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     e.printStackTrace();
                 }
 
+                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+
                 params = gson.fromJson(String.valueOf(finalJSONObj), type);
 
                 Log.d("params", params.get("kerusakan"));
@@ -227,7 +229,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 Log.d("params", params.get("keterangan"));
                 Log.d("params", params.get("nik_pic"));
                 Log.d("params", params.get("no_pic"));
-                Log.d("params", params.get("date_lps"));
+                //Log.d("params", params.get("date_lps"));
                 //Log.d("params", params.get("tanggal_jam_selesai"));
 
                 return params;
@@ -308,6 +310,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
             cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+            //kerusakan_input.setText(service.);
 
             serDAO.closeConnection();
 
@@ -519,9 +522,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 try {
                     finalJSONObj.put("no_lps", service.getNoLPS());
                     //finalJSONObj.put("type_lps", service.getTypeService());
-                    finalJSONObj.put("customer_id", service.getCustomerID());
-                    finalJSONObj.put("customer_branch_id", service.getCBID());
-                    finalJSONObj.put("teknisi_id", 111);
+                    finalJSONObj.put("customer_id", String.valueOf(service.getCustomerID()));
+                    finalJSONObj.put("customer_branch_id", String.valueOf(service.getCBID()));
+                    finalJSONObj.put("teknisi_id", "111");
                     //finalJSONObj.put("date_lps", date);
                     //finalJSONObj.put("tanggal_jam_selesai", dateTime);
                 } catch (JSONException e) {
