@@ -126,7 +126,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     @OnClick(R.id.create_form_button)
     public void sendForm() {
         //set the url
-        String url = "http://103.26.208.118/api/submitdatalps";
+        //String url = "http://103.26.208.118/api/submitdatalps";
+        String url = "http://103.26.208.118/api/submitRoutineLPS";
 
         create_form_button.setEnabled(false);
 
@@ -260,6 +261,28 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
     @OnClick(R.id.clear_signature_button)
     public void clearSignature() {
+        //prepare the filled in data first
+        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        try {
+            finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
+            finalJSONObj.put("no_lps", cachedService.getNoLPS());
+            //finalJSONObj.put("teknisi_id", 121);
+            finalJSONObj.put("kerusakan", kerusakan_input.getText().toString());
+            //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
+            finalJSONObj.put("keterangan", keterangan_input.getText().toString());
+            finalJSONObj.put("nik_pic", nik_pic_input.getText().toString());
+            finalJSONObj.put("no_pic", no_pic_input.getText().toString());
+            //finalJSONObj.put("date_lps", date);
+            finalJSONObj.put("tanggal_jam_selesai", date_time.getText().toString());
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            //editor.putString("current_service_json", String.valueOf(finalJSONObj));
+            editor.putString(cachedService.getNoLPS(), String.valueOf(finalJSONObj));
+            editor.apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         Intent intent = new Intent(getActivity(), SignatureActivity.class);
         intent.putExtra("service_id", serviceID);
         startActivity(intent);
@@ -541,6 +564,18 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 try {
                     //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                     finalJSONObj = new JSONObject(sharedPref.getString(service.getNoLPS(), "empty"));
+
+                    //put the input data (if any) into the form
+                    try {
+                        kerusakan_input.setText(finalJSONObj.getString("kerusakan"));
+                        keterangan_input.setText(finalJSONObj.getString("keterangan"));
+                        nik_pic_input.setText(finalJSONObj.getString("nik_pic"));
+                        no_pic_input.setText(finalJSONObj.getString("no_pic"));
+                        date_time.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     if(checkForSparepartData()) {
                         //put inner object first
                         if(machineSpareparts.length() > 0) {
