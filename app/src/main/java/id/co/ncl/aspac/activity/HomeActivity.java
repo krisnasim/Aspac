@@ -164,7 +164,14 @@ public class HomeActivity extends AppCompatActivity
             extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
             extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
             fragment.setArguments(extra);
-        } else {
+        } else if(getIntent().getByteArrayExtra("signature_image") == null) {
+            fragment = new CreateFragment();
+            Bundle extra = new Bundle();
+            extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
+            //extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
+            fragment.setArguments(extra);
+        } else
+        {
             fragment = new HomeFragment();
             //Fragment fragment = new InputTaskFragment();
         }

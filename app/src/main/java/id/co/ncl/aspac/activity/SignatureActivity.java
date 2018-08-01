@@ -31,6 +31,7 @@ public class SignatureActivity extends AppCompatActivity {
     @OnClick(R.id.clear_sign_btn)
     public void clearSignature() {
         signature_pad_fs.clear();
+        signedBitmap = null;
     }
 
     @OnClick(R.id.save_sign_btn)
@@ -47,12 +48,20 @@ public class SignatureActivity extends AppCompatActivity {
 
         //Convert to byte array
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        signedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-
         Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra("signature_image", byteArray);
-        intent.putExtra("service_id", serviceID);
+        if(signedBitmap != null) {
+            signedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            intent.putExtra("signature_image", byteArray);
+            intent.putExtra("service_id", serviceID);
+        } else {
+            byte[] byteArray = null;
+            intent.putExtra("signature_image", byteArray);
+            intent.putExtra("service_id", serviceID);
+        }
+
+
         progressDialog.dismiss();
         startActivity(intent);
         finish();
@@ -93,7 +102,7 @@ public class SignatureActivity extends AppCompatActivity {
 
             @Override
             public void onClear() {
-
+                signedBitmap = null;
             }
         });
     }

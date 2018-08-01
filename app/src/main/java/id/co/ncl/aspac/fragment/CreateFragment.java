@@ -83,7 +83,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     @BindView(R.id.create_form_4_card_view) CardView create_form_4_card_view;
     @BindView(R.id.create_form_button) Button create_form_button;
     @BindView(R.id.kerusakan_input) EditText kerusakan_input;
-    @BindView(R.id.perbaikan_input) EditText perbaikan_input;
+    //@BindView(R.id.perbaikan_input) EditText perbaikan_input;
     @BindView(R.id.keterangan_input) EditText keterangan_input;
     @BindView(R.id.nik_pic_input) EditText nik_pic_input;
     @BindView(R.id.no_pic_input) EditText no_pic_input;
@@ -127,7 +127,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     public void sendForm() {
         //set the url
         //String url = "http://103.26.208.118/api/submitdatalps";
-        String url = "http://103.26.208.118/api/submitRoutineLPS";
+        String url = "http://103.26.208.118/api/postRoutineLPS";
 
         create_form_button.setEnabled(false);
 
@@ -176,7 +176,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         }
         //set headers
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "multipart/form-data");
+        //headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
 
         VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
@@ -225,11 +225,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
                 params = gson.fromJson(String.valueOf(finalJSONObj), type);
 
-                Log.d("params", params.get("kerusakan"));
+                //Log.d("params", params.get("kerusakan"));
                 //Log.d("params", params.get("perbaikan"));
-                Log.d("params", params.get("keterangan"));
-                Log.d("params", params.get("nik_pic"));
-                Log.d("params", params.get("no_pic"));
+                //Log.d("params", params.get("keterangan"));
+                //Log.d("params", params.get("nik_pic"));
+                //Log.d("params", params.get("no_pic"));
                 //Log.d("params", params.get("date_lps"));
                 //Log.d("params", params.get("tanggal_jam_selesai"));
 
@@ -332,7 +332,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             cachedService = service;
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
-            cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+            //cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+            cust_data.setText(service.getName() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
             //kerusakan_input.setText(service.);
 
             serDAO.closeConnection();
@@ -604,7 +605,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                                 }
                             }
                             //then put the final array back to json
-                            finalJSONObj.put("machine", machineStatusArray);
+                            Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
+                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
                         } else {
                             //if it HAS NOT the name
                             machineStatusArray = new JSONArray();
