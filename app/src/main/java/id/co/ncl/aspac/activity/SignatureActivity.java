@@ -55,6 +55,9 @@ public class SignatureActivity extends AppCompatActivity {
 
             intent.putExtra("signature_image", byteArray);
             intent.putExtra("service_id", serviceID);
+            if(getIntent().hasExtra("special")) {
+                intent.putExtra("special", true);
+            }
         } else {
             byte[] byteArray = null;
             intent.putExtra("signature_image", byteArray);

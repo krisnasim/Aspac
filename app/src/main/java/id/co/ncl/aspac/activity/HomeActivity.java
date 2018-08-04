@@ -25,6 +25,7 @@ import id.co.ncl.aspac.fragment.HomeFragment;
 import id.co.ncl.aspac.fragment.LeaveFragment;
 import id.co.ncl.aspac.fragment.MachineFragment;
 import id.co.ncl.aspac.fragment.SparepartFragment;
+import id.co.ncl.aspac.fragment.SpecialCreateFragment;
 import id.co.ncl.aspac.fragment.SpecialWorkFragment;
 import id.co.ncl.aspac.fragment.WorkFragment;
 
@@ -159,19 +160,28 @@ public class HomeActivity extends AppCompatActivity
         boolean boolIntent = checkforBundle();
         Fragment fragment = new Fragment();
         if(getIntent().getByteArrayExtra("signature_image") != null) {
-            fragment = new CreateFragment();
+            if(getIntent().hasExtra("special")) {
+                fragment = new SpecialCreateFragment();
+            } else {
+                fragment = new CreateFragment();
+            }
             Bundle extra = new Bundle();
             extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
             extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
             fragment.setArguments(extra);
-        } else if(getIntent().getByteArrayExtra("signature_image") == null) {
-            fragment = new CreateFragment();
-            Bundle extra = new Bundle();
-            extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
-            //extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
-            fragment.setArguments(extra);
-        } else
-        {
+        } else if(getIntent().hasExtra("signature_image")) {
+            if(getIntent().getByteArrayExtra("signature_image") == null) {
+                if(getIntent().hasExtra("special")) {
+                    fragment = new SpecialCreateFragment();
+                } else {
+                    fragment = new CreateFragment();
+                }
+                Bundle extra = new Bundle();
+                extra.putLong("service_id", getIntent().getLongExtra("service_id", 0));
+                //extra.putByteArray("signature_image", getIntent().getByteArrayExtra("signature_image"));
+                fragment.setArguments(extra);
+            }
+        } else {
             fragment = new HomeFragment();
             //Fragment fragment = new InputTaskFragment();
         }

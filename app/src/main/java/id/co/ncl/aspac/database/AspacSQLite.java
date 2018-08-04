@@ -22,12 +22,14 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String SERVICE_COLUMN_ID = "_id";
     public static final String SERVICE_COLUMN_NO_LPS = "no_lps";
     //customer branch portion
+    public static final String SERVICE_COLUMN_CUST_ID = "cust_id";
+    public static final String SERVICE_COLUMN_CUST_NAME = "cust_name";
     public static final String SERVICE_COLUMN_CB_ID = "cb_id";
     public static final String SERVICE_COLUMN_CB_NAME = "cb_name";
     public static final String SERVICE_COLUMN_CB_ADDRESS = "cb_address";
     public static final String SERVICE_COLUMN_CB_OFFICE_PHONE_NUM = "cb_office_phone_number";
-    public static final String SERVICE_COLUMN_CB_CUST_ID = "cb_customer_id";
-    public static final String SERVICE_COLUMN_CB_CUST_NAME = "cb_customer_name";
+    public static final String SERVICE_COLUMN_REPAIR_ID = "repair_id";
+    public static final String SERVICE_COLUMN_KERUSAKAN = "kerusakan";
 
     //the machine table info
     //table name
@@ -35,8 +37,9 @@ public class AspacSQLite extends SQLiteOpenHelper {
     //column info
     public static final String MACHINE_COLUMN_ID = "_id";
     public static final String MACHINE_COLUMN_TEMP_SERVICE_ID = "temp_service_id";
-    public static final String MACHINE_COLUMN_NAME = "namee";
+    public static final String MACHINE_COLUMN_NAME = "name";
     public static final String MACHINE_COLUMN_SERIAL_NUM = "serial_number";
+    public static final String MACHINE_COLUMN_MACHINE_ID = "machine_id";
     //foreign key to service
     public static final String MACHINE_COLUMN_SERVICE_ID = "service_id";
 
@@ -60,8 +63,10 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + SERVICE_COLUMN_CB_NAME + " text, "
             + SERVICE_COLUMN_CB_ADDRESS + " text, "
             + SERVICE_COLUMN_CB_OFFICE_PHONE_NUM + " text, "
-            + SERVICE_COLUMN_CB_CUST_ID + " integer, "
-            + SERVICE_COLUMN_CB_CUST_NAME + " string);";
+            + SERVICE_COLUMN_REPAIR_ID + " text, "
+            + SERVICE_COLUMN_KERUSAKAN + " text, "
+            + SERVICE_COLUMN_CUST_ID + " integer, "
+            + SERVICE_COLUMN_CUST_NAME + " string);";
 
     //machine table sql creation
     private static final String MACHINE_TABLE_CREATE = "create table "
@@ -70,6 +75,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + MACHINE_COLUMN_TEMP_SERVICE_ID + " integer, "
             + MACHINE_COLUMN_NAME + " string, "
             + MACHINE_COLUMN_SERIAL_NUM + " text, "
+            + MACHINE_COLUMN_MACHINE_ID + " text, "
             + MACHINE_COLUMN_SERVICE_ID + " integer, "
             + "foreign key (" + MACHINE_COLUMN_SERVICE_ID + ") REFERENCES " + TABLE_SERVICE + " (" + SERVICE_COLUMN_ID + "));";
 

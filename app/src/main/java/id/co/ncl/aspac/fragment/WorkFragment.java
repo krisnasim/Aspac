@@ -179,7 +179,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             progressDialog.dismiss();
             swipeLayoutWork.setRefreshing(false);
             workData.clear();
-            //Log.d("JSONResponse", "JSON Response: "+response.toString(2));
+            Log.d("JSONResponse", "JSON Response: "+response.toString(2));
             //Log.d("onCreate", "API SUCCESS!");
             //create local JSONObj
             JSONObject jsonObj = response;
@@ -263,7 +263,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setTupdatedAt(custJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
-                    long serviceID = serDAO.insert(service);
+                    long serviceID = serDAO.insertRoutine(service);
                     Log.d("serviceIDSuccess", String.valueOf(serviceID));
                     serviceIDs.add(serviceID);
                     serDAO.closeConnection();
@@ -324,7 +324,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
     private void checkForLocalData() {
         ServiceDao serDAO = new ServiceDao(dbManager);
-        int result = serDAO.getCount();
+        int result = serDAO.getCountRoutine();
         //serDAO.closeConnection();
 
         if(result > 0) {
@@ -333,7 +333,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
             workData.clear();
 
             //get data from sqlite
-            List<Service> services = serDAO.getAll();
+            List<Service> services = serDAO.getAllRoutine();
 
             for(int z = 0; z < services.size(); z++) {
                 Service ser = services.get(z);

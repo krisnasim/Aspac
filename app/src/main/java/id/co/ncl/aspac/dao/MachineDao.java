@@ -64,6 +64,25 @@ public class MachineDao {
         return machines;
     }
 
+    public List<Machine> getAllRepair(long serviceID) {
+        List<Machine> machines = new ArrayList<>();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_MACHINE_ID + " IS NOT NULL", null, null, null, null);
+        cursor.moveToFirst();
+        for (int w = 0; w < cursor.getCount(); w++) {
+            Machine mac = new Machine();
+            mac.setId(cursor.getInt(0));
+            mac.setTempServiceID(cursor.getInt(1));
+            mac.setName(cursor.getString(2));
+            mac.setSerialNumber(cursor.getString(3));
+            mac.setMachineID(cursor.getString(4));
+
+            machines.add(mac);
+            cursor.moveToNext();
+        }
+        return machines;
+    }
+
 //    public Machine get(String machineID) {
 //        Machine mac = new Machine();
 //
@@ -104,6 +123,30 @@ public class MachineDao {
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
         //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
         values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+
+        long rowID = 0;
+
+        try {
+            rowID = db.insert(dbHelper.TABLE_MACHINE, null, values);
+            Log.d("insertMachineDAO", "Insert successful! Row ID: "+rowID);
+        }
+        catch (RuntimeException exception) {
+            exception.getCause();
+            exception.getLocalizedMessage();
+        }
+        return rowID;
+    }
+
+    public long insertRepairMachine(Machine machine) {
+        ContentValues values = new ContentValues();
+        //values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
+        values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
+        //values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
+        values.put(dbHelper.MACHINE_COLUMN_NAME, machine.getName());
+        values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
+        //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+        values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
 
         long rowID = 0;
 
