@@ -80,7 +80,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
         View view = inflater.inflate(R.layout.fragment_special_work, container, false);
         ButterKnife.bind(this, view);
         //Log.d("onCreate", "MY VIEW IS CREATED!");
-        getActivity().setTitle("Daftar Pekerjaan Rutin");
+        getActivity().setTitle("Daftar Pekerjaan Perbaikan");
         dbManager = DatabaseManager.getInstance();
 
         //create listener for the swipe behaviour
@@ -267,8 +267,9 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
 
                     //create new work object
                     Work newWork = new Work();
-                    newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
-                    newWork.setWorkDescShort(custJSON.getString("customer_branch_name"));
+                    //newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
+                    newWork.setWorkTitle(custJSON.getString("customer_branch_name"));
+                    newWork.setWorkDescShort(machineJSON.getString("machine_name") + " - " + machineJSON.getString("serial_number"));
                     //newWork.setWorkStatus("Pending");
                     //newWork.setWorkDateTime(date);
 
@@ -295,10 +296,11 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
 
             for(int z = 0; z < services.size(); z++) {
                 Service ser = services.get(z);
+                List<Machine> mach = new MachineDao(dbManager).getAllByServiceID(ser.getId());
                 //create new work object
                 Work newWork = new Work();
-                newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
-                newWork.setWorkDescShort(ser.getName());
+                newWork.setWorkTitle(ser.getCustomerName());
+                newWork.setWorkDescShort(mach.get(0).getName() + " - " + mach.get(0).getSerialNumber());
 //                newWork.setWorkStatus("Pending");
 //                newWork.setWorkDateTime(date);
 

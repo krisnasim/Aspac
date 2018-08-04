@@ -129,7 +129,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
     public void sendForm() {
         //set the url
         //String url = "http://103.26.208.118/api/submitdatalps";
-        String url = "http://103.26.208.118/api/postRoutineLPS";
+        String url = "http://103.26.208.118/api/postRepairLPS";
 
         create_form_button_sp.setEnabled(false);
 

@@ -178,6 +178,10 @@ public class CreateDetailFragment extends Fragment {
         dbManager = DatabaseManager.getInstance();
         ctx = getActivity();
 
+        if(getArguments().getBoolean("routine")) {
+            add_sparepart_button.setEnabled(false);
+        }
+
         Log.d("machineIDDetail", machineID);
 
         //get the machineID first

@@ -643,6 +643,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     args.putLong("service_id", serviceID);
                     args.putString("machine_id", machineIDs.get(position));
                     args.putString("no_lps", cachedService.getNoLPS());
+                    args.putBoolean("routine", true);
                     mesinData.clear();
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();

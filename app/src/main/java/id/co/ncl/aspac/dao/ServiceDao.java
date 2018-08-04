@@ -59,7 +59,7 @@ public class ServiceDao {
     }
 
     public Service get(long serviceID) {
-        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID + " AND repair_id IS NOT NULL", null, null, null, null);
         boolean result = cursor.moveToFirst();
         if(result) {
 
