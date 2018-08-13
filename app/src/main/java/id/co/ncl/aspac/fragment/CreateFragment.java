@@ -650,7 +650,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();
                     newFrag.setArguments(args);
-                    act.changeFragmentNoBS(newFrag);
+                    //act.changeFragmentNoBS(newFrag);
+                    act.changeFragment(newFrag);
                 }
             });
         }

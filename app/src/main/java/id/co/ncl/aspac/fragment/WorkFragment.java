@@ -309,7 +309,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //create new work object
                     Work newWork = new Work();
                     newWork.setWorkTitle(obj.getString("no_lps"));
-                    newWork.setWorkDescShort(custJSON.getString("customer_branch_name"));
+                    newWork.setWorkDescShort(custJSON.getString("customer_branch_name") + " - " + custJSON.getString("customer_name"));
                     //newWork.setWorkStatus("Pending");
                     //newWork.setWorkDateTime(date);
 
@@ -349,7 +349,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 //create new work object
                 Work newWork = new Work();
                 newWork.setWorkTitle(ser.getNoLPS());
-                newWork.setWorkDescShort(ser.getCustomerName());
+                newWork.setWorkDescShort(ser.getCustomerName() + " - " + ser.getName());
 //                newWork.setWorkStatus("Pending");
 //                newWork.setWorkDateTime(date);
 

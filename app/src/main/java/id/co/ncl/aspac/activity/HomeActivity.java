@@ -74,12 +74,12 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-//            if(getFragmentManager().getBackStackEntryCount()>1) {
-//                getFragmentManager().popBackStack();
-//            }
-//            else {
+            if(getFragmentManager().getBackStackEntryCount()>1) {
+                getFragmentManager().popBackStack();
+            }
+            else {
                 super.onBackPressed();
-//            }
+            }
         }
 
         //navigationView.getMenu().getItem(2).setChecked(true);
