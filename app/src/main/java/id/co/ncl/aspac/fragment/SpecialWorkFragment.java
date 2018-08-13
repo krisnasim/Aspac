@@ -194,9 +194,12 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                     //service.setInitial(custJSON.getString("branch_initial"));
                     service.setName(custJSON.getString("customer_branch_name"));
                     service.setAddress(custJSON.getString("customer_branch_address"));
-                    service.setOfficePhoneNumber("123123123");
+                    //service.setOfficePhoneNumber("123123123");
+                    service.setOfficePhoneNumber(custJSON.getString("customer_branch_office_phone_number"));
                     service.setCustomerID(custJSON.getInt("customer_id"));
                     service.setCustomerName(custJSON.getString("customer_name"));
+                    service.setKerusakan(obj.getString("kerusakan"));
+                    service.setRepairdID(obj.getInt("repair_service_id"));
 
                     //JSONArray detailsArray = obj.getJSONArray("details");
                     //JSONArray machinesArray = obj.getJSONArray("machines");

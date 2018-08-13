@@ -49,6 +49,8 @@ public class Service {
     private String superiorID;
     private String TcreatedAt;
     private String TupdatedAt;
+    private String kerusakan;
+    private int repairdID;
 
     public int getId() {
         return id;
@@ -380,5 +382,21 @@ public class Service {
 
     public void setTupdatedAt(String updatedAt) {
         this.TupdatedAt = updatedAt;
+    }
+
+    public String getKerusakan() {
+        return kerusakan;
+    }
+
+    public void setKerusakan(String kerusakan) {
+        this.kerusakan = kerusakan;
+    }
+
+    public int getRepairdID() {
+        return repairdID;
+    }
+
+    public void setRepairdID(int repairdID) {
+        this.repairdID = repairdID;
     }
 }

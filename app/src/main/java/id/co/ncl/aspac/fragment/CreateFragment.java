@@ -166,6 +166,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 //finalJSONObj.put("date_lps", date);
                 //finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
+                //Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));
                 editor.putString(cachedService.getNoLPS(), String.valueOf(finalJSONObj));
@@ -333,7 +335,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
             //cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
-            cust_data.setText(service.getName() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+            cust_data.setText(service.getCustomerName() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
             //kerusakan_input.setText(service.);
 
             serDAO.closeConnection();

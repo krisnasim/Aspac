@@ -59,7 +59,7 @@ public class ServiceDao {
     }
 
     public Service get(long serviceID) {
-        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID + " AND repair_id IS NOT NULL", null, null, null, null);
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
         boolean result = cursor.moveToFirst();
         if(result) {
 
@@ -129,8 +129,8 @@ public class ServiceDao {
         values.put(dbHelper.SERVICE_COLUMN_CB_NAME, service.getName());
         values.put(dbHelper.SERVICE_COLUMN_CB_ADDRESS, service.getAddress());
         values.put(dbHelper.SERVICE_COLUMN_CB_OFFICE_PHONE_NUM, service.getOfficePhoneNumber());
-        values.put(dbHelper.SERVICE_COLUMN_REPAIR_ID, service.getCustomerName());
-        values.put(dbHelper.SERVICE_COLUMN_KERUSAKAN, service.getCustomerName());
+        values.put(dbHelper.SERVICE_COLUMN_REPAIR_ID, service.getRepairdID());
+        values.put(dbHelper.SERVICE_COLUMN_KERUSAKAN, service.getKerusakan());
         //TECHNICIAN
 
         long rowID = 0;
@@ -172,7 +172,7 @@ public class ServiceDao {
 
     public int getCountRoutine() {
         int count = 0;
-        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, "repair_id IS NULL", null, null, null, null);
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null,  dbHelper.SERVICE_COLUMN_REPAIR_ID + " IS NULL", null, null, null, null);
         count = cursor.getCount();
         Log.d("countResult", "Number of rows: "+count);
 
@@ -181,7 +181,7 @@ public class ServiceDao {
 
     public int getCountRepair() {
         int count = 0;
-        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, "repair_id IS NOT NULL", null, null, null, null);
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_REPAIR_ID + " IS NOT NULL", null, null, null, null);
         count = cursor.getCount();
         Log.d("countResult", "Number of rows: "+count);
 

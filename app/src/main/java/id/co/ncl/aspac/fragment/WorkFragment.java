@@ -222,8 +222,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setProvinceID(custJSON.getInt("province_id"));
                     //service.setPostCode(custJSON.getString("post_code"));
                     //service.setPostCode("asd");
-                    //service.setOfficePhoneNumber(obj.getString("customer_branch_office_phone_number"));
-                    service.setOfficePhoneNumber("123123123");
+                    service.setOfficePhoneNumber(custJSON.getString("customer_branch_office_phone_number"));
+                    //service.setOfficePhoneNumber("123123123");
                     //service.setFax(custJSON.getString("fax"));
                     //service.setFax("asd");
                     //service.setCustomerID(custJSON.getInt("customer_id"));
@@ -308,7 +308,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                     //create new work object
                     Work newWork = new Work();
-                    newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
+                    newWork.setWorkTitle(obj.getString("no_lps"));
                     newWork.setWorkDescShort(custJSON.getString("customer_branch_name"));
                     //newWork.setWorkStatus("Pending");
                     //newWork.setWorkDateTime(date);
@@ -348,8 +348,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 
                 //create new work object
                 Work newWork = new Work();
-                newWork.setWorkTitle("Pekerjaan Rutin " + (z + 1));
-                newWork.setWorkDescShort(ser.getName());
+                newWork.setWorkTitle(ser.getNoLPS());
+                newWork.setWorkDescShort(ser.getCustomerName());
 //                newWork.setWorkStatus("Pending");
 //                newWork.setWorkDateTime(date);
 

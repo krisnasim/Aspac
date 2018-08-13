@@ -168,6 +168,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 //finalJSONObj.put("date_lps", date);
                 //finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
+                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));
                 editor.putString(cachedService.getNoLPS(), String.valueOf(finalJSONObj));
@@ -181,77 +183,77 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         //headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
 
-        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
-            @Override
-            public void onResponse(NetworkResponse response) {
-                progressDialog.dismiss();
-                try {
-                    Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
-                    Log.d("onResponse", response.toString());
-                    Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
-
-                    //delete the sharedpref
-                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-                    //preferences.edit().remove("current_service_json").apply();
-                    preferences.edit().remove(cachedService.getNoLPS()).apply();
-
-                    //delete the sent service
-                    ServiceDao serDAO = new ServiceDao(dbManager);
-                    serDAO.delete(cachedService);
-                    serDAO.closeConnection();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                //move to new fragment
-                HomeActivity act = (HomeActivity) getActivity();
-                Fragment newFrag = new WorkFragment();
-                act.changeFragmentNoBS(newFrag);
-            }
-        }, this) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                //convert JSON into Map
-                Type type = new TypeToken<Map<String, Object>>(){}.getType();
-                Gson gson = new Gson();
-
-                try {
-                    Log.d("checkFinalJSON", finalJSONObj.toString(2));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
-
-                params = gson.fromJson(String.valueOf(finalJSONObj), type);
-
-                //Log.d("params", params.get("kerusakan"));
-                //Log.d("params", params.get("perbaikan"));
-                //Log.d("params", params.get("keterangan"));
-                //Log.d("params", params.get("nik_pic"));
-                //Log.d("params", params.get("no_pic"));
-                //Log.d("params", params.get("date_lps"));
-                //Log.d("params", params.get("tanggal_jam_selesai"));
-
-                return params;
-            }
-
-            @Override
-            protected Map<String, DataPart> getByteData() throws AuthFailureError {
-                Map<String, DataPart> params = new HashMap<>();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
-
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
+//        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
+//            @Override
+//            public void onResponse(NetworkResponse response) {
+//                progressDialog.dismiss();
+//                try {
+//                    Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
+//                    Log.d("onResponse", response.toString());
+//                    Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
+//
+//                    //delete the sharedpref
+//                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+//                    //preferences.edit().remove("current_service_json").apply();
+//                    preferences.edit().remove(cachedService.getNoLPS()).apply();
+//
+//                    //delete the sent service
+//                    ServiceDao serDAO = new ServiceDao(dbManager);
+//                    serDAO.delete(cachedService);
+//                    serDAO.closeConnection();
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //move to new fragment
+//                HomeActivity act = (HomeActivity) getActivity();
+//                Fragment newFrag = new WorkFragment();
+//                act.changeFragmentNoBS(newFrag);
+//            }
+//        }, this) {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                //convert JSON into Map
+//                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+//                Gson gson = new Gson();
+//
+//                try {
+//                    Log.d("checkFinalJSON", finalJSONObj.toString(2));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+//
+//                params = gson.fromJson(String.valueOf(finalJSONObj), type);
+//
+//                //Log.d("params", params.get("kerusakan"));
+//                //Log.d("params", params.get("perbaikan"));
+//                //Log.d("params", params.get("keterangan"));
+//                //Log.d("params", params.get("nik_pic"));
+//                //Log.d("params", params.get("no_pic"));
+//                //Log.d("params", params.get("date_lps"));
+//                //Log.d("params", params.get("tanggal_jam_selesai"));
+//
+//                return params;
+//            }
+//
+//            @Override
+//            protected Map<String, DataPart> getByteData() throws AuthFailureError {
+//                Map<String, DataPart> params = new HashMap<>();
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                byte[] byteArray = stream.toByteArray();
+//
+//                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
+//
+//                return params;
+//            }
+//        };
+//
+//        VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
     }
 
     @OnClick(R.id.date_time_sp)
@@ -336,7 +338,14 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
             //cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
-            cust_data_sp.setText(service.getName() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
+
+            Log.d("logging", "" + service.getName());
+            Log.d("logging", "" + service.getAddress());
+            Log.d("logging", "" + service.getAddress());
+            Log.d("logging", "" + service.getOfficePhoneNumber());
+            Log.d("logging", String.valueOf(service.getBranchID()));
+
+            cust_data_sp.setText(service.getCustomerName() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
             //kerusakan_input.setText(service.);
 
             serDAO.closeConnection();

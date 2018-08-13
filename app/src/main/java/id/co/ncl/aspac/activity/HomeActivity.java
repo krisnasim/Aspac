@@ -15,8 +15,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.co.ncl.aspac.R;
 import id.co.ncl.aspac.fragment.AttendanceFragment;
@@ -56,6 +58,14 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         selectedMenu = R.id.nav_dashboard;
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        TextView userNameGlobal = (TextView) navigationView.getHeaderView(0).findViewById(R.id.userNameGlobal);
+        TextView emailGlobal = (TextView) navigationView.getHeaderView(0).findViewById(R.id.emailGlobal);
+
+        SharedPreferences sharedPref = getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        userNameGlobal.setText(sharedPref.getString("name", "NoName"));
+        emailGlobal.setText("");
     }
 
     @Override
