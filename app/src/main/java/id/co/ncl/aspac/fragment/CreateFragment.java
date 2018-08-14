@@ -166,7 +166,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 //finalJSONObj.put("date_lps", date);
                 //finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
-                //Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
 
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));

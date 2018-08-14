@@ -183,77 +183,77 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         //headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
 
-//        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
-//            @Override
-//            public void onResponse(NetworkResponse response) {
-//                progressDialog.dismiss();
-//                try {
-//                    Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
-//                    Log.d("onResponse", response.toString());
-//                    Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
-//
-//                    //delete the sharedpref
-//                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-//                    //preferences.edit().remove("current_service_json").apply();
-//                    preferences.edit().remove(cachedService.getNoLPS()).apply();
-//
-//                    //delete the sent service
-//                    ServiceDao serDAO = new ServiceDao(dbManager);
-//                    serDAO.delete(cachedService);
-//                    serDAO.closeConnection();
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //move to new fragment
-//                HomeActivity act = (HomeActivity) getActivity();
-//                Fragment newFrag = new WorkFragment();
-//                act.changeFragmentNoBS(newFrag);
-//            }
-//        }, this) {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                //convert JSON into Map
-//                Type type = new TypeToken<Map<String, Object>>(){}.getType();
-//                Gson gson = new Gson();
-//
-//                try {
-//                    Log.d("checkFinalJSON", finalJSONObj.toString(2));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
-//
-//                params = gson.fromJson(String.valueOf(finalJSONObj), type);
-//
-//                //Log.d("params", params.get("kerusakan"));
-//                //Log.d("params", params.get("perbaikan"));
-//                //Log.d("params", params.get("keterangan"));
-//                //Log.d("params", params.get("nik_pic"));
-//                //Log.d("params", params.get("no_pic"));
-//                //Log.d("params", params.get("date_lps"));
-//                //Log.d("params", params.get("tanggal_jam_selesai"));
-//
-//                return params;
-//            }
-//
-//            @Override
-//            protected Map<String, DataPart> getByteData() throws AuthFailureError {
-//                Map<String, DataPart> params = new HashMap<>();
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//                byte[] byteArray = stream.toByteArray();
-//
-//                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
-//
-//                return params;
-//            }
-//        };
-//
-//        VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
+        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                progressDialog.dismiss();
+                try {
+                    Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
+                    Log.d("onResponse", response.toString());
+                    Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
+
+                    //delete the sharedpref
+                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+                    //preferences.edit().remove("current_service_json").apply();
+                    preferences.edit().remove(cachedService.getNoLPS()).apply();
+
+                    //delete the sent service
+                    ServiceDao serDAO = new ServiceDao(dbManager);
+                    serDAO.delete(cachedService);
+                    serDAO.closeConnection();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //move to new fragment
+                HomeActivity act = (HomeActivity) getActivity();
+                Fragment newFrag = new WorkFragment();
+                act.changeFragmentNoBS(newFrag);
+            }
+        }, this) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                //convert JSON into Map
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                Gson gson = new Gson();
+
+                try {
+                    Log.d("checkFinalJSON", finalJSONObj.toString(2));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("StringfyJSON", String.valueOf(finalJSONObj));
+
+                params = gson.fromJson(String.valueOf(finalJSONObj), type);
+
+                //Log.d("params", params.get("kerusakan"));
+                //Log.d("params", params.get("perbaikan"));
+                //Log.d("params", params.get("keterangan"));
+                //Log.d("params", params.get("nik_pic"));
+                //Log.d("params", params.get("no_pic"));
+                //Log.d("params", params.get("date_lps"));
+                //Log.d("params", params.get("tanggal_jam_selesai"));
+
+                return params;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() throws AuthFailureError {
+                Map<String, DataPart> params = new HashMap<>();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
+
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
     }
 
     @OnClick(R.id.date_time_sp)
@@ -270,6 +270,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         try {
             finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
             finalJSONObj.put("no_lps", cachedService.getNoLPS());
+            finalJSONObj.put("repair_service_id", cachedService.getRepairdID());
             //finalJSONObj.put("teknisi_id", 121);
             finalJSONObj.put("kerusakan", kerusakan_input_sp.getText().toString());
             //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
@@ -591,40 +592,45 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
                     if(checkForSparepartData()) {
                         //put inner object first
-                        if(machineSpareparts.length() > 0) {
-                            machineStatus.put("sparepart_consumed", machineSpareparts);
-                        }
+//                        if(machineSpareparts.length() > 0) {
+//                            machineStatus.put("sparepart_consumed", machineSpareparts);
+//                        }
                         //and then, put the object into json
-                        if(finalJSONObj.has("machine")) {
-                            //if it HAS the name
-                            machineStatusArray = finalJSONObj.getJSONArray("machine");
-                            //check if we add NEW machine, or REVISE old machine data
-                            for(int g = 0; g < machineStatusArray.length(); g++) {
-                                JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
-                                //if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
-                                if(machineStatusOld.getInt("temp_service_id") == machineStatus.getInt("temp_service_id")) {
-                                    Log.d("loopCountFinal", "SAME ID TEMP?");
-                                    //replace the old on with the new one, instead of ADDING
-                                    machineStatusArray.remove(g);
-                                    machineStatusArray.put(g, machineStatus);
-                                    break;
-                                } else {
-                                    Log.d("loopCountFinal", String.valueOf(g));
-                                    Log.d("lengthArray", String.valueOf(machineStatusArray.length()));
-                                    //if(g - machineStatusArray.length() == 1) {
-                                    machineStatusArray.put(machineStatus);
-                                    //}
-                                }
-                            }
-                            //then put the final array back to json
-                            Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
-                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
-                        } else {
-                            //if it HAS NOT the name
-                            machineStatusArray = new JSONArray();
-                            machineStatusArray.put(machineStatus);
-                            finalJSONObj.put("machine", machineStatusArray);
-                        }
+//                        if(finalJSONObj.has("machine")) {
+//                            //if it HAS the name
+//                            machineStatusArray = finalJSONObj.getJSONArray("machine");
+//                            //check if we add NEW machine, or REVISE old machine data
+//                            for(int g = 0; g < machineStatusArray.length(); g++) {
+//                                JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
+//                                //if(machineStatusOld.getInt("machine_id") == machineStatus.getInt("machine_id")) {
+//                                if(machineStatusOld.getInt("temp_service_id") == machineStatus.getInt("temp_service_id")) {
+//                                    Log.d("loopCountFinal", "SAME ID TEMP?");
+//                                    //replace the old on with the new one, instead of ADDING
+//                                    machineStatusArray.remove(g);
+//                                    machineStatusArray.put(g, machineStatus);
+//                                    break;
+//                                } else {
+//                                    Log.d("loopCountFinal", String.valueOf(g));
+//                                    Log.d("lengthArray", String.valueOf(machineStatusArray.length()));
+//                                    //if(g - machineStatusArray.length() == 1) {
+//                                    machineStatusArray.put(machineStatus);
+//                                    //}
+//                                }
+//                            }
+//                            //then put the final array back to json
+//                            Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
+//                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
+//                        } else {
+//                            //if it HAS NOT the name
+//                            machineStatusArray = new JSONArray();
+//                            machineStatusArray.put(machineStatus);
+//                            finalJSONObj.put("machine", machineStatusArray);
+//                        }
+                        finalJSONObj.put("rtbs_flag", machineStatus.get("rtbs_flag"));
+                        finalJSONObj.put("rtas_flag", machineStatus.get("rtas_flag"));
+                        finalJSONObj.put("job_status", machineStatus.get("job_status"));
+                        finalJSONObj.put("sparepart_consumed", machineSpareparts);
+
                         Log.d("JSONArray", finalJSONObj.toString(2));
                     }
                 } catch (JSONException e) {
@@ -655,6 +661,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                     args.putLong("service_id", serviceID);
                     args.putString("machine_id", machineIDs.get(position));
                     args.putString("no_lps", cachedService.getNoLPS());
+                    args.putString("special", "special");
                     mesinData.clear();
                     adapter.notifyDataSetChanged();
                     Fragment newFrag = new CreateDetailFragment();

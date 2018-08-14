@@ -61,6 +61,7 @@ public class CreateDetailFragment extends Fragment {
     private int rtbs_flag, rtas_flag, job_status;
     private SharedPreferences sharedPref;
     private String noLPS;
+    private boolean special = false;
 
     private DatabaseManager dbManager;
 
@@ -148,7 +149,12 @@ public class CreateDetailFragment extends Fragment {
         args.putString("machine_status", machineStatus.toString());
         args.putString("machine_spareparts", machineSpareparts.toString());
         args.putLong("service_id", serviceID);
-        Fragment newFrag = new CreateFragment();
+        Fragment newFrag;
+        if(special) {
+            newFrag = new SpecialCreateFragment();
+        } else {
+            newFrag = new CreateFragment();
+        }
         newFrag.setArguments(args);
         act.changeFragmentNoBS(newFrag);
     }
@@ -165,6 +171,9 @@ public class CreateDetailFragment extends Fragment {
             machineID = args.getString("machine_id");
             serviceID = args.getLong("service_id");
             noLPS = args.getString("no_lps");
+            if(args.getString("special").equals("special")) {
+                special = true;
+            }
         }
     }
 
@@ -179,7 +188,8 @@ public class CreateDetailFragment extends Fragment {
         ctx = getActivity();
 
         if(getArguments().getBoolean("routine")) {
-            add_sparepart_button.setEnabled(false);
+            //add_sparepart_button.setEnabled(false);
+            add_sparepart_button.setVisibility(View.GONE);
         }
 
         Log.d("machineIDDetail", machineID);
