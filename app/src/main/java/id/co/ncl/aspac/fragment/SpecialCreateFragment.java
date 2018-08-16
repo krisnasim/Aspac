@@ -158,15 +158,16 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             try {
                 //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                 finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
-                finalJSONObj.put("no_lps", cachedService.getNoLPS());
+                //finalJSONObj.put("no_lps", cachedService.getNoLPS());
                 //finalJSONObj.put("teknisi_id", 121);
+                finalJSONObj.put("name_pic", sharedPref.getString("name", "noName"));
                 finalJSONObj.put("kerusakan", kerusakan_input_sp.getText().toString());
                 //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
                 finalJSONObj.put("keterangan", keterangan_input_sp.getText().toString());
                 finalJSONObj.put("nik_pic", nik_pic_input_sp.getText().toString());
                 finalJSONObj.put("no_pic", no_pic_input_sp.getText().toString());
                 //finalJSONObj.put("date_lps", date);
-                //finalJSONObj.put("tanggal_jam_selesai", dateTime);
+                finalJSONObj.put("tanggal_jam_selesai", dateTime);
 
                 Log.d("StringfyJSON", String.valueOf(finalJSONObj));
 
@@ -214,7 +215,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         }, this) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+                Map<String, String> params;
                 //convert JSON into Map
                 Type type = new TypeToken<Map<String, Object>>(){}.getType();
                 Gson gson = new Gson();
@@ -229,13 +230,18 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
                 params = gson.fromJson(String.valueOf(finalJSONObj), type);
 
-                //Log.d("params", params.get("kerusakan"));
-                //Log.d("params", params.get("perbaikan"));
-                //Log.d("params", params.get("keterangan"));
-                //Log.d("params", params.get("nik_pic"));
-                //Log.d("params", params.get("no_pic"));
-                //Log.d("params", params.get("date_lps"));
-                //Log.d("params", params.get("tanggal_jam_selesai"));
+//                Log.d("params", params.get("kerusakan"));
+//                //Log.d("params", params.get("perbaikan"));
+//                Log.d("params", params.get("keterangan"));
+//                Log.d("params", params.get("nik_pic"));
+//                Log.d("params", params.get("no_pic"));
+//                //Log.d("params", params.get("date_lps"));
+//                Log.d("params", String.valueOf(params.get("rtbs_flag")));
+//                Log.d("params", String.valueOf(params.get("rtas_flag")));
+//                Log.d("params", String.valueOf(params.get("job_status")));
+//                Log.d("params", String.valueOf(params.get("repair_service_id")));
+//                Log.d("params", params.get("name_pic"));
+//                Log.d("params", params.get("sparepart_consumed"));
 
                 return params;
             }
@@ -269,8 +275,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
         try {
             finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
-            finalJSONObj.put("no_lps", cachedService.getNoLPS());
-            finalJSONObj.put("repair_service_id", cachedService.getRepairdID());
+            //finalJSONObj.put("no_lps", cachedService.getNoLPS());
+            finalJSONObj.put("repair_service_id", String.valueOf(cachedService.getRepairdID()));
             //finalJSONObj.put("teknisi_id", 121);
             finalJSONObj.put("kerusakan", kerusakan_input_sp.getText().toString());
             //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
@@ -278,7 +284,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             finalJSONObj.put("nik_pic", nik_pic_input_sp.getText().toString());
             finalJSONObj.put("no_pic", no_pic_input_sp.getText().toString());
             //finalJSONObj.put("date_lps", date);
-            finalJSONObj.put("tanggal_jam_selesai", date_time_sp.getText().toString());
+            //finalJSONObj.put("tanggal_jam_selesai", date_time_sp.getText().toString());
 
             SharedPreferences.Editor editor = sharedPref.edit();
             //editor.putString("current_service_json", String.valueOf(finalJSONObj));
@@ -556,17 +562,17 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 Log.d("finalJSON", "NO FINAL JSON EXIST!");
                 //create the new JSOn
                 finalJSONObj = new JSONObject();
-                try {
-                    finalJSONObj.put("no_lps", service.getNoLPS());
-                    //finalJSONObj.put("type_lps", service.getTypeService());
-                    finalJSONObj.put("customer_id", String.valueOf(service.getCustomerID()));
-                    finalJSONObj.put("customer_branch_id", String.valueOf(service.getCBID()));
-                    finalJSONObj.put("teknisi_id", "111");
-                    //finalJSONObj.put("date_lps", date);
-                    //finalJSONObj.put("tanggal_jam_selesai", dateTime);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    //finalJSONObj.put("no_lps", service.getNoLPS());
+//                    //finalJSONObj.put("type_lps", service.getTypeService());
+//                    //finalJSONObj.put("customer_id", String.valueOf(service.getCustomerID()));
+//                    //finalJSONObj.put("customer_branch_id", String.valueOf(service.getCBID()));
+//                    //finalJSONObj.put("teknisi_id", "111");
+//                    //finalJSONObj.put("date_lps", date);
+//                    //finalJSONObj.put("tanggal_jam_selesai", dateTime);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
 
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));
@@ -585,7 +591,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                         keterangan_input_sp.setText(finalJSONObj.getString("keterangan"));
                         nik_pic_input_sp.setText(finalJSONObj.getString("nik_pic"));
                         no_pic_input_sp.setText(finalJSONObj.getString("no_pic"));
-                        date_time_sp.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                        //date_time_sp.setText(finalJSONObj.getString("tanggal_jam_selesai"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -626,10 +632,10 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 //                            machineStatusArray.put(machineStatus);
 //                            finalJSONObj.put("machine", machineStatusArray);
 //                        }
-                        finalJSONObj.put("rtbs_flag", machineStatus.get("rtbs_flag"));
-                        finalJSONObj.put("rtas_flag", machineStatus.get("rtas_flag"));
-                        finalJSONObj.put("job_status", machineStatus.get("job_status"));
-                        finalJSONObj.put("sparepart_consumed", machineSpareparts);
+                        finalJSONObj.put("rtbs_flag", String.valueOf(machineStatus.get("rtbs_flag")));
+                        finalJSONObj.put("rtas_flag", String.valueOf(machineStatus.get("rtas_flag")));
+                        finalJSONObj.put("job_status", String.valueOf(machineStatus.get("job_status")));
+                        finalJSONObj.put("sparepart_consumed", Arrays.toString(new JSONArray[]{machineSpareparts}));
 
                         Log.d("JSONArray", finalJSONObj.toString(2));
                     }

@@ -171,7 +171,7 @@ public class CreateDetailFragment extends Fragment {
             machineID = args.getString("machine_id");
             serviceID = args.getLong("service_id");
             noLPS = args.getString("no_lps");
-            if(args.getString("special").equals("special")) {
+            if(args.containsKey("special")) {
                 special = true;
             }
         }
@@ -298,6 +298,22 @@ public class CreateDetailFragment extends Fragment {
                         }
                         //break;
                     }
+                }
+            } else if(finalJSONObj.has("rtbs_flag")){
+                rtbs_flag = finalJSONObj.getInt("rtbs_flag");
+                rtas_flag = finalJSONObj.getInt("rtas_flag");
+                job_status = finalJSONObj.getInt("job_status");
+
+                if(rtbs_flag == 1) {
+                    rtbs_check_box.setChecked(true);
+                }
+                if(rtas_flag == 1) {
+                    rtas_check_box.setChecked(true);
+                }
+                if(job_status == 1) {
+                    job_status_ok_radio_btn.setChecked(true);
+                } else {
+                    job_status_bad_radio_btn.setChecked(true);
                 }
             }
         } catch (JSONException e) {
