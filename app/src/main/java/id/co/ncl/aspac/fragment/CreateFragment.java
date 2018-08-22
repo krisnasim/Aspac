@@ -127,7 +127,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     public void sendForm() {
         //set the url
         //String url = "http://103.26.208.118/api/submitdatalps";
-        String url = "http://103.26.208.118/api/postRoutineLPS";
+        //String url = "http://103.26.208.118/api/postRoutineLPS";
+        //String url = "http://103.26.208.118/api/postViewRequestRaw";
+        String url = "http://103.26.208.118/api/postViewRequestJSON";
 
         create_form_button.setEnabled(false);
 
@@ -188,6 +190,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 try {
                     Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
                     Log.d("onResponse", response.toString());
+                    //Log.d("onResponse", response.);
                     Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
                     //delete the sharedpref

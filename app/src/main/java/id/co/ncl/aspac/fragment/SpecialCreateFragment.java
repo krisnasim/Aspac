@@ -456,7 +456,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
         //move to new fragment
         HomeActivity act = (HomeActivity) getActivity();
-        Fragment newFrag = new WorkFragment();
+        Fragment newFrag = new SpecialWorkFragment();
         act.changeFragmentNoBS(newFrag);
     }
 
