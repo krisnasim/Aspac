@@ -347,7 +347,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             //cust_data.setText(service.getName() + "\n" + service.getStatus() + "\n" + service.getAddress() + "\n" + service.getOfficePhoneNumber());
 
             Log.d("logging", "" + service.getName());
-            Log.d("logging", "" + service.getAddress());
+            Log.d("logging", "" + service.getRepairdID());
             Log.d("logging", "" + service.getAddress());
             Log.d("logging", "" + service.getOfficePhoneNumber());
             Log.d("logging", String.valueOf(service.getBranchID()));
@@ -635,7 +635,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                         finalJSONObj.put("rtbs_flag", String.valueOf(machineStatus.get("rtbs_flag")));
                         finalJSONObj.put("rtas_flag", String.valueOf(machineStatus.get("rtas_flag")));
                         finalJSONObj.put("job_status", String.valueOf(machineStatus.get("job_status")));
-                        finalJSONObj.put("sparepart_consumed", Arrays.toString(new JSONArray[]{machineSpareparts}));
+                        String testJSON = machineSpareparts.toString();
+                        finalJSONObj.put("sparepart_consumed", testJSON);
 
                         Log.d("JSONArray", finalJSONObj.toString(2));
                     }

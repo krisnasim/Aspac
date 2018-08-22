@@ -200,6 +200,14 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                     service.setCustomerName(custJSON.getString("customer_name"));
                     service.setKerusakan(obj.getString("kerusakan"));
                     service.setRepairdID(obj.getInt("repair_service_id"));
+//                    Log.d("repair_service_id", String.valueOf(obj.getInt("repair_service_id")));
+//                    Log.d("customer_branch_id", String.valueOf(custJSON.getInt("customer_branch_id")));
+//                    Log.d("customer_branch_name", custJSON.getString("customer_branch_name"));
+//                    Log.d("customer_branch_address", custJSON.getString("customer_branch_address"));
+//                    Log.d("office_phone_number", custJSON.getString("customer_branch_office_phone_number"));
+//                    Log.d("customer_id", String.valueOf(custJSON.getInt("customer_id")));
+//                    Log.d("customer_name", custJSON.getString("customer_name"));
+//                    Log.d("kerusakan", String.valueOf(obj.getString("kerusakan")));
 
                     //JSONArray detailsArray = obj.getJSONArray("details");
                     //JSONArray machinesArray = obj.getJSONArray("machines");

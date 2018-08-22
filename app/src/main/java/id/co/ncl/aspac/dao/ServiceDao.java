@@ -131,6 +131,16 @@ public class ServiceDao {
         values.put(dbHelper.SERVICE_COLUMN_CB_OFFICE_PHONE_NUM, service.getOfficePhoneNumber());
         values.put(dbHelper.SERVICE_COLUMN_REPAIR_ID, service.getRepairdID());
         values.put(dbHelper.SERVICE_COLUMN_KERUSAKAN, service.getKerusakan());
+
+        Log.d("insertRepair", service.getNoLPS());
+        Log.d("insertRepair", String.valueOf(service.getCustomerID()));
+        Log.d("insertRepair", service.getCustomerName());
+        Log.d("insertRepair", String.valueOf(service.getCBID()));
+        Log.d("insertRepair", service.getName());
+        Log.d("insertRepair", service.getAddress());
+        Log.d("insertRepair", service.getOfficePhoneNumber());
+        Log.d("insertRepair", String.valueOf(service.getRepairdID()));
+        Log.d("insertRepair", service.getKerusakan());
         //TECHNICIAN
 
         long rowID = 0;
@@ -201,12 +211,14 @@ public class ServiceDao {
         Service ser = new Service();
         ser.setId(cursor.getInt(0));
         ser.setNoLPS(cursor.getString(1));
-        ser.setCustomerID(cursor.getInt(2));
-        ser.setCustomerName(cursor.getString(3));
-        ser.setCBID(cursor.getInt(4));
-        ser.setName(cursor.getString(5));
-        ser.setAddress(cursor.getString(6));
-        ser.setOfficePhoneNumber(cursor.getString(7));
+        ser.setCBID(cursor.getInt(2));
+        ser.setName(cursor.getString(3));
+        ser.setAddress(cursor.getString(4));
+        ser.setOfficePhoneNumber(cursor.getString(5));
+        ser.setRepairdID(cursor.getInt(6));
+        ser.setKerusakan(cursor.getString(7));
+        ser.setCustomerID(cursor.getInt(8));
+        ser.setCustomerName(cursor.getString(9));
 
         return ser;
     }
@@ -216,14 +228,24 @@ public class ServiceDao {
 
         for (int w = 0; w < cursor.getCount(); w++) {
             Service ser = new Service();
+//            ser.setId(cursor.getInt(0));
+//            ser.setNoLPS(cursor.getString(1));
+//            ser.setCustomerID(cursor.getInt(2));
+//            ser.setCustomerName(cursor.getString(3));
+//            ser.setCBID(cursor.getInt(4));
+//            ser.setName(cursor.getString(5));
+//            ser.setAddress(cursor.getString(6));
+//            ser.setOfficePhoneNumber(cursor.getString(7));
             ser.setId(cursor.getInt(0));
             ser.setNoLPS(cursor.getString(1));
-            ser.setCustomerID(cursor.getInt(2));
-            ser.setCustomerName(cursor.getString(3));
-            ser.setCBID(cursor.getInt(4));
-            ser.setName(cursor.getString(5));
-            ser.setAddress(cursor.getString(6));
-            ser.setOfficePhoneNumber(cursor.getString(7));
+            ser.setCBID(cursor.getInt(2));
+            ser.setName(cursor.getString(3));
+            ser.setAddress(cursor.getString(4));
+            ser.setOfficePhoneNumber(cursor.getString(5));
+            ser.setRepairdID(cursor.getInt(6));
+            ser.setKerusakan(cursor.getString(7));
+            ser.setCustomerID(cursor.getInt(8));
+            ser.setCustomerName(cursor.getString(9));
 
 
             services.add(ser);

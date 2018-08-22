@@ -250,7 +250,8 @@ public class CreateDetailFragment extends Fragment {
             Log.d("machineIDfinalJSON", String.valueOf(machineID));
 
             if(finalJSONObj.has("machine")) {
-                JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
+                Log.d("jsonPrint", finalJSONObj.toString(2));
+                JSONArray machineJSONArray = new JSONArray(finalJSONObj.getJSONArray("machine"));
                 for(int x = 0; x < machineJSONArray.length(); x++) {
                     Log.d("countMachineLoop", String.valueOf(x));
                     Log.d("machineLength", String.valueOf(machineJSONArray.length()));

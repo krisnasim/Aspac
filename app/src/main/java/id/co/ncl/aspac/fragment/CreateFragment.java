@@ -607,8 +607,11 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                                 }
                             }
                             //then put the final array back to json
-                            Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
-                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
+                            //Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
+                            String testJSON = machineStatusArray.toString().replace("\\\\","");
+                            Log.d("stringJSON", testJSON);
+//                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
+                            finalJSONObj.put("machine",testJSON);
                         } else {
                             //if it HAS NOT the name
                             machineStatusArray = new JSONArray();
