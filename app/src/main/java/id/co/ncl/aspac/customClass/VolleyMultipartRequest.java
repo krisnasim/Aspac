@@ -14,6 +14,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -27,12 +30,12 @@ import java.util.Map;
  * Sketch Project Studio
  * Created by Angga on 27/04/2016 12.05.
  */
-public class VolleyMultipartRequest extends Request<NetworkResponse> {
+public class VolleyMultipartRequest extends Request<String> {
     private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
     private final String boundary = "apiclient-" + System.currentTimeMillis();
 
-    private Response.Listener<NetworkResponse> mListener;
+    private Response.Listener mListener;
     private Response.ErrorListener mErrorListener;
     private Map<String, String> mHeaders;
 
@@ -45,7 +48,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param errorListener on error http or library timeout
      */
     public VolleyMultipartRequest(String url, Map<String, String> headers,
-                                  Response.Listener<NetworkResponse> listener,
+                                  Response.Listener listener,
                                   Response.ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
         this.mListener = listener;
@@ -118,18 +121,35 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     }
 
     @Override
-    protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
+    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//        try {
+//            Log.d("parseNetworkResponse", response.toString());
+//            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+////            return Response.success(
+////                    response,
+////                    HttpHeaderParser.parseCacheHeaders(response));
+//            return Response.success("uploaded", getCacheEntry());
+//        } catch (Exception e) {
+//            return Response.error(new ParseError(e));
+//        }
         try {
-            return Response.success(
-                    response,
-                    HttpHeaderParser.parseCacheHeaders(response));
-        } catch (Exception e) {
+            String jsonString = new String(response.data,"UTF-8");
+//            JSONObject jsonResponse = null;
+//            try {
+//                jsonResponse = new JSONObject(jsonString);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            //jsonResponse.put("headers", new JSONObject(response.headers));
+            return Response.success(jsonString,
+                    getCacheEntry());
+        } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
     }
 
     @Override
-    protected void deliverResponse(NetworkResponse response) {
+    protected void deliverResponse(String response) {
         mListener.onResponse(response);
     }
 

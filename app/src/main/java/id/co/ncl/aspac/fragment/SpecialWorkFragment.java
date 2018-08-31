@@ -96,7 +96,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                 progressDialog.show();
 
                 ServiceDao serDAO = new ServiceDao(dbManager);
-                serDAO.deleteAll();
+                serDAO.deleteAllRepair();
                 serDAO.closeConnection();
 
                 //get work API
@@ -310,7 +310,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                 List<Machine> mach = new MachineDao(dbManager).getAllByServiceID(ser.getId());
                 //create new work object
                 Work newWork = new Work();
-                newWork.setWorkTitle(ser.getCustomerName());
+                newWork.setWorkTitle(ser.getName());
                 newWork.setWorkDescShort(mach.get(0).getName() + " - " + mach.get(0).getSerialNumber());
 //                newWork.setWorkStatus("Pending");
 //                newWork.setWorkDateTime(date);

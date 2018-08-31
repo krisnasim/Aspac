@@ -447,6 +447,10 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
             //delete the sent service
             ServiceDao serDAO = new ServiceDao(dbManager);
+            MachineDao macDAO = new MachineDao(dbManager);
+            //delete the machines first
+            macDAO.deleteByID(cachedService.getId());
+            //then delete the service
             serDAO.delete(cachedService);
             serDAO.closeConnection();
 

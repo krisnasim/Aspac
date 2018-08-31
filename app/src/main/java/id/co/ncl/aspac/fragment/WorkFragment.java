@@ -111,7 +111,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 progressDialog.show();
 
                 ServiceDao serDAO = new ServiceDao(dbManager);
-                serDAO.deleteAll();
+                serDAO.deleteAllRoutine();
                 serDAO.closeConnection();
 
                 //get work API
@@ -349,7 +349,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 //create new work object
                 Work newWork = new Work();
                 newWork.setWorkTitle(ser.getNoLPS());
-                newWork.setWorkDescShort(ser.getCustomerName() + " - " + ser.getName());
+                newWork.setWorkDescShort(ser.getName() + " - " + ser.getCustomerName());
 //                newWork.setWorkStatus("Pending");
 //                newWork.setWorkDateTime(date);
 

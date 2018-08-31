@@ -15,6 +15,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -251,7 +254,15 @@ public class CreateDetailFragment extends Fragment {
 
             if(finalJSONObj.has("machine")) {
                 Log.d("jsonPrint", finalJSONObj.toString(2));
-                JSONArray machineJSONArray = new JSONArray(finalJSONObj.getJSONArray("machine"));
+                //JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
+                //lets use gson
+                String stringJSON = finalJSONObj.getString("machine");
+                JsonParser jsonParser = new JsonParser();
+                JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
+                Log.d("printGSON", objectFromString.toString());
+                String convertedString = objectFromString.toString();
+                //and then...
+                JSONArray machineJSONArray = new JSONArray(convertedString);
                 for(int x = 0; x < machineJSONArray.length(); x++) {
                     Log.d("countMachineLoop", String.valueOf(x));
                     Log.d("machineLength", String.valueOf(machineJSONArray.length()));

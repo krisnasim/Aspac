@@ -36,6 +36,9 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -182,14 +185,17 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         Map<String, String> headers = new HashMap<>();
         //headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
-
-        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
+        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<String>() {
             @Override
-            public void onResponse(NetworkResponse response) {
+            public void onResponse(String response) {
                 progressDialog.dismiss();
-                try {
+                try {;
                     Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
-                    Log.d("onResponse", response.toString());
+                    Log.d("onResponse", response);
+//                    for(int x=0; x < response.data.length; x++) {
+//                        Log.d("onResponse", String.valueOf(response.data[x]));
+//                    }
+//                    Log.d("onResponse", String.valueOf(response.statusCode));
                     //Log.d("onResponse", response.);
                     Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
@@ -252,6 +258,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
                 return params;
             }
+
         };
 
         VolleySingleton.getInstance(getContext()).addToRequestQueue(newReq);
@@ -269,6 +276,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         //prepare the filled in data first
         sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
         try {
+            SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy, HH:mm");
+            finalCalendar = Calendar.getInstance();
+            String date = format.format(finalCalendar.getTime());
+
             finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
             finalJSONObj.put("no_lps", cachedService.getNoLPS());
             //finalJSONObj.put("teknisi_id", 121);
@@ -278,7 +289,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             finalJSONObj.put("nik_pic", nik_pic_input.getText().toString());
             finalJSONObj.put("no_pic", no_pic_input.getText().toString());
             //finalJSONObj.put("date_lps", date);
-            finalJSONObj.put("tanggal_jam_selesai", date_time.getText().toString());
+            finalJSONObj.put("tanggal_jam_selesai", date);
 
             SharedPreferences.Editor editor = sharedPref.edit();
             //editor.putString("current_service_json", String.valueOf(finalJSONObj));
@@ -433,6 +444,10 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
             //delete the sent service
             ServiceDao serDAO = new ServiceDao(dbManager);
+            MachineDao macDAO = new MachineDao(dbManager);
+            //delete the machines first
+            macDAO.deleteByID(cachedService.getId());
+            //then delete the service
             serDAO.delete(cachedService);
             serDAO.closeConnection();
 
@@ -573,11 +588,18 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
                     //put the input data (if any) into the form
                     try {
-                        kerusakan_input.setText(finalJSONObj.getString("kerusakan"));
-                        keterangan_input.setText(finalJSONObj.getString("keterangan"));
-                        nik_pic_input.setText(finalJSONObj.getString("nik_pic"));
-                        no_pic_input.setText(finalJSONObj.getString("no_pic"));
-                        date_time.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                        if(finalJSONObj.has("kerusakan")) {
+                            kerusakan_input.setText(finalJSONObj.getString("kerusakan"));
+                        } if(finalJSONObj.has("keterangan")) {
+                            keterangan_input.setText(finalJSONObj.getString("keterangan"));
+                        } if(finalJSONObj.has("nik_pic")) {
+                            nik_pic_input.setText(finalJSONObj.getString("nik_pic"));
+                        } if(finalJSONObj.has("no_pic")) {
+                            no_pic_input.setText(finalJSONObj.getString("no_pic"));
+                        } if(finalJSONObj.has("tanggal_jam_selesai")) {
+                            date_time.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -590,7 +612,16 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                         //and then, put the object into json
                         if(finalJSONObj.has("machine")) {
                             //if it HAS the name
-                            machineStatusArray = finalJSONObj.getJSONArray("machine");
+                            //machineStatusArray = finalJSONObj.getJSONArray("machine");
+                            //lets use gson
+                            String stringJSON = finalJSONObj.getString("machine");
+                            JsonParser jsonParser = new JsonParser();
+                            JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
+                            Log.d("printGSON", objectFromString.toString());
+                            String convertedString = objectFromString.toString();
+                            //and then...
+                            machineStatusArray = new JSONArray(convertedString);
+                            Log.d("finalResult", machineStatusArray.toString());
                             //check if we add NEW machine, or REVISE old machine data
                             for(int g = 0; g < machineStatusArray.length(); g++) {
                                 JSONObject machineStatusOld = machineStatusArray.getJSONObject(g);
@@ -611,7 +642,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                             }
                             //then put the final array back to json
                             //Log.d("machineArray", Arrays.toString(new JSONArray[]{machineStatusArray}));
-                            String testJSON = machineStatusArray.toString().replace("\\\\","");
+                            String testJSON = machineStatusArray.toString();
                             Log.d("stringJSON", testJSON);
 //                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
                             finalJSONObj.put("machine",testJSON);

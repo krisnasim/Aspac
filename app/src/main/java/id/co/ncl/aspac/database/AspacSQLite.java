@@ -116,4 +116,16 @@ public class AspacSQLite extends SQLiteOpenHelper {
         Log.d("onDelete", "Deleting the mentioned database if exists");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + tableName);
     }
+
+    public void createServiceTable(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(SERVICE_TABLE_CREATE);
+    }
+
+    public void createMachineTable(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(MACHINE_TABLE_CREATE);
+    }
+
+    public void createSprepartTable(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(SPAREPART_TABLE_CREATE);
+    }
 }

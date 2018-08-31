@@ -64,6 +64,24 @@ public class MachineDao {
         return machines;
     }
 
+//    public List<Integer> getAllRoutineIDs() {
+//        List<Integer> machinesID = new ArrayList<>();
+//        String[] columns = {"_id"};
+//        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, columns, "_id IS NOT NULL", null, null, null, null);
+//        cursor.moveToFirst();
+//        for (int w = 0; w < cursor.getCount(); w++) {
+//            Machine mac = new Machine();
+//            mac.setId(cursor.getInt(0));
+//            mac.setTempServiceID(cursor.getInt(1));
+//            mac.setName(cursor.getString(2));
+//            mac.setSerialNumber(cursor.getString(3));
+//
+//            machines.add(mac);
+//            cursor.moveToNext();
+//        }
+//        return machinesID;
+//    }
+
     public List<Machine> getAllRepair(long serviceID) {
         List<Machine> machines = new ArrayList<>();
 
@@ -169,6 +187,19 @@ public class MachineDao {
         long id = machine.getId();
         int count = db.delete(dbHelper.TABLE_MACHINE, dbHelper.MACHINE_COLUMN_ID + " = " + id, null);
         Log.d("deleteMachineDao", "Amount deleted rows: "+count);
+    }
+
+    public void deleteByID(int id) {
+        int count = db.delete(dbHelper.TABLE_MACHINE, dbHelper.MACHINE_COLUMN_ID + " = " + id, null);
+        Log.d("deleteMachineDao", "Amount deleted rows: "+count);
+        //this.dbManager.closeDatabase();
+        Log.d("databaseCon", "closing database connection..");
+    }
+
+    public void deleteAll() {
+        dbHelper.delete(db, "machine");
+        dbHelper.createMachineTable(db);
+        Log.d("deleteMachineDao", "Table deleted");
     }
 
     public void openConnection() {

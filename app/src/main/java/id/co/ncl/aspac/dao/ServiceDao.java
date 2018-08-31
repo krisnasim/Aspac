@@ -12,6 +12,7 @@ import java.util.List;
 
 import id.co.ncl.aspac.database.AspacSQLite;
 import id.co.ncl.aspac.database.DatabaseManager;
+import id.co.ncl.aspac.model.Machine;
 import id.co.ncl.aspac.model.Service;
 
 /**
@@ -24,6 +25,7 @@ public class ServiceDao {
     private SQLiteDatabase db;
     private AspacSQLite dbHelper;
     private DatabaseManager dbManager;
+    private MachineDao machineDao;
 
     public ServiceDao(DatabaseManager manager) {
         this.dbManager = manager;
@@ -56,6 +58,32 @@ public class ServiceDao {
         services = cursorToServices(cursor);
 
         return services;
+    }
+
+    public List<Integer> getAllRoutineIDs() {
+        List<Integer> servicesID = new ArrayList<>();
+        String[] columns = {"_id"};
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, columns, "repair_id IS NULL", null, null, null, null);
+        cursor.moveToFirst();
+        for (int w = 0; w < cursor.getCount(); w++) {
+            servicesID.add(cursor.getInt(0));
+            cursor.moveToNext();
+        }
+
+        return servicesID;
+    }
+
+    public List<Integer> getAllRepairIDs() {
+        List<Integer> servicesID = new ArrayList<>();
+        String[] columns = {"_id"};
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, columns, "repair_id IS NOT NULL", null, null, null, null);
+        cursor.moveToFirst();
+        for (int w = 0; w < cursor.getCount(); w++) {
+            servicesID.add(cursor.getInt(0));
+            cursor.moveToNext();
+        }
+
+        return servicesID;
     }
 
     public Service get(long serviceID) {
@@ -166,9 +194,65 @@ public class ServiceDao {
         Log.d("deleteServiceDao", "Amount deleted rows: "+count);
     }
 
+
     public void deleteAll() {
-        db.execSQL("delete from "+ dbHelper.TABLE_SERVICE);
+        dbHelper.delete(db, "service");
+        dbHelper.delete(db, "machine");
+        dbHelper.createServiceTable(db);
+        dbHelper.createMachineTable(db);
+        //db.execSQL("delete from "+ dbHelper.TABLE_SERVICE);
         Log.d("deleteServiceDao", "Table deleted");
+    }
+
+    public void deleteAllRoutine() {
+        //delete all machine first
+        machineDao = new MachineDao(dbManager);
+        List<Service> services = getAllRoutine();
+        for (int a=0; a<services.size(); a++) {
+            machineDao.deleteByID(services.get(a).getId());
+        }
+        //then, check if all machine is deleted. in case repair cases are not opened yet
+        List<Machine> machines = machineDao.getAll();
+        if(machines.size() <= 0) {
+            Log.d("machineFlush", "flushing all machines and tables");
+            machineDao.deleteAll();
+        }
+        machineDao.closeConnection();
+        //then, delete the services
+        db.execSQL("delete from "+ dbHelper.TABLE_SERVICE + " where " + dbHelper.SERVICE_COLUMN_REPAIR_ID + " IS NULL");
+        //another check to see if all services is deleted, in case no repair case opened yet
+        List<Integer> serviceIDs = getAllRoutineIDs();
+        if(serviceIDs.size() <= 0) {
+            Log.d("serviceFlush", "flushing all services and tables");
+            dbHelper.delete(db, "service");
+            dbHelper.createServiceTable(db);
+        }
+        Log.d("deleteServiceDao", "All Routine data deleted");
+    }
+
+    public void deleteAllRepair() {
+        //delete all machine first
+        machineDao = new MachineDao(dbManager);
+        List<Service> services = getAllRepair();
+        for (int a=0; a<services.size(); a++) {
+            machineDao.deleteByID(services.get(a).getId());
+        }
+        //then, check if all machine is deleted. in case routine cases are not opened yet
+        List<Machine> machines = machineDao.getAll();
+        if(machines.size() <= 0) {
+            machineDao.deleteAll();
+        }
+        machineDao.closeConnection();
+        //then, delete the services
+        db.execSQL("delete from "+ dbHelper.TABLE_SERVICE + " where " + dbHelper.SERVICE_COLUMN_REPAIR_ID + " IS NOT NULL");
+        //another check to see if all services is deleted, in case no routine case opened yet
+        List<Integer> serviceIDs = getAllRepairIDs();
+        if(serviceIDs.size() <= 0) {
+            Log.d("serviceFlush", "flushing all services and tables");
+            dbHelper.delete(db, "service");
+            dbHelper.createServiceTable(db);
+        }
+        Log.d("deleteServiceDao", "All Repair data deleted");
     }
 
     public int getCount() {
