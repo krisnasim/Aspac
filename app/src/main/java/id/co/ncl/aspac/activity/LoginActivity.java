@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
         Log.d("errorResponse", String.valueOf(error));
         Log.d("errorResponse", String.valueOf(error.getLocalizedMessage()));
         Log.d("errorResponse", Arrays.toString(error.getStackTrace()));
-        onLoginFailed();
+        onLoginFailed(String.valueOf(error));
     }
 
     @Override
@@ -119,8 +119,12 @@ public class LoginActivity extends AppCompatActivity implements Response.ErrorLi
         }
     }
 
-    private void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Username atau password yang anda masukan tidak cocok. Mohon cek kembali user dan password saat login", Toast.LENGTH_LONG).show();
+    private void onLoginFailed(String errMessage) {
+        if(errMessage.equals("com.android.volley.TimeoutError")) {
+            Toast.makeText(getBaseContext(), "Mohon maaf, namun aplikasi tidak dapat bisa terkoneksi dengan server. Mohon dicoba kembali", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getBaseContext(), "Username atau password yang anda masukan tidak cocok. Mohon cek kembali user dan password saat login", Toast.LENGTH_LONG).show();
+        }
         loginButton.setEnabled(true);
     }
 

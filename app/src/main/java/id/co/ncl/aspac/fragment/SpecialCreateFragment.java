@@ -591,11 +591,19 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
                     //put the input data (if any) into the form
                     try {
-                        kerusakan_input_sp.setText(finalJSONObj.getString("kerusakan"));
-                        keterangan_input_sp.setText(finalJSONObj.getString("keterangan"));
-                        nik_pic_input_sp.setText(finalJSONObj.getString("nik_pic"));
-                        no_pic_input_sp.setText(finalJSONObj.getString("no_pic"));
-                        //date_time_sp.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                        //put the input data (if any) into the form
+                        try {
+                            if(finalJSONObj.has("kerusakan")) {
+                                kerusakan_input_sp.setText(finalJSONObj.getString("kerusakan"));
+                            } if(finalJSONObj.has("keterangan")) {
+                                keterangan_input_sp.setText(finalJSONObj.getString("keterangan"));
+                            } if(finalJSONObj.has("nik_pic")) {
+                                nik_pic_input_sp.setText(finalJSONObj.getString("nik_pic"));
+                            } if(finalJSONObj.has("no_pic")) {
+                                no_pic_input_sp.setText(finalJSONObj.getString("no_pic"));
+                            } if(finalJSONObj.has("tanggal_jam_selesai")) {
+                                date_time_sp.setText(finalJSONObj.getString("tanggal_jam_selesai"));
+                            }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -652,6 +660,9 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 //editor.putString("current_service_json", String.valueOf(finalJSONObj));
                 editor.putString(service.getNoLPS(), String.valueOf(finalJSONObj));
                 editor.apply();
+            } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
