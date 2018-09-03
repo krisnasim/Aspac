@@ -199,7 +199,12 @@ public class CreateDetailFragment extends Fragment {
 
         //get the machineID first
         MachineDao macDAO = new MachineDao(dbManager);
-        Machine newMachine = macDAO.getByTempID(machineID);
+        Machine newMachine;
+        if(special) {
+            newMachine = macDAO.getByMachineID(machineID);
+        } else {
+            newMachine = macDAO.getByTempID(machineID);
+        }
         //Log.d("machineSpec", newMachine.getBrand());
         Log.d("machineSpec", newMachine.getName());
         Log.d("machineSpec", String.valueOf(newMachine.getTempServiceID()));

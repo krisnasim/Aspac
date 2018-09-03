@@ -97,7 +97,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
 
                 ServiceDao serDAO = new ServiceDao(dbManager);
                 serDAO.deleteAllRepair();
-                serDAO.closeConnection();
+                //serDAO.closeConnection();
 
                 //get work API
                 getAllWorkData();
@@ -216,8 +216,11 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                     //machine.setTempServiceID(machineJSON.getInt("temporary_service_id"));
                     //Log.d("machineID", machineJSON.getString("temporary_service_id"));
                     machine.setName(machineJSON.getString("machine_name"));
+                    Log.d("machineData", machineJSON.getString("machine_name"));
                     machine.setSerialNumber(machineJSON.getString("serial_number"));
-                    machine.setMachineID(machineJSON.getString("machine_id"));
+                    Log.d("machineData", machineJSON.getString("serial_number"));
+                    machine.setMachineID(String.valueOf(machineJSON.getInt("machine_id")));
+                    Log.d("machineData", String.valueOf(machineJSON.getInt("machine_id")));
 
                     //JSONObject detailObj = detailsArray.getJSONObject(0);
                     //JSONObject tempObj = detailObj.getJSONObject("temporary_service");

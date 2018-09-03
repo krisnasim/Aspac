@@ -208,11 +208,13 @@ public class ServiceDao {
         //delete all machine first
         machineDao = new MachineDao(dbManager);
         List<Service> services = getAllRoutine();
+        Log.d("dataSize", "the number of services for routine item are: "+ String.valueOf(services.size()));
         for (int a=0; a<services.size(); a++) {
             machineDao.deleteByID(services.get(a).getId());
         }
         //then, check if all machine is deleted. in case repair cases are not opened yet
         List<Machine> machines = machineDao.getAll();
+        Log.d("dataSize", "the number of machine for routine item are: "+ String.valueOf(machines.size()));
         if(machines.size() <= 0) {
             Log.d("machineFlush", "flushing all machines and tables");
             machineDao.deleteAll();
@@ -234,11 +236,15 @@ public class ServiceDao {
         //delete all machine first
         machineDao = new MachineDao(dbManager);
         List<Service> services = getAllRepair();
+        Log.d("dataSize", "the number of services for repair item are: "+ String.valueOf(services.size()));
+        List<Machine> oldMachines = machineDao.getAll();
+        Log.d("dataSize", "the number of machine for repair item before deletion are: "+ String.valueOf(oldMachines.size()));
         for (int a=0; a<services.size(); a++) {
             machineDao.deleteByID(services.get(a).getId());
         }
         //then, check if all machine is deleted. in case routine cases are not opened yet
         List<Machine> machines = machineDao.getAll();
+        Log.d("dataSize", "the number of machine for repair item are: "+ String.valueOf(machines.size()));
         if(machines.size() <= 0) {
             machineDao.deleteAll();
         }

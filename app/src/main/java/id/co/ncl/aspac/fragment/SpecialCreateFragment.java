@@ -365,7 +365,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 Machine mac = mesinArray.get(h);
                 //Log.d("mesin", mac.getBrand());
                 Log.d("mesin", mac.getName());
-                Log.d("mesin", String.valueOf(mac.getTempServiceID()));
+                Log.d("mesin", String.valueOf(mac.getMachineID()));
                 //Log.d("mesin", String.valueOf(mac.getTempServiceID()));
                 Log.d("mesin", String.valueOf(mac.getId()));
                 //create new forum object
@@ -376,7 +376,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 //Log.d("machineIDs", mac.getBrand());
                 //Log.d("machineTempIDs", String.valueOf(mac.getTempServiceID()));
                 //machineIDs.add(String.valueOf(mac.getTempServiceID()));
-                machineIDs.add(String.valueOf(mac.getTempServiceID()));
+                machineIDs.add(mac.getMachineID());
                 mesinData.add(newMesin);
             }
             //checkForSparepartData();
@@ -682,6 +682,10 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                     Bundle args = new Bundle();
                     args.putLong("service_id", serviceID);
                     args.putString("machine_id", machineIDs.get(position));
+                    for(int x=0; x<machineIDs.size(); x++) {
+                        //Log.d("machineID", "machine ID is: " + machineIDs.get(position));
+                        Log.d("machineID", "machine ID is: " + machineIDs.get(x));
+                    }
                     args.putString("no_lps", cachedService.getNoLPS());
                     args.putString("special", "special");
                     mesinData.clear();

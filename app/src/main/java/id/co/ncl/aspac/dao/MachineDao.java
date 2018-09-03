@@ -57,6 +57,7 @@ public class MachineDao {
             mac.setTempServiceID(cursor.getInt(1));
             mac.setName(cursor.getString(2));
             mac.setSerialNumber(cursor.getString(3));
+            mac.setMachineID(cursor.getString(4));
 
             machines.add(mac);
             cursor.moveToNext();
@@ -132,6 +133,20 @@ public class MachineDao {
         return mac;
     }
 
+    public Machine getByMachineID(String machineID) {
+        Machine mac = new Machine();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_MACHINE_ID + "=" + machineID, null, null, null, null);
+        cursor.moveToFirst();
+        Log.d("result", String.valueOf(cursor.getCount()));
+        mac.setId(cursor.getInt(0));
+        mac.setName(cursor.getString(2));
+        mac.setSerialNumber(cursor.getString(3));
+        mac.setMachineID(cursor.getString(4));
+
+        return mac;
+    }
+
     public long insert(Machine machine) {
         ContentValues values = new ContentValues();
         //values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
@@ -157,13 +172,13 @@ public class MachineDao {
 
     public long insertRepairMachine(Machine machine) {
         ContentValues values = new ContentValues();
-        //values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
-        values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
+        //values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
         //values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
         values.put(dbHelper.MACHINE_COLUMN_NAME, machine.getName());
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
         //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
         values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+        Log.d("INSERTREPAIR", machine.getMachineID());
         values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
 
         long rowID = 0;
