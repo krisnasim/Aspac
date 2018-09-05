@@ -1,6 +1,8 @@
 package id.co.ncl.aspac.dao;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
@@ -86,8 +88,8 @@ public class ServiceDao {
         return servicesID;
     }
 
-    public Service get(long serviceID) {
-        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_ID + "=" + serviceID, null, null, null, null);
+    public Service get(String serviceID) {
+        Cursor cursor = db.query(dbHelper.TABLE_SERVICE, null, dbHelper.SERVICE_COLUMN_NO_LPS + "='" + serviceID + "'", null, null, null, null);
         boolean result = cursor.moveToFirst();
         if(result) {
 
@@ -122,7 +124,7 @@ public class ServiceDao {
         return rowID;
     }
 
-    public long insertRoutine(Service service) {
+    public String insertRoutine(Service service) {
         ContentValues values = new ContentValues();
         values.put(dbHelper.SERVICE_COLUMN_NO_LPS, service.getNoLPS());
         //CUSTOMER BRANCH
@@ -144,10 +146,10 @@ public class ServiceDao {
             exception.getCause();
             exception.getLocalizedMessage();
         }
-        return rowID;
+        return service.getNoLPS();
     }
 
-    public long insertRepair(Service service) {
+    public String insertRepair(Service service) {
         ContentValues values = new ContentValues();
         values.put(dbHelper.SERVICE_COLUMN_NO_LPS, service.getNoLPS());
         //CUSTOMER BRANCH
@@ -181,7 +183,7 @@ public class ServiceDao {
             exception.getCause();
             exception.getLocalizedMessage();
         }
-        return rowID;
+        return service.getNoLPS();
     }
 
     public void update(Service service) {
@@ -210,7 +212,7 @@ public class ServiceDao {
         List<Service> services = getAllRoutine();
         Log.d("dataSize", "the number of services for routine item are: "+ String.valueOf(services.size()));
         for (int a=0; a<services.size(); a++) {
-            machineDao.deleteByID(services.get(a).getId());
+            machineDao.deleteByNoLPS(services.get(a).getNoLPS());
         }
         //then, check if all machine is deleted. in case repair cases are not opened yet
         List<Machine> machines = machineDao.getAll();
@@ -240,7 +242,7 @@ public class ServiceDao {
         List<Machine> oldMachines = machineDao.getAll();
         Log.d("dataSize", "the number of machine for repair item before deletion are: "+ String.valueOf(oldMachines.size()));
         for (int a=0; a<services.size(); a++) {
-            machineDao.deleteByID(services.get(a).getId());
+            machineDao.deleteByNoLPS(services.get(a).getNoLPS());
         }
         //then, check if all machine is deleted. in case routine cases are not opened yet
         List<Machine> machines = machineDao.getAll();

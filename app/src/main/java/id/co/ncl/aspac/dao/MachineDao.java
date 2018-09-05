@@ -46,10 +46,10 @@ public class MachineDao {
         return machines;
     }
 
-    public List<Machine> getAllByServiceID(long serviceID) {
+    public List<Machine> getAllByServiceID(String serviceID) {
         List<Machine> machines = new ArrayList<>();
 
-        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_SERVICE_ID + "=" + serviceID, null, null, null, null);
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_SERVICE_ID + "='" + serviceID + "'", null, null, null, null);
         cursor.moveToFirst();
         for (int w = 0; w < cursor.getCount(); w++) {
             Machine mac = new Machine();
@@ -58,6 +58,26 @@ public class MachineDao {
             mac.setName(cursor.getString(2));
             mac.setSerialNumber(cursor.getString(3));
             mac.setMachineID(cursor.getString(4));
+
+            machines.add(mac);
+            cursor.moveToNext();
+        }
+        return machines;
+    }
+
+    public List<Machine> getAllByNoLPS(String serviceID) {
+        List<Machine> machines = new ArrayList<>();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_SERVICE_NO_LPS + "='" + serviceID + "'", null, null, null, null);
+        cursor.moveToFirst();
+        for (int w = 0; w < cursor.getCount(); w++) {
+            Machine mac = new Machine();
+            mac.setId(cursor.getInt(0));
+            mac.setTempServiceID(cursor.getInt(1));
+            mac.setName(cursor.getString(2));
+            mac.setSerialNumber(cursor.getString(3));
+            mac.setMachineID(cursor.getString(4));
+            mac.setServiceID(cursor.getString(5));
 
             machines.add(mac);
             cursor.moveToNext();
@@ -133,6 +153,20 @@ public class MachineDao {
         return mac;
     }
 
+    public Machine getByRepairID(String machineID) {
+        Machine mac = new Machine();
+
+        Cursor cursor = db.query(dbHelper.TABLE_MACHINE, null, dbHelper.MACHINE_COLUMN_SERVICE_ID + "=" + machineID, null, null, null, null);
+        cursor.moveToFirst();
+        Log.d("result", String.valueOf(cursor.getCount()));
+        mac.setId(cursor.getInt(0));
+        mac.setTempServiceID(cursor.getInt(1));
+        mac.setName(cursor.getString(2));
+        mac.setSerialNumber(cursor.getString(3));
+
+        return mac;
+    }
+
     public Machine getByMachineID(String machineID) {
         Machine mac = new Machine();
 
@@ -155,7 +189,9 @@ public class MachineDao {
         values.put(dbHelper.MACHINE_COLUMN_NAME, machine.getName());
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
         //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
-        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getTempServiceID());
+        Log.d("INSERTLPS", machine.getNoLPS());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_NO_LPS, machine.getNoLPS());
 
         long rowID = 0;
 
@@ -167,19 +203,22 @@ public class MachineDao {
             exception.getCause();
             exception.getLocalizedMessage();
         }
-        return rowID;
+        return machine.getTempServiceID();
     }
 
-    public long insertRepairMachine(Machine machine) {
+    public long insertRepairMachine(Machine machine, int service_id) {
         ContentValues values = new ContentValues();
         //values.put(dbHelper.MACHINE_COLUMN_TEMP_SERVICE_ID, machine.getTempServiceID());
         //values.put(dbHelper.MACHINE_COLUMN_BRAND, machine.getBrand());
         values.put(dbHelper.MACHINE_COLUMN_NAME, machine.getName());
         values.put(dbHelper.MACHINE_COLUMN_SERIAL_NUM, machine.getSerialNumber());
         //values.put(dbHelper.MACHINE_COLUMN_SALES_NUM, machine.getSalesNumber());
-        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getServiceID());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, machine.getNoLPS());
         Log.d("INSERTREPAIR", machine.getMachineID());
         values.put(dbHelper.MACHINE_COLUMN_MACHINE_ID, machine.getMachineID());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_ID, service_id);
+        Log.d("INSERTLPS", machine.getNoLPS());
+        values.put(dbHelper.MACHINE_COLUMN_SERVICE_NO_LPS, machine.getNoLPS());
 
         long rowID = 0;
 
@@ -191,7 +230,7 @@ public class MachineDao {
             exception.getCause();
             exception.getLocalizedMessage();
         }
-        return rowID;
+        return service_id;
     }
 
     public void update(Machine machine) {
@@ -208,7 +247,12 @@ public class MachineDao {
         int count = db.delete(dbHelper.TABLE_MACHINE, dbHelper.MACHINE_COLUMN_ID + " = " + id, null);
         Log.d("deleteMachineDao", "Amount deleted rows: "+count);
         //this.dbManager.closeDatabase();
-        Log.d("databaseCon", "closing database connection..");
+        //Log.d("databaseCon", "closing database connection..");
+    }
+
+    public void deleteByNoLPS(String noLPS) {
+        int count = db.delete(dbHelper.TABLE_MACHINE, dbHelper.MACHINE_COLUMN_SERVICE_NO_LPS + " = '" + noLPS + "'", null);
+        Log.d("deleteMachineDao", "Amount deleted rows: "+count);
     }
 
     public void deleteAll() {

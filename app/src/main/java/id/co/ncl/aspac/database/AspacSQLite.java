@@ -42,6 +42,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
     public static final String MACHINE_COLUMN_MACHINE_ID = "machine_id";
     //foreign key to service
     public static final String MACHINE_COLUMN_SERVICE_ID = "service_id";
+    public static final String MACHINE_COLUMN_SERVICE_NO_LPS = "no_lps";
 
     //the sparepart table info
     //table name
@@ -76,7 +77,8 @@ public class AspacSQLite extends SQLiteOpenHelper {
             + MACHINE_COLUMN_NAME + " string, "
             + MACHINE_COLUMN_SERIAL_NUM + " text, "
             + MACHINE_COLUMN_MACHINE_ID + " text, "
-            + MACHINE_COLUMN_SERVICE_ID + " integer, "
+            + MACHINE_COLUMN_SERVICE_ID + " string, "
+            + MACHINE_COLUMN_SERVICE_NO_LPS + " string, "
             + "foreign key (" + MACHINE_COLUMN_SERVICE_ID + ") REFERENCES " + TABLE_SERVICE + " (" + SERVICE_COLUMN_ID + "));";
 
     //sparepart table sql creation
@@ -125,7 +127,7 @@ public class AspacSQLite extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(MACHINE_TABLE_CREATE);
     }
 
-    public void createSprepartTable(SQLiteDatabase sqLiteDatabase) {
+    public void createSparepartTable(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SPAREPART_TABLE_CREATE);
     }
 }

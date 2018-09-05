@@ -14,8 +14,10 @@ public class Machine {
     private String name;
     private String serialNumber;
     private String salesNumber;
+    private int repairID;
     //foreign key to service ID
-    private int serviceID;
+    private String noLPS;
+    private String serviceID;
 
     public int getId() {
         return id;
@@ -81,11 +83,27 @@ public class Machine {
         this.salesNumber = salesNumber;
     }
 
-    public int getServiceID() {
+    public String getNoLPS() {
+        return noLPS;
+    }
+
+    public void setNoLPS(String noLPS) {
+        this.noLPS = noLPS;
+    }
+
+    public int getRepairID() {
+        return repairID;
+    }
+
+    public void setRepairID(int repairID) {
+        this.repairID = repairID;
+    }
+
+    public String getServiceID() {
         return serviceID;
     }
 
-    public void setServiceID(int serviceID) {
+    public void setServiceID(String serviceID) {
         this.serviceID = serviceID;
     }
 }

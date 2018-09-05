@@ -24,7 +24,7 @@ public class SignatureActivity extends AppCompatActivity {
     @BindView(R.id.save_sign_btn) Button save_sign_btn;
     @BindView(R.id.clear_sign_btn) Button clear_sign_btn;
 
-    private long serviceID;
+    private String serviceID;
     private Bitmap signedBitmap;
     private ProgressDialog progressDialog;
 
@@ -78,8 +78,8 @@ public class SignatureActivity extends AppCompatActivity {
         setTitle("Sign Here");
         ButterKnife.bind(this);
 
-        if(getIntent().getLongExtra("service_id", 0) != 0) {
-            serviceID = getIntent().getLongExtra("service_id", 0);
+        if(!getIntent().getStringExtra("service_id").isEmpty()) {
+            serviceID = getIntent().getStringExtra("service_id");
         }
 
         //setup signature listener

@@ -55,7 +55,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
     private ArrayList<Work> workData = new ArrayList<>();
-    List<Long> serviceIDs = new ArrayList<>();
+    List<String> serviceLPSs = new ArrayList<>();
     List<Long> machineIDs = new ArrayList<>();
 
 //    @OnClick(R.id.refresh_service_btn)
@@ -114,8 +114,14 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                 serDAO.deleteAllRoutine();
                 serDAO.closeConnection();
 
+                SharedPreferences dataSharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = dataSharedPref.edit();
+                editor.remove("userData");
+                editor.apply();
+
                 //get work API
                 getAllWorkData();
+
             }
         });
         // Scheme colors for animation
@@ -263,9 +269,9 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     //service.setTupdatedAt(custJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
-                    long serviceID = serDAO.insertRoutine(service);
-                    Log.d("serviceIDSuccess", String.valueOf(serviceID));
-                    serviceIDs.add(serviceID);
+                    String noLPS = serDAO.insertRoutine(service);
+                    Log.d("serviceIDSuccess", noLPS);
+                    serviceLPSs.add(noLPS);
                     serDAO.closeConnection();
 
                     //final long[] machineIDs = new long[detailsArray.length()];
@@ -288,12 +294,14 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                         machine.setName(mesinObj.getString("machine_name"));
                         //machine.setSalesNumber(tempObj.getString("sales_number"));
                         machine.setSerialNumber(mesinObj.getString("serial_number"));
-                        machine.setServiceID(serviceIDs.get(z).intValue());
+                        machine.setNoLPS(serviceLPSs.get(z));
+                        Log.d("serviceLPS", "Service LPS is: "+serviceLPSs.get(z));
 
                         MachineDao macDAO = new MachineDao(dbManager);
                         long machineID = macDAO.insert(machine);
                         Log.d("machineIDDB", String.valueOf(machineID));
                         macDAO.closeConnection();
+                        //this is change to temp id
                         machineIDs.add(machineID);
                     }
 
@@ -354,7 +362,7 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
 //                newWork.setWorkDateTime(date);
 
                 workData.add(newWork);
-                serviceIDs.add((long) ser.getId());
+                serviceLPSs.add(ser.getNoLPS());
             }
             serDAO.closeConnection();
             //lastly, setadapter
@@ -412,8 +420,8 @@ public class WorkFragment extends Fragment implements Response.ErrorListener, Re
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
                     Log.d("position", String.valueOf(position));
-                    Log.d("selectedPosID", String.valueOf(serviceIDs.get(position)));
-                    args.putLong("service_id", serviceIDs.get(position));
+                    Log.d("selectedPosID", String.valueOf(serviceLPSs.get(position)));
+                    args.putString("service_id", serviceLPSs.get(position));
                     Fragment newFrag = new CreateFragment();
                     newFrag.setArguments(args);
                     act.changeFragment(newFrag);

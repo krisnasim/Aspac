@@ -101,7 +101,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     private JSONArray machineStatusArray;
     private JSONObject machineStatus;
     private JSONObject finalJSONObj;
-    private long serviceID = 0;
+    private String serviceLPS;
     private List<String> machineIDs = new ArrayList<>();
     private List<Mesin> mesinData = new ArrayList<Mesin>();
     private List<Machine> mesinArray = new ArrayList<>();
@@ -156,8 +156,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
         String token = "";
         if(checkforSharedPreferences()) {
-            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-            token = "Bearer "+sharedPref.getString("token", "empty token");
+            SharedPreferences userSharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
+            token = "Bearer "+userSharedPref.getString("token", "empty token");
             try {
                 //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                 finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
@@ -200,7 +201,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
                     //delete the sharedpref
-                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+                    SharedPreferences preferences = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
                     //preferences.edit().remove("current_service_json").apply();
                     preferences.edit().remove(cachedService.getNoLPS()).apply();
 
@@ -274,7 +275,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
     @OnClick(R.id.clear_signature_button)
     public void clearSignature() {
         //prepare the filled in data first
-        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy, HH:mm");
             finalCalendar = Calendar.getInstance();
@@ -300,7 +301,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         }
 
         Intent intent = new Intent(getActivity(), SignatureActivity.class);
-        intent.putExtra("service_id", serviceID);
+        intent.putExtra("service_id", serviceLPS);
         startActivity(intent);
     }
 
@@ -313,8 +314,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            serviceID = args.getLong("service_id");
-            Log.d("receivedSerID", String.valueOf(serviceID));
+            serviceLPS = args.getString("service_id");
+            Log.d("receivedSerID", serviceLPS);
 
             //check if signature image exist in arguments
             if(args.getByteArray("signature_image") != null) {
@@ -342,9 +343,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             signature_preview_img.setImageBitmap(signedBitmap);
         }
 
-        if(serviceID != 0) {
+        if(!serviceLPS.isEmpty()) {
             ServiceDao serDAO = new ServiceDao(dbManager);
-            Service service = serDAO.get(serviceID);
+            Service service = serDAO.get(serviceLPS);
             cachedService = service;
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
@@ -355,7 +356,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             serDAO.closeConnection();
 
             MachineDao macDAO = new MachineDao(dbManager);
-            mesinArray = macDAO.getAllByServiceID(serviceID);
+            mesinArray = macDAO.getAllByNoLPS(serviceLPS);
             macDAO.closeConnection();
 
             for(int h = 0; h < mesinArray.size(); h++) {
@@ -438,7 +439,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
             //delete the sharedpref
-            SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            SharedPreferences preferences = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
             //preferences.edit().remove("current_service_json").apply();
             preferences.edit().remove(cachedService.getNoLPS()).apply();
 
@@ -555,7 +556,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         //start creating the JSON
         String token = "";
         if(checkforSharedPreferences()) {
-            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
 
             //check if there are any previous json
             //if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
@@ -679,7 +680,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                     //move to new fragment
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
-                    args.putLong("service_id", serviceID);
+                    args.putString("service_id", serviceLPS);
                     args.putString("machine_id", machineIDs.get(position));
                     args.putString("no_lps", cachedService.getNoLPS());
                     args.putBoolean("routine", true);
@@ -700,8 +701,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 
     private boolean checkforSharedPreferences() {
         boolean result = false;
-        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-        if(sharedPref.contains("token")) {
+        SharedPreferences userSharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        if(userSharedPref.contains("token")) {
             //sharedpref exist
             result = true;
         } else {

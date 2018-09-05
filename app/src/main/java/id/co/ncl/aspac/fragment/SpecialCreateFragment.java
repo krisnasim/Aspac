@@ -35,6 +35,8 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -45,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,7 +103,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
     private JSONArray machineStatusArray;
     private JSONObject machineStatus;
     private JSONObject finalJSONObj;
-    private long serviceID = 0;
+    private String serviceLPS;
     private List<String> machineIDs = new ArrayList<>();
     private List<Mesin> mesinData = new ArrayList<Mesin>();
     private List<Machine> mesinArray = new ArrayList<>();
@@ -153,14 +156,15 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
         String token = "";
         if(checkforSharedPreferences()) {
-            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-            token = "Bearer "+sharedPref.getString("token", "empty token");
+            SharedPreferences userSharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
+            token = "Bearer "+userSharedPref.getString("token", "empty token");
             try {
                 //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
                 finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
                 //finalJSONObj.put("no_lps", cachedService.getNoLPS());
                 //finalJSONObj.put("teknisi_id", 121);
-                finalJSONObj.put("name_pic", sharedPref.getString("name", "noName"));
+                //finalJSONObj.put("name_pic", sharedPref.getString("name", "noName"));
                 finalJSONObj.put("kerusakan", kerusakan_input_sp.getText().toString());
                 //finalJSONObj.put("perbaikan", perbaikan_input.getText().toString());
                 finalJSONObj.put("keterangan", keterangan_input_sp.getText().toString());
@@ -184,17 +188,17 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         //headers.put("Content-Type", "multipart/form-data");
         headers.put("Authorization", token);
 
-        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<NetworkResponse>() {
+        VolleyMultipartRequest newReq = new VolleyMultipartRequest(url, headers, new Response.Listener<String>() {
             @Override
-            public void onResponse(NetworkResponse response) {
+            public void onResponse(String response) {
                 progressDialog.dismiss();
                 try {
                     Log.d("onResponse", "DAMN YOU DID IT! HECK YEAH");
-                    Log.d("onResponse", response.toString());
+                    Log.d("onResponse", response);
                     Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
                     //delete the sharedpref
-                    SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+                    SharedPreferences preferences = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
                     //preferences.edit().remove("current_service_json").apply();
                     preferences.edit().remove(cachedService.getNoLPS()).apply();
 
@@ -272,7 +276,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
     @OnClick(R.id.clear_signature_button_sp)
     public void clearSignature() {
         //prepare the filled in data first
-        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
         try {
             finalJSONObj = new JSONObject(sharedPref.getString(cachedService.getNoLPS(), "empty"));
             //finalJSONObj.put("no_lps", cachedService.getNoLPS());
@@ -295,7 +299,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         }
 
         Intent intent = new Intent(getActivity(), SignatureActivity.class);
-        intent.putExtra("service_id", serviceID);
+        intent.putExtra("service_id", serviceLPS);
         intent.putExtra("special", true);
         startActivity(intent);
     }
@@ -309,8 +313,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            serviceID = args.getLong("service_id");
-            Log.d("receivedSerID", String.valueOf(serviceID));
+            serviceLPS = args.getString("service_id");
+            Log.d("receivedSerID", String.valueOf(serviceLPS));
 
             //check if signature image exist in arguments
             if(args.getByteArray("signature_image") != null) {
@@ -338,9 +342,9 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             signature_preview_img_sp.setImageBitmap(signedBitmap);
         }
 
-        if(serviceID != 0) {
+        if(!serviceLPS.isEmpty()) {
             ServiceDao serDAO = new ServiceDao(dbManager);
-            Service service = serDAO.get(serviceID);
+            Service service = serDAO.get(serviceLPS);
             cachedService = service;
             setupFinalJSON(service);
             //date_time.setText(service.getDateService());
@@ -358,7 +362,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             serDAO.closeConnection();
 
             MachineDao macDAO = new MachineDao(dbManager);
-            mesinArray = macDAO.getAllByServiceID(serviceID);
+            mesinArray = macDAO.getAllByNoLPS(serviceLPS);
+            Log.d("mesinarrayCount", "mesin array count is: "+mesinArray.size());
             macDAO.closeConnection();
 
             for(int h = 0; h < mesinArray.size(); h++) {
@@ -430,6 +435,13 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         Log.d("errorResponse", String.valueOf(error));
         Log.d("errorResponse", String.valueOf(error.getLocalizedMessage()));
         Log.d("errorResponse", Arrays.toString(error.getStackTrace()));
+        String response = null;
+        try {
+            response = new String(error.networkResponse.data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Log.d("errorResponse", response);
     }
 
     @Override
@@ -441,7 +453,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
             Toast.makeText(getActivity(), "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
             //delete the sharedpref
-            SharedPreferences preferences = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            SharedPreferences preferences = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
             //preferences.edit().remove("current_service_json").apply();
             preferences.edit().remove(cachedService.getNoLPS()).apply();
 
@@ -558,7 +570,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         //start creating the JSON
         String token = "";
         if(checkforSharedPreferences()) {
-            sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+            sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
 
             //check if there are any previous json
             //if(sharedPref.getString("current_service_json", "empty").equals("empty")) {
@@ -647,8 +659,13 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                         finalJSONObj.put("rtbs_flag", String.valueOf(machineStatus.get("rtbs_flag")));
                         finalJSONObj.put("rtas_flag", String.valueOf(machineStatus.get("rtas_flag")));
                         finalJSONObj.put("job_status", String.valueOf(machineStatus.get("job_status")));
-                        String testJSON = machineSpareparts.toString();
-                        finalJSONObj.put("sparepart_consumed", testJSON);
+                        String stringJSON = machineSpareparts.toString();
+                        JsonParser jsonParser = new JsonParser();
+                        JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
+                        Log.d("printGSON", objectFromString.toString());
+                        String convertedString = objectFromString.toString();
+                        //String testJSON = machineSpareparts.toString();
+                        finalJSONObj.put("sparepart_consumed", convertedString);
 
                         Log.d("JSONArray", finalJSONObj.toString(2));
                     }
@@ -680,7 +697,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                     //move to new fragment
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
-                    args.putLong("service_id", serviceID);
+                    args.putString("service_id", serviceLPS);
                     args.putString("machine_id", machineIDs.get(position));
                     for(int x=0; x<machineIDs.size(); x++) {
                         //Log.d("machineID", "machine ID is: " + machineIDs.get(position));
@@ -704,8 +721,8 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
 
     private boolean checkforSharedPreferences() {
         boolean result = false;
-        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
-        if(sharedPref.contains("token")) {
+        SharedPreferences userSharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        if(userSharedPref.contains("token")) {
             //sharedpref exist
             result = true;
         } else {

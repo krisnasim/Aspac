@@ -59,7 +59,7 @@ public class CreateDetailFragment extends Fragment {
     private JSONObject dataMachine;
     private int machinePosition;
     private String machineID;
-    private Long serviceID;
+    private String serviceID;
     private boolean sparepartExists = false;
     private int rtbs_flag, rtas_flag, job_status;
     private SharedPreferences sharedPref;
@@ -151,7 +151,7 @@ public class CreateDetailFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("machine_status", machineStatus.toString());
         args.putString("machine_spareparts", machineSpareparts.toString());
-        args.putLong("service_id", serviceID);
+        args.putString("service_id", serviceID);
         Fragment newFrag;
         if(special) {
             newFrag = new SpecialCreateFragment();
@@ -172,7 +172,8 @@ public class CreateDetailFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null) {
             machineID = args.getString("machine_id");
-            serviceID = args.getLong("service_id");
+            Log.d("machineIDEntry", "machine ID is: "+ machineID);
+            serviceID = args.getString("service_id");
             noLPS = args.getString("no_lps");
             if(args.containsKey("special")) {
                 special = true;
@@ -200,6 +201,7 @@ public class CreateDetailFragment extends Fragment {
         //get the machineID first
         MachineDao macDAO = new MachineDao(dbManager);
         Machine newMachine;
+        Log.d("machineID", "machine ID is: "+machineID);
         if(special) {
             newMachine = macDAO.getByMachineID(machineID);
         } else {
@@ -249,59 +251,99 @@ public class CreateDetailFragment extends Fragment {
     }
 
     private void setupFinalJSON(int machineID) {
-        sharedPref = getActivity().getSharedPreferences("userCred", Context.MODE_PRIVATE);
+        sharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
 
         try {
             //finalJSONObj = new JSONObject(sharedPref.getString("current_service_json", "empty"));
-            finalJSONObj = new JSONObject(sharedPref.getString(noLPS, "empty"));
+            if (!sharedPref.getString(noLPS, "empty").equals("empty")) {
+                finalJSONObj = new JSONObject(sharedPref.getString(noLPS, "empty"));
+                Log.d("machineIDfinalJSON", String.valueOf(machineID));
 
-            Log.d("machineIDfinalJSON", String.valueOf(machineID));
+                if (finalJSONObj.has("machine")) {
+                    Log.d("jsonPrint", finalJSONObj.toString(2));
+                    //JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
+                    //lets use gson
+                    String stringJSON = finalJSONObj.getString("machine");
+                    JsonParser jsonParser = new JsonParser();
+                    JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
+                    Log.d("printGSON", "BACA WOI "+objectFromString.toString());
+                    String convertedString = objectFromString.toString();
+                    //and then...
+                    JSONArray machineJSONArray = new JSONArray(convertedString);
+                    for (int x = 0; x < machineJSONArray.length(); x++) {
+                        Log.d("countMachineLoop", String.valueOf(x));
+                        Log.d("machineLength", String.valueOf(machineJSONArray.length()));
+                        JSONObject machineJSON = machineJSONArray.getJSONObject(x);
+                        Log.d("tempServiceID", String.valueOf(machineJSON.getInt("temp_service_id")));
+                        //Log.d("tempServiceID", String.valueOf(machineJSON.getString("brand")));
+                        //Log.d("tempServiceID", String.valueOf(machineJSON.getString("model")));
+                        Log.d("loop", String.valueOf(x));
+                        if (machineJSON.getInt("temp_service_id") == machineID) {
+                            Log.d("tempService", "GOT IT");
+                            rtbs_flag = machineJSON.getInt("rtbs_flag");
+                            rtas_flag = machineJSON.getInt("rtas_flag");
+                            job_status = machineJSON.getInt("job_status");
 
-            if(finalJSONObj.has("machine")) {
-                Log.d("jsonPrint", finalJSONObj.toString(2));
-                //JSONArray machineJSONArray = finalJSONObj.getJSONArray("machine");
-                //lets use gson
-                String stringJSON = finalJSONObj.getString("machine");
-                JsonParser jsonParser = new JsonParser();
-                JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
-                Log.d("printGSON", objectFromString.toString());
-                String convertedString = objectFromString.toString();
-                //and then...
-                JSONArray machineJSONArray = new JSONArray(convertedString);
-                for(int x = 0; x < machineJSONArray.length(); x++) {
-                    Log.d("countMachineLoop", String.valueOf(x));
-                    Log.d("machineLength", String.valueOf(machineJSONArray.length()));
-                    JSONObject machineJSON = machineJSONArray.getJSONObject(x);
-                    Log.d("tempServiceID", String.valueOf(machineJSON.getInt("temp_service_id")));
-                    //Log.d("tempServiceID", String.valueOf(machineJSON.getString("brand")));
-                    //Log.d("tempServiceID", String.valueOf(machineJSON.getString("model")));
-                    Log.d("loop", String.valueOf(x));
-                    if(machineJSON.getInt("temp_service_id") == machineID) {
-                        Log.d("tempService", "GOT IT");
-                        rtbs_flag = machineJSON.getInt("rtbs_flag");
-                        rtas_flag = machineJSON.getInt("rtas_flag");
-                        job_status = machineJSON.getInt("job_status");
+                            if (rtbs_flag == 1) {
+                                rtbs_check_box.setChecked(true);
+                            }
+                            if (rtas_flag == 1) {
+                                rtas_check_box.setChecked(true);
+                            }
+                            if (job_status == 1) {
+                                job_status_ok_radio_btn.setChecked(true);
+                            } else {
+                                job_status_bad_radio_btn.setChecked(true);
+                            }
 
-                        if(rtbs_flag == 1) {
-                            rtbs_check_box.setChecked(true);
+                            //prepare this area to be commented
+                            JSONArray sparepartJSONArray = null;
+                            if (machineJSON.has("sparepart_consumed")) {
+                                sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
+                                Log.d("sparepartJSON", sparepartJSONArray.toString(2));
+                            }
+                            if (sparepartJSONArray != null) {
+                                for (int c = 0; c < sparepartJSONArray.length(); c++) {
+                                    Log.d("arrayLength", String.valueOf(sparepartJSONArray.length()));
+                                    JSONObject sparepartJSON = sparepartJSONArray.getJSONObject(c);
+                                    SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
+                                    form1.setSparepartArray(sparepartArray);
+                                    //set the spinner to selected to exact name, and also add qty!
+                                    form1.setSparepartPickerSelected(sparepartJSON.getInt("sparepart_id"));
+                                    form1.setQtyValue(sparepartJSON.getInt("qty"));
+                                    sparepart_layout.addView(form1);
+                                    sparepartForms.add(form1);
+                                }
+                            }
+                            //break;
                         }
-                        if(rtas_flag == 1) {
-                            rtas_check_box.setChecked(true);
-                        }
-                        if(job_status == 1) {
-                            job_status_ok_radio_btn.setChecked(true);
-                        } else {
-                            job_status_bad_radio_btn.setChecked(true);
-                        }
+                    }
+                } else if (finalJSONObj.has("rtbs_flag")) {
+                    rtbs_flag = finalJSONObj.getInt("rtbs_flag");
+                    rtas_flag = finalJSONObj.getInt("rtas_flag");
+                    job_status = finalJSONObj.getInt("job_status");
 
-                        //prepare this area to be commented
-                        JSONArray sparepartJSONArray = null;
-                        if(machineJSON.has("sparepart_consumed")) {
-                            sparepartJSONArray = machineJSON.getJSONArray("sparepart_consumed");
-                            Log.d("sparepartJSON", sparepartJSONArray.toString(2));
-                        }
-                        if(sparepartJSONArray != null) {
-                            for(int c = 0; c < sparepartJSONArray.length(); c++) {
+                    if (rtbs_flag == 1) {
+                        rtbs_check_box.setChecked(true);
+                    }
+                    if (rtas_flag == 1) {
+                        rtas_check_box.setChecked(true);
+                    }
+                    if (job_status == 1) {
+                        job_status_ok_radio_btn.setChecked(true);
+                    } else {
+                        job_status_bad_radio_btn.setChecked(true);
+                    }
+
+                    if(finalJSONObj.has("sparepart_consumed")) {
+                        String stringJSON = finalJSONObj.getString("sparepart_consumed");
+                        JsonParser jsonParser = new JsonParser();
+                        JsonArray objectFromString = jsonParser.parse(stringJSON).getAsJsonArray();
+                        Log.d("printGSON", objectFromString.toString());
+                        String convertedString = objectFromString.toString();
+
+                        JSONArray sparepartJSONArray = new JSONArray(convertedString);
+                            for (int c = 0; c < sparepartJSONArray.length(); c++) {
                                 Log.d("arrayLength", String.valueOf(sparepartJSONArray.length()));
                                 JSONObject sparepartJSON = sparepartJSONArray.getJSONObject(c);
                                 SparepartFormGenerator form1 = new SparepartFormGenerator(getActivity(), sparepartArray);
@@ -312,25 +354,7 @@ public class CreateDetailFragment extends Fragment {
                                 sparepart_layout.addView(form1);
                                 sparepartForms.add(form1);
                             }
-                        }
-                        //break;
                     }
-                }
-            } else if(finalJSONObj.has("rtbs_flag")){
-                rtbs_flag = finalJSONObj.getInt("rtbs_flag");
-                rtas_flag = finalJSONObj.getInt("rtas_flag");
-                job_status = finalJSONObj.getInt("job_status");
-
-                if(rtbs_flag == 1) {
-                    rtbs_check_box.setChecked(true);
-                }
-                if(rtas_flag == 1) {
-                    rtas_check_box.setChecked(true);
-                }
-                if(job_status == 1) {
-                    job_status_ok_radio_btn.setChecked(true);
-                } else {
-                    job_status_bad_radio_btn.setChecked(true);
                 }
             }
         } catch (JSONException e) {

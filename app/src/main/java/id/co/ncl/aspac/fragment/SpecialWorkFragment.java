@@ -58,7 +58,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
     private SharedPreferences sharedPref;
     private ProgressDialog progressDialog;
     private ArrayList<Work> workData = new ArrayList<>();
-    List<Long> serviceIDs = new ArrayList<>();
+    List<String> serviceLPSs = new ArrayList<>();
     List<Long> machineIDs = new ArrayList<>();
 
     private DatabaseManager dbManager;
@@ -98,6 +98,11 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                 ServiceDao serDAO = new ServiceDao(dbManager);
                 serDAO.deleteAllRepair();
                 //serDAO.closeConnection();
+
+                SharedPreferences dataSharedPref = getActivity().getSharedPreferences("userData", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = dataSharedPref.edit();
+                editor.remove("userData");
+                editor.apply();
 
                 //get work API
                 getAllWorkData();
@@ -242,15 +247,17 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                     //service.setTupdatedAt(custJSON.getString("updated_at"));
 
                     ServiceDao serDAO = new ServiceDao(dbManager);
-                    long serviceID = serDAO.insertRepair(service);
-                    Log.d("serviceIDSuccess", String.valueOf(serviceID));
-                    serviceIDs.add(serviceID);
+                    String noLPS = serDAO.insertRepair(service);
+                    Log.d("serviceIDSuccess", noLPS);
+                    serviceLPSs.add(noLPS);
                     serDAO.closeConnection();
-
-                    machine.setServiceID(serviceIDs.get(z).intValue());
+                    String goblok = serviceLPSs.get(z);
+                    machine.setNoLPS(goblok);
+                    Log.d("serviceLPS", "Service LPS is: "+serviceLPSs.get(z));
+                    Log.d("serviceLPS", "Service LPS is: "+machine.getNoLPS());
 
                     MachineDao macDAO = new MachineDao(dbManager);
-                    long machineID = macDAO.insertRepairMachine(machine);
+                    long machineID = macDAO.insertRepairMachine(machine, obj.getInt("repair_service_id"));
                     Log.d("machineIDDB", String.valueOf(machineID));
                     macDAO.closeConnection();
                     machineIDs.add(machineID);
@@ -310,7 +317,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
 
             for(int z = 0; z < services.size(); z++) {
                 Service ser = services.get(z);
-                List<Machine> mach = new MachineDao(dbManager).getAllByServiceID(ser.getId());
+                List<Machine> mach = new MachineDao(dbManager).getAllByServiceID(String.valueOf(ser.getRepairdID()));
                 //create new work object
                 Work newWork = new Work();
                 newWork.setWorkTitle(ser.getName());
@@ -319,7 +326,7 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
 //                newWork.setWorkDateTime(date);
 
                 workData.add(newWork);
-                serviceIDs.add((long) ser.getId());
+                serviceLPSs.add(ser.getNoLPS());
             }
             serDAO.closeConnection();
             //lastly, setadapter
@@ -377,8 +384,8 @@ public class SpecialWorkFragment extends Fragment implements Response.ErrorListe
                     HomeActivity act = (HomeActivity) getActivity();
                     Bundle args = new Bundle();
                     Log.d("position", String.valueOf(position));
-                    Log.d("selectedPosID", String.valueOf(serviceIDs.get(position)));
-                    args.putLong("service_id", serviceIDs.get(position));
+                    Log.d("selectedPosID", String.valueOf(serviceLPSs.get(position)));
+                    args.putString("service_id", serviceLPSs.get(position));
                     Fragment newFrag = new SpecialCreateFragment();
                     newFrag.setArguments(args);
                     act.changeFragment(newFrag);
