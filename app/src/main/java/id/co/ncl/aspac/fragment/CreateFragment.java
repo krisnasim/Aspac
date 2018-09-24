@@ -37,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -132,7 +133,8 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
         //String url = "http://103.26.208.118/api/submitdatalps";
         //String url = "http://103.26.208.118/api/postRoutineLPS";
         //String url = "http://103.26.208.118/api/postViewRequestRaw";
-        String url = "http://103.26.208.118/api/postViewRequestJSON";
+        String url = "http://103.26.208.118/api/postRoutineLPS_new";
+        //String url = "http://103.26.208.118/api/postViewRequestJSON";
 
         create_form_button.setEnabled(false);
 
@@ -171,6 +173,96 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 finalJSONObj.put("no_pic", no_pic_input.getText().toString());
                 //finalJSONObj.put("date_lps", date);
                 //finalJSONObj.put("tanggal_jam_selesai", dateTime);
+
+//                if(machineStatusArray != null) {
+//                    Log.d("arrayLength", String.valueOf(machineStatusArray.length()));
+//                    JSONObject test = machineStatusArray.getJSONObject(0);
+//                    Log.d("rtasFlag", test.getString("rtas_flag"));
+//                }
+
+                String machineJSONArray = finalJSONObj.getString("machine");
+                JsonParser jsonParser = new JsonParser();
+                JsonArray machineJSONArrayFinal = jsonParser.parse(machineJSONArray).getAsJsonArray();
+                //Log.d("printGSON", objectFromString.toString());
+                //String convertedString = objectFromString.toString();
+
+                int[] tempServiceID = new int[machineJSONArrayFinal.size()];
+                int[] rtbsFlags = new int[machineJSONArrayFinal.size()];
+                int[] rtasFlags = new int[machineJSONArrayFinal.size()];
+                int[] jobStatus = new int[machineJSONArrayFinal.size()];
+
+                for(int j=0; j<machineJSONArrayFinal.size(); j++) {
+                    //JSONObject machStatus = machineJSONArrayFinal.get(j);
+                    JsonElement machStatus = machineJSONArrayFinal.get(j);
+                    JsonObject jsonTest = machStatus.getAsJsonObject();
+                    //printout first to check if valid
+                    Log.d("rtas_flag", String.valueOf(jsonTest.get("rtas_flag")));
+                    Log.d("rtbs_flag", String.valueOf(jsonTest.get("rtbs_flag")));
+                    Log.d("job_status", String.valueOf(jsonTest.get("job_status")));
+                    Log.d("temp_service_id", String.valueOf(jsonTest.get("temp_service_id")));
+                    //then if valid, put each data into the array
+                    tempServiceID[j] = jsonTest.get("temp_service_id").getAsInt();
+                    rtbsFlags[j] = jsonTest.get("rtbs_flag").getAsInt();
+                    rtasFlags[j] = jsonTest.get("rtas_flag").getAsInt();
+                    jobStatus[j] = jsonTest.get("job_status").getAsInt();
+                }
+
+                StringBuilder sb = new StringBuilder(tempServiceID.length);
+                for (int x=0; x<tempServiceID.length; x++) {
+                    if(x==0) {
+                        sb.append(tempServiceID[x]);
+                    } else {
+                        sb.append(",");
+                        sb.append(tempServiceID[x]);
+                    }
+                }
+                String s = sb.toString();
+
+                StringBuilder sb2 = new StringBuilder(rtbsFlags.length);
+                for (int x=0; x<rtbsFlags.length; x++) {
+                    if(x==0) {
+                        sb2.append(rtbsFlags[x]);
+                    } else {
+                        sb2.append(",");
+                        sb2.append(rtbsFlags[x]);
+                    }
+                }
+                String s2 = sb2.toString();
+
+                StringBuilder sb3 = new StringBuilder(rtasFlags.length);
+                for (int x=0; x<rtasFlags.length; x++) {
+                    if(x==0) {
+                        sb3.append(rtasFlags[x]);
+                    } else {
+                        sb3.append(",");
+                        sb3.append(rtasFlags[x]);
+                    }
+                }
+                String s3 = sb3.toString();
+
+                StringBuilder sb4 = new StringBuilder(jobStatus.length);
+                for (int x=0; x<jobStatus.length; x++) {
+                    if(x==0) {
+                        sb4.append(jobStatus[x]);
+                    } else {
+                        sb4.append(",");
+                        sb4.append(jobStatus[x]);
+                    }
+                }
+                String s4 = sb4.toString();
+
+                Log.d("tempServiceID", s);
+                Log.d("rtbsFlags", s2);
+                Log.d("rtasFlags", s3);
+                Log.d("jobStatus", s4);
+
+                finalJSONObj.put("temp_service_id", s);
+                finalJSONObj.put("rtbs_flag", s2);
+                finalJSONObj.put("rtas_flag", s3);
+                finalJSONObj.put("job_status", s4);
+
+                //finally, delete the machine
+                finalJSONObj.remove("machine");
 
                 Log.d("StringfyJSON", String.valueOf(finalJSONObj));
 
@@ -255,6 +347,9 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                 signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 
+//                for (int x=0; x<byteArray.length; x++) {
+//                    Log.d("imageByte", String.valueOf(byteArray[x]));
+//                }
                 params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
 
                 return params;
@@ -356,6 +451,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
             serDAO.closeConnection();
 
             MachineDao macDAO = new MachineDao(dbManager);
+            Log.d("noLPS", "noLPS: "+serviceLPS);
             mesinArray = macDAO.getAllByNoLPS(serviceLPS);
             macDAO.closeConnection();
 
@@ -646,11 +742,13 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
                             String testJSON = machineStatusArray.toString();
                             Log.d("stringJSON", testJSON);
 //                            finalJSONObj.put("machine", Arrays.toString(new JSONArray[]{machineStatusArray}));
+                            //IGNORE FOR TESTING FIRST
                             finalJSONObj.put("machine",testJSON);
                         } else {
                             //if it HAS NOT the name
                             machineStatusArray = new JSONArray();
                             machineStatusArray.put(machineStatus);
+                            //IGNORE FOR TESTING FIRST
                             finalJSONObj.put("machine", machineStatusArray);
                         }
                         Log.d("JSONArray", finalJSONObj.toString(2));
