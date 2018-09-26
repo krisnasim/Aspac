@@ -36,6 +36,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
@@ -150,7 +152,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
         //prepare date and datetime here
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd MMMM yyyy, HH:mm");
         final String date = dateFormat.format(cal.getTime());
         final String dateTime = dateTimeFormat.format(cal.getTime());
 
@@ -172,6 +174,56 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 finalJSONObj.put("no_pic", no_pic_input_sp.getText().toString());
                 //finalJSONObj.put("date_lps", date);
                 finalJSONObj.put("tanggal_jam_selesai", dateTime);
+
+                String sparepartJSONArray = finalJSONObj.getString("sparepart_consumed");
+                JsonParser jsonParser = new JsonParser();
+                JsonArray sparepartJSONArrayFinal = jsonParser.parse(sparepartJSONArray).getAsJsonArray();
+
+                int[] sparepartID = new int[sparepartJSONArrayFinal.size()];
+                int[] quantity = new int[sparepartJSONArrayFinal.size()];
+
+                for(int j=0; j<sparepartJSONArrayFinal.size(); j++) {
+                    //JSONObject machStatus = machineJSONArrayFinal.get(j);
+                    JsonElement sparepart = sparepartJSONArrayFinal.get(j);
+                    JsonObject jsonTest = sparepart.getAsJsonObject();
+                    //printout first to check if valid
+                    Log.d("sparepart_id", String.valueOf(jsonTest.get("sparepart_id")));
+                    Log.d("qty", String.valueOf(jsonTest.get("qty")));
+                    //then if valid, put each data into the array
+                    sparepartID[j] = jsonTest.get("sparepart_id").getAsInt();
+                    quantity[j] = jsonTest.get("qty").getAsInt();
+                }
+
+                StringBuilder sb = new StringBuilder(sparepartID.length);
+                for (int x=0; x<sparepartID.length; x++) {
+                    if(x==0) {
+                        sb.append(sparepartID[x]);
+                    } else {
+                        sb.append(",");
+                        sb.append(sparepartID[x]);
+                    }
+                }
+                String s = sb.toString();
+
+                StringBuilder sb2 = new StringBuilder(quantity.length);
+                for (int x=0; x<quantity.length; x++) {
+                    if(x==0) {
+                        sb2.append(quantity[x]);
+                    } else {
+                        sb2.append(",");
+                        sb2.append(quantity[x]);
+                    }
+                }
+                String s2 = sb2.toString();
+
+                Log.d("sparepart_id", s);
+                Log.d("quantity", s2);
+
+                finalJSONObj.put("sparepart_id", s);
+                finalJSONObj.put("qty", s2);
+
+                //finally, delete the machine
+                finalJSONObj.remove("sparepart_consumed");
 
                 Log.d("StringfyJSON", String.valueOf(finalJSONObj));
 
@@ -257,7 +309,7 @@ public class SpecialCreateFragment extends Fragment implements Response.ErrorLis
                 signedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 
-                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
+                params.put("image_signature", new DataPart("signature.jpg", byteArray, "image/jpeg"));
 
                 return params;
             }

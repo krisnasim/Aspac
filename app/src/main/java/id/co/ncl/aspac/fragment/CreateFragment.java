@@ -350,7 +350,7 @@ public class CreateFragment extends Fragment implements Response.ErrorListener, 
 //                for (int x=0; x<byteArray.length; x++) {
 //                    Log.d("imageByte", String.valueOf(byteArray[x]));
 //                }
-                params.put("signature_image", new DataPart("signature.jpg", byteArray, "image/jpeg"));
+                params.put("image_signature", new DataPart("signature.jpg", byteArray, "image/jpeg"));
 
                 return params;
             }
